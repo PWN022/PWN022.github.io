@@ -58,11 +58,12 @@ export const profileConfig: ProfileConfig = {
 	bio: "吾來之，見之，勝之",
 	links: [
 		{
-			name: "CloudMusic",
-			icon: "simple-icons:netease-cloud-music", // Visit https://icones.js.org/ for icon codes
+			name: "Spotify",
+			icon: "fa6-brands:spotify",
+			// Visit https://icones.js.org/ for icon codes
 			// You will need to install the corresponding icon set if it's not already included
 			// `pnpm add @iconify-json/<icon-set-name>`
-			url: "https://music.163.com/#/user/home?id=",
+			url: "https://open.spotify.com/album/2nLOHgzXzwFEpl62zAgCEC?si=OKRS-QSuQKie7d-tNFyGEw",
 		},
 		{
 			name: "Steam",
