@@ -1,9 +1,9 @@
 ---
-title: Simple Guides for Fuwari
+title: 存档
 published: 2024-04-01
 description: "How to use this blog template."
 image: "./cover.jpeg"
-tags: ["Fuwari", "Blogging", "Customization"]
+tags: ["Fuwari"]
 category: Guides
 draft: false
 ---

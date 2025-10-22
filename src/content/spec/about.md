@@ -1,9 +1,11 @@
 # About
-This is the demo site for [Fuwari](https://github.com/saicaca/fuwari).
-
+此博客的项目地址(目前)：
 ::github{repo="PWN022/PWN022.github.io"}
+:::tip
+人生一定要拥有落子无悔的心态，不要去后悔你做的任何决定，不要去责怪曾经做决定的那个你自己，当时的你只不过在他那个时候的认知和环境等各种因素下做了他认为最正确的选择，而你是用现在的认知以及局外人的态度看这一切，所以你没有理由去责怪当时的你，况且，你能有现在的认知也是因为曾经给你做决定的你，没有他，现在的你不可能知道下次遇到同样的情况什么选择是正确的，或许每一次同样的困境，都没有正确的选择，但是每一个替我们做决定的自己都是给未来的自己提供成长的基石，也不要后悔错过某个人某件事，错过固然让人可惜，却也让人进步，或许有的人有的事只会给你一次遇见的机会，但是错过之后的经验能让你在未来减少错过接下来每一次的相遇，我们要看到自己得到了什么，失去的无法改变，我们能选择的只有吸取经验，也不必因为未来的不确定性而害怕担忧自己曾经的错过，因为当下才是最好的，在当下能尽可能的做到问心无愧，尽可能的将过去化作经验，才会在未来不再有那么多后悔。
+:::
 
-> ### Sources of images used in this site
-> - [Unsplash](https://unsplash.com/)
-> - [星と少女](https://www.pixiv.net/artworks/108916539) by [Stella](https://www.pixiv.net/users/93273965)
-> - [Rabbit - v1.4 Showcase](https://civitai.com/posts/586908) by [Rabbit_YourMajesty](https://civitai.com/user/Rabbit_YourMajesty)
+> ### "Friend link
+> - [Sora](https://steamcommunity.com/profiles/76561198321526097/)
+> - [null](#)
+> - [null](#) by [null](#)
