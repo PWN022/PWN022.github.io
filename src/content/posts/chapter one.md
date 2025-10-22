@@ -1,6 +1,6 @@
 ---
 title: 门电路以及基础
-published: 2023-09-05
+published: 2023-09-02
 description: 微机原理与、或、非、异或，以及其他基础知识。
 tags: [微机原理]
 category: 大学课程
