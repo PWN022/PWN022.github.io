@@ -59,7 +59,7 @@ export const profileConfig: ProfileConfig = {
 	links: [
 		{
 			name: "CloudMusic",
-			icon: "ri:netease-cloud-music-fill", // Visit https://icones.js.org/ for icon codes
+			icon: "simple-icons:netease-cloud-music", // Visit https://icones.js.org/ for icon codes
 			// You will need to install the corresponding icon set if it's not already included
 			// `pnpm add @iconify-json/<icon-set-name>`
 			url: "https://music.163.com/#/user/home?id=",
