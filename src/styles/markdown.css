@@ -13,7 +13,6 @@
         }
 
         &:hover {
-              @apply text-[var(--primary)];
             .anchor {
                 @apply opacity-100 !important;
             }

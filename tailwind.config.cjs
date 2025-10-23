@@ -5,10 +5,6 @@ module.exports = {
 	darkMode: "class", // allows toggling dark mode manually
 	theme: {
 		extend: {
-			colors: {
-				link: "#0366d6", // 默认链接色
-				"link-hover": "#024ea4", // 悬停加深
-			},
 			fontFamily: {
 				sans: ["Roboto", "sans-serif", ...defaultTheme.fontFamily.sans],
 			},
