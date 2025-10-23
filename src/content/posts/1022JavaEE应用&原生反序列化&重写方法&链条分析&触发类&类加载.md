@@ -92,7 +92,7 @@ public class SerializableDemo {
 
 图中为序列化后的字节流数据：
 
-![image-20251022093415781](C:\Users\A411\AppData\Roaming\Typora\typora-user-images\image-20251022093415781.png)
+![](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/35-01.png)
 
 UnSerializableDemo反序列化：
 
@@ -124,7 +124,7 @@ public class UnSerializableDemo {
 
 进行反序列化后的结果：
 
-![image-20251022100640164](C:\Users\A411\AppData\Roaming\Typora\typora-user-images\image-20251022100640164.png)
+![](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/35-02.png)
 
 ### 安全问题
 
