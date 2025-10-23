@@ -1,3 +1,12 @@
+---
+title: JavaEE应用&JNDI注入&RMI服务&LDAP服务&JDK绕过&调用链类
+published: 2025-10-23
+description: JNDI的注入、RMI、LDAP服务、FastJson反序列化漏洞结合。
+tags: [JavaEE,安全开发]
+category: 网络安全
+draft: false
+---
+
 # JavaEE应用&JNDI注入&RMI服务&LDAP服务&JDK绕过&调用链类
 
 ## 思考
