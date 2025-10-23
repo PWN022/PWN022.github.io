@@ -13,6 +13,7 @@
         }
 
         &:hover {
+              @apply text-link underline hover:text-link-hover;
             .anchor {
                 @apply opacity-100 !important;
             }
