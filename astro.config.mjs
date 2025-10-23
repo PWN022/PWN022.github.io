@@ -30,6 +30,9 @@ export default defineConfig({
 	// base: "/",
 	trailingSlash: "always",
 	integrations: [
+		expressiveCode({
+			langs: ["java", "jsp"],
+		}),
 		tailwind({
 			nesting: true,
 		}),
