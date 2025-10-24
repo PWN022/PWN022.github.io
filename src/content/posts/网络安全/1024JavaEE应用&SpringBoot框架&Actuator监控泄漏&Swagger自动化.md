@@ -1,3 +1,12 @@
+---
+title: JavaEE应用&SpringBoot框架&Actuator监控泄漏&Swagger自动化
+published: 2025-10-24
+description: Actutor的开发使用、监控泄露以及Swagger自动化测试接口。
+tags: [JavaEE,安全开发]
+category: 网络安全
+draft: false
+---
+
 # JavaEE应用&SpringBoot框架&Actuator监控泄漏&Swagger自动化
 
 ## Actutor端点图
