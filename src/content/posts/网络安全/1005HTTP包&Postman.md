@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# HTTP包&Postman
-
 # 简要
 
 先来贴几张图认识一下HTTP包的是怎么构成的：

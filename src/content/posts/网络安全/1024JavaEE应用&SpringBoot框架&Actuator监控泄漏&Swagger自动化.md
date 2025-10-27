@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JavaEE应用&SpringBoot框架&Actuator监控泄漏&Swagger自动化
-
 ## Actutor端点图
 
 ![](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/3901.png)

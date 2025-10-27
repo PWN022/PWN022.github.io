@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JavaEE应用&JNDI注入&RMI服务&LDAP服务&JDK绕过&调用链类
-
 ## 思考
 
 什么是jndi注入？

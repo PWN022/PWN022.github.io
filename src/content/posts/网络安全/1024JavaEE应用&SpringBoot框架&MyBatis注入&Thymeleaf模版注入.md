@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JavaEE应用&SpringBoot框架&MyBatis注入&Thymeleaf模版注入
-
 ## Java知识点
 
 功能：数据库操作，文件操作，序列化数据，身份验证，框架开发，第三方库使用等。

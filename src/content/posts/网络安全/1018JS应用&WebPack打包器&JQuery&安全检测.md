@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JS应用&WebPack打包器&第三方库JQuery&安装使用&安全检测
-
 ## 打包器—WebPack—使用&安全
 
 参考：https://mp.weixin.qq.com/s/J3bpy-SsCnQ1lBov1L98WA

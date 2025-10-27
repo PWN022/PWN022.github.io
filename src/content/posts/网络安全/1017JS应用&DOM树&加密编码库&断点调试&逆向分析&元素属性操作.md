@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JS应用&DOM树&加密编码库&断点调试&逆向分析&元素属性操作
-
 ## JS 原生开发—DOM树—用户交互
 
 DOM：文档操作对象

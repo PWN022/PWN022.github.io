@@ -7,10 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-
-
-# 安全开发-PHP应用&模板引用&Smarty渲染&MVC模型&数据联动&RCE安全
-
 ## 知识点
 
 RCE安全：远程代码执行（Remote Code Execution）。

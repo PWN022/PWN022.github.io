@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# ASP应用&HTTP.SYS&短文件&文件解析&Access注入&数据库泄漏
-
 ## 内容总结
 
 1. ASP因为access导致可以根据路径路由访问

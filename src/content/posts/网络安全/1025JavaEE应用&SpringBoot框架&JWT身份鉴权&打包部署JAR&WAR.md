@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JavaEE应用&SpringBoot框架&JWT身份鉴权&打包部署JAR&WAR
-
 ## SpringBoot—身份鉴权—JWT 技术
 
 > JWT(JSON Web Token) 是由服务端用加密算法对信息签名来保证其完整性和不可伪造；

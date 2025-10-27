@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# JavaEE应用&第三方组件&Log4j日志&FastJson序列化&JNDI注入
-
 ## Java—三方组件—Log4J&JNDI
 
 ### Log4j

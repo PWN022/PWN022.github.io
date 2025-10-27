@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# PHP应用&MYSQL架构&SQL注入&跨库查询&文件读写&权限操作
-
 ## 内容总结
 
 > 1. root用户与用户A,用户B对数据库的管理区别
@@ -34,7 +32,7 @@ MYSQL注入：（目的获取当前web权限）
 - root用户：**先测试读写，后测试获取数据。**
 - 非root用户：**直接测试获取数据。**
 
-## 知识点：
+## 知识点
 
 > 1. PHP-MYSQL-SQL注入-常规查询
 > 2. PHP-MYSQL-SQL注入-跨库查询
@@ -83,7 +81,7 @@ MYSQL注入：（目的获取当前web权限）
 
 攻击：**利用SQL语句执行你想要的东西**（SQL语句能干嘛，注入就能干嘛）。
 
-**SQL语句能干嘛⇒SQL语句由谁决定⇒数据库类型决定〈为什么mysql注入。oracle注人叫法原因）。**
+**SQL语句能干嘛⇒SQL语句由谁决定⇒数据库类型决定（mysql注入、oracle注入，叫法原因）。**
 
 ```sql
 http://localhost:63342/demo01/new.php?id=3

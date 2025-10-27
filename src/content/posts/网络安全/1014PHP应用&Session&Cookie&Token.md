@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# PHP应用&后台模块&Session&**cookie**&Token&身份验证&唯一性
-
 ## 身份验证-**cookie**使用
 
 ### 生成**cookie**的原理图过程

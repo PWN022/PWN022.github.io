@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# PHP应用&TP框架&路由访问&对象操作&内置过滤绕过&核心漏洞
-
 ## TP框架—开发—配置架构&路由&MVC模型
 
 参考：https://www.thinkphp.cn/doc

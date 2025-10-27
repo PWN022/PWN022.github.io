@@ -7,7 +7,7 @@ category: 网络安全
 draft: false
 ---
 
-# JS应用&原生开发&JQuery库&Ajax技术&前端后端&安全验证处理
+## 知识点
 
 JS：
 
