@@ -1,7 +1,7 @@
 ---
-title: Pikachu暴力破解-SQLI记录
+title: Pikachu通关记录
 published: 2025-10-30
-description: pikachu靶场的Burte Force、Cross-Site Scripting、CSRF、SQL-inject通关记录。
+description: pikachu靶场的BurteForce、XSS、CSRF、SQLI通关记录。
 tags: [WEB攻防,靶场]
 category: 网络安全
 draft: false
