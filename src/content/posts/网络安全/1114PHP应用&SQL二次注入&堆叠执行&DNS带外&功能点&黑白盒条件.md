@@ -7,8 +7,6 @@ category: 网络安全
 draft: false
 ---
 
-# PHP应用&SQL二次注入&堆叠执行&DNS带外&功能点&黑白盒条件
-
 ## 知识点
 
 > 1. PHP-MYSQL-SQL注入-二次注入&利用条件
