@@ -7,5 +7,3 @@
 
 > ### "Friend link
 > - [Sora](https://steamcommunity.com/profiles/76561198321526097/) via [Steam](#)
-> - [xiaoRan](https://y.music.163.com/m/user?id=594254622) via [CloudMusic](#)
-> - [null](#) by [null](#)
