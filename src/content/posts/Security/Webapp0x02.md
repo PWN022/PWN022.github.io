@@ -21,7 +21,7 @@ draft: false
 
 #### 了解WAF
 
-<img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119090435294.png" alt="image-20260119090435294" style="zoom:80%;" />
+<img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119090435294.png" alt="image-20260119090435294" style="zoom:80%;" />
 
 原理：Web应用防火墙，旨在提供防护。
 
@@ -53,7 +53,7 @@ https://<safeline-ip>:9443/
 
 #### 了解CDN
 
-![image-20260119092937160](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119092937160.png)
+![image-20260119092937160](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119092937160.png)
 
 原理：内容分发服务，旨在提高访问速度。
 
@@ -65,19 +65,19 @@ https://<safeline-ip>:9443/
 
 1. 首先是在内容分发服务中的域名管理：
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119093722590.png" alt="image-20260119093722590" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119093722590.png" alt="image-20260119093722590" style="zoom:80%;" />
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119093734461.png" alt="image-20260119093734461" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119093734461.png" alt="image-20260119093734461" style="zoom:80%;" />
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119093757740.png" alt="image-20260119093757740"  />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119093757740.png" alt="image-20260119093757740"  />
 
-   ![image-20260119093823130](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119093823130.png)
+   ![image-20260119093823130](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119093823130.png)
 
-   ![image-20260119094059941](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119094059941.png)
+   ![image-20260119094059941](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119094059941.png)
 
 2. 之后在云解析DNS中的公网DNS解析：
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119094113022.png" alt="image-20260119094113022" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119094113022.png" alt="image-20260119094113022" style="zoom:80%;" />
 
 ## 文件托管-OSS存储
 
@@ -95,39 +95,39 @@ https://github.com/cloudreve/Cloudreve/releases/tag/3.7.1
 
 1. 启动应用
 
-   ![image-20260119094939529](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119094939529.png)
+   ![image-20260119094939529](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119094939529.png)
 
 2. 登录管理
 
-   ![image-20260119094958005](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119094958005.png)
+   ![image-20260119094958005](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119094958005.png)
 
-   ![image-20260119095013719](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095013719.png)
+   ![image-20260119095013719](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095013719.png)
 
-   ![image-20260119095022133](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095022133.png)
+   ![image-20260119095022133](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095022133.png)
 
 3. 配置存储信息
 
-   ![image-20260119095619017](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095619017.png)
+   ![image-20260119095619017](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095619017.png)
 
-   ![image-20260119095632011](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095632011.png)
+   ![image-20260119095632011](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095632011.png)
 
-   ![image-20260119095644690](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095644690.png)
+   ![image-20260119095644690](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095644690.png)
 
-   ![image-20260119095656264](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095656264.png)
+   ![image-20260119095656264](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095656264.png)
 
-   ![image-20260119100113632](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119100113632.png)
+   ![image-20260119100113632](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119100113632.png)
 
 4. 更改用户组存储属性
 
-   ![image-20260119095736968](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095736968.png)
+   ![image-20260119095736968](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095736968.png)
 
-   ![image-20260119095751577](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095751577.png)
+   ![image-20260119095751577](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095751577.png)
 
-   ![image-20260119095808806](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095808806.png)
+   ![image-20260119095808806](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095808806.png)
 
-   ![image-20260119095820587](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095820587.png)
+   ![image-20260119095820587](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095820587.png)
 
-   ![image-20260119095830345](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119095830345.png)
+   ![image-20260119095830345](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119095830345.png)
 
 阿里云OSS:
 
@@ -159,9 +159,9 @@ https://github.com/cloudreve/Cloudreve/releases/tag/3.7.1
 
 #### 了解正/反向代理
 
-![image-20260119101446951](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119101446951.png)
+![image-20260119101446951](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119101446951.png)
 
-![image-20260119101502120](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119101502120.png)
+![image-20260119101502120](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119101502120.png)
 
 正代理为客户端服务,客户端主动建立代理访问目标（不代理不可达）。
 
@@ -179,9 +179,9 @@ Windows2016 + BT宝塔面板 + Nginx
 
 ### 演示案例3
 
-![image-20260119101117807](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119101117807.png)
+![image-20260119101117807](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119101117807.png)
 
-![image-20260119101126657](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119101126657.png)
+![image-20260119101126657](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119101126657.png)
 
 ## 运维安全-负载均衡
 
@@ -205,7 +205,7 @@ Windows2016 + BT宝塔面板 + Nginx
    }
    ```
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119102103254.png" alt="image-20260119102103254" style="zoom:80%;" />
+   ![image-20260119120600784](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119120600784.png)
 
 2. 定义负载设置
 
@@ -216,9 +216,9 @@ upstream fzjh{
 }
 ```
 
-![image-20260119102136525](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119102136525.png)
+![image-20260119102136525](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119102136525.png)
 
-![image-20260119102147295](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119102147295.png)
+![image-20260119102147295](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119102147295.png)
 
 ## 如何判断对方使用了CDN或者负载均衡
 

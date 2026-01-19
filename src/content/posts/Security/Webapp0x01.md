@@ -118,7 +118,7 @@ draft: false
 
    访问路径：xxx.com/admin/
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118104009387.png" alt="image-20260118104009387" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118104009387.png" alt="image-20260118104009387" style="zoom:80%;" />
 
 2. MVC框架源码
 
@@ -134,7 +134,7 @@ draft: false
 
    正确(一般路由设计)：xxx.com/index.php/admins
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118104301559.png" alt="image-20260118104301559" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118104301559.png" alt="image-20260118104301559" style="zoom:80%;" />
 
 3. 编译调用源码
 
@@ -144,13 +144,13 @@ draft: false
 
    反编译工具为ILSpy。
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118104829339.png" alt="image-20260118104829339" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118104829339.png" alt="image-20260118104829339" style="zoom:80%;" />
 
-   ![image-20260118105505590](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118105505590.png)
+   ![image-20260118105505590](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118105505590.png)
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118105557601.png" alt="image-20260118105557601" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118105557601.png" alt="image-20260118105557601" style="zoom:80%;" />
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118105632150.png" alt="image-20260118105632150" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118105632150.png" alt="image-20260118105632150" style="zoom:80%;" />
 
    ##### Jar反编译
 
@@ -162,13 +162,13 @@ draft: false
 
    使用jadx-gui，也就是反编译工具就能看到核心源代码。
 
-   ![image-20260118110135255](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118110135255.png)
+   ![image-20260118110135255](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118110135255.png)
 
 4. 加密型源码
 
    各种厂商，比如通达OA、致远OA等等，图中使用的是Zend加密，可以在网上搜索一些解密的在线工具，也可以利用OA漏洞检测工具。
 
-   ![image-20260118110719178](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118110719178.png)
+   ![image-20260118110719178](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118110719178.png)
 
 5. 前后端分离源码
 
@@ -178,4 +178,4 @@ draft: false
 
    后端：php、java、python等。
 
-   <img src="https://gitee.com/silaswin/typora_img/raw/master/img/image-20260118111211862.png" alt="image-20260118111211862" style="zoom:80%;" />
+   <img src="https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260118111211862.png" alt="image-20260118111211862" style="zoom:80%;" />
