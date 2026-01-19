@@ -161,7 +161,7 @@ https://github.com/cloudreve/Cloudreve/releases/tag/3.7.1
 
 ![image-20260119101446951](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119101446951.png)
 
-![image-20260119101502120](C:\Users\C311S\AppData\Roaming\Typora\typora-user-images\image-20260119101502120.png)
+![image-20260119101502120](https://gitee.com/silaswin/typora_img/raw/master/img/image-20260119101502120.png)
 
 正代理为客户端服务,客户端主动建立代理访问目标（不代理不可达）。
 
