@@ -100,7 +100,7 @@ API接口：是一个允许不同软件应用程序之间进行通信和数据�
 
 #### 内部API
 
-![image-20260119172844348](C:\Users\C311S\AppData\Roaming\Typora\typora-user-images\image-20260119172844348.png)
+![image-20260119172844348](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119172844348.png)
 
 ![](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260119173021451.png)
 
