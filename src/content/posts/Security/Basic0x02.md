@@ -1,6 +1,6 @@
 ---
 title: Web应用&OSS存储&负载均衡&CDN加速&反向代理&WAF防护&部署影响
-published: 2026-01-19
+published: 2026-01-19 12:00:00
 description: 了解WAF、CDN服务、OSS存储、反向代理和负载均衡，以及如何判断对方使用了CDN或者负载均衡。
 tags: [基础入门,Web应用]
 category: 网络安全
