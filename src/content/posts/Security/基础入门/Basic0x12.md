@@ -2,7 +2,7 @@
 title: 网站协议&身份鉴权&OAuth2安全&Token令牌&JWT值&Authirization标头
 published: 2026-01-24 12:00:00
 description: HTTP明文到HTTPS加密，Cookie、Session、Token、JWT、OAuth2的鉴权演进与攻防要点，以及了解Authorization头的几种授权方案以及安全问题，根据网站所使用的技术来决定。
-tags: [基础入门,HTTP,HTTPS,身份鉴权]
+tags: [基础入门,HTTP/HTTPS,身份鉴权]
 category: 网络安全
 draft: false
 ---

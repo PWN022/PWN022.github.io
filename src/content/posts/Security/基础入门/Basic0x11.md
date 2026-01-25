@@ -2,7 +2,7 @@
 title: HTTP数据包&红蓝队研判&自定义构造&请求方法&请求头修改&状态码判断
 published: 2026-01-23 21:00:00
 description: 了解HTTP的请求头、响应头、GET/POST请求、方法以及状态码。红队方面内容：通过修改请求头中的内容来进行Cookie身份绕过，或者POST来进行对账号或者密码的爆破等等。蓝队方面内容：流量分析、安全工具流量特征。
-tags: [基础入门,HTTP,HTTPS,数据包分析]
+tags: [基础入门,HTTP/HTTPS,数据包分析]
 category: 网络安全
 draft: false
 ---
