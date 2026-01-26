@@ -1,7 +1,7 @@
 ---
 title: ChatGPT4篇&注册升级&专业接口&结合红蓝队&Ai工具插件&高效赋能需求
 published: 2026-01-24 16:00:00
-description: 还没准备好。
+description: AI对于红蓝队的用处。
 tags: [基础入门]
 category: 网络安全
 draft: false
