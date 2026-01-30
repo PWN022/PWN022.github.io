@@ -2,7 +2,7 @@
 title: 反弹Shell&渗透命令&Reverse反向&Bind正向&利用语言&文件下载&多姿势
 published: 2026-01-22 10:00:00
 description: 反弹shell的本质：当防火墙、NAT或数据不回显，还有反弹shell的在线命令生成的平台，以及Windows和Linux双平台反弹shell的演示案例。最后就是如何利用文件下载以及powershell。
-tags: [基础入门,反弹shell]
+tags: [基础入门]
 category: 网络安全
 draft: false
 ---

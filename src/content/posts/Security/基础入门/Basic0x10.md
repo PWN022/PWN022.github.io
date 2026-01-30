@@ -2,7 +2,7 @@
 title: 算法解密&散列对称非对称&字典碰撞&前后端逆向&MD5&AES&DES&RSA
 published: 2026-01-23 12:00:00
 description: 加密的特征：MD5(32/16 位 0-9a-f)、Base64(尾部==)、AES/DES(密文带/+)、RSA(长度，公/密钥)。解密：后端有源码看salt+hash，没有源码就字典撞库、前端看js，把密钥或者算法保存本地跑通，再写payload。最后还有在线解密工具，前提是如果得到了加密方式或者公/密钥。
-tags: [基础入门,算法,js逆向]
+tags: [基础入门]
 category: 网络安全
 draft: false
 ---
