@@ -1,0 +1,843 @@
+---
+title: PHP应用&鉴别修复&AI算法&流量检测&PHP.INI&通用过滤&内置函数
+published: 2026-02-13 13:00:00
+description: PHP.INI安全配置、全局文件过滤机制（黑白名单）、基于规则与AI算法的流量检测、SQL注入/XSS/命令执行等漏洞的内置函数防护方案，以及WAF与预编译等实战防御策略。
+tags: [Web开发,PHP]
+category: 网络安全
+draft: false
+---
+
+# 知识点
+
+1. 安全开发-原生PHP-PHP.INI安全
+2. 安全开发-原生PHP-全局文件&单函数
+3. 安全开发-原生PHP-流量检测&AI算法
+
+# 引用-全局文件
+
+## 关键内容检测（黑白名单）
+
+文件上传，SQL注入，XSS跨站等
+
+演示：文件上传，SQL注入，XSS跨站
+
+### 文件上传-黑/白名单
+
+```php
+<?php
+function filter_file_upload($file, $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'], $max_size = 10485760, $upload_dir = 'uploads/') {
+    // 检查文件是否上传成功
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return '文件上传失败！';
+    }
+
+    // 获取文件扩展名并转换为小写
+    $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+    // 1. 检查文件扩展名是否允许
+    if (!in_array($file_extension, $allowed_extensions)) {
+        return '不允许的文件类型！';
+    }
+
+    // 2. 检查文件大小是否超过限制
+    if ($file['size'] > $max_size) {
+        return '文件大小超出限制！';
+    }
+
+    // 3. 检查文件是否为有效的图片（避免上传伪装成图片的恶意文件）
+    if (!getimagesize($file['tmp_name'])) {
+        return '上传的文件不是有效的图片！';
+    }
+
+    // 4. 检查文件名是否包含特殊字符（避免路径穿越）
+    $filename = basename($file['name']);
+    if (preg_match('/[^a-zA-Z0-9_\.-]/', $filename)) {
+        return '文件名包含不允许的字符！';
+    }
+
+    // 5. 创建上传目录（如果不存在）
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
+
+    // 6. 移动文件到指定目录
+    $target_path = $upload_dir . $filename;
+    if (move_uploaded_file($file['tmp_name'], $target_path)) {
+        return '文件上传成功！';
+    } else {
+        return '文件移动失败！';
+    }
+}
+```
+
+#### 黑名单
+
+```php
+<form action="" method="post" enctype="multipart/form-data">
+    选择文件：<input type="file" name="file_upload">
+    <input type="submit" value="上传">
+</form>
+
+<?php
+include "filecheck_config.php";
+//获取表单名为file_upload提交的文件名
+$filename=@$_FILES['file_upload']['name'];
+$filetype=@$_FILES['file_upload']['type'];
+$filesize=@$_FILES['file_upload']['size'];
+$filetmp_name=@$_FILES['file_upload']['tmp_name'];
+
+
+$blacklist = array(".php", ".phtml", ".php3", ".php4");// 黑名单
+$item = substr($filename, -4 );
+echo $item;
+if(in_array($item, $blacklist)){
+    die(" 黑名单触发，请上传正确的文件类型！ ");
+}else{
+    echo "上传成功了哦";
+}
+```
+
+#### 白名单
+
+```php
+$whitelist = array(".jpg", ".gif", ".png");// 白名单
+$item = substr($filename, -4 );
+echo $item;
+if(!in_array($item, $whitelist)){
+    die(" 不是白名单，请上传正确的文件类型！ ");
+}else{
+    echo "上传成功了哦";
+}
+```
+
+### sql注入
+
+```php
+<?php
+function filter_sql_injection($input) {
+    // 定义需要过滤的 SQL 注入关键字或恶意模式
+    $sql_keywords = [
+        '/u*select.*\(/i',        // 过滤 UNION SELECT 注入
+        '/\bunion\b/i',                // 过滤单个 union 关键字
+        '/\bselect\b/i',               // 过滤单个 select 关键字
+        '/select.*from.*information_schema/i',  // 过滤从 information_schema 查询
+        '/select.*from.*mysql/i',      // 过滤从 mysql 数据库查询
+        '/drop.*table.*\(/i',          // 过滤nion. DROP TABLE 注入
+        '/insert.*into.*\(/i',         // 过滤 INSERT INTO 注入
+        '/update.*set.*\(/i',          // 过滤 UPDATE SET 注入
+        '/delete.*from/i',             // 过滤 DELETE FROM 注入
+        '/--/i',                       // 过滤 SQL 单行注释符号
+        '/#\s*/i',                     // 过滤 SQL 单行注释符号
+        '/\b(?:or|and)\b\s+.*=\s*/i',  // 过滤 OR / AND 条件语句
+        '/\b(?:sleep|benchmark|load_file|outfile)\b/i', // 过滤延迟、文件操作等危险函数
+        '/\bselect\b.*\bfrom\b.*where\b/i', // 过滤 SELECT FROM WHERE 注入
+        '/\bupdate\b.*\bset\b/i',      // 过滤 UPDATE SET 注入
+        '/\bdelete\b.*\bfrom\b/i',     // 过滤 DELETE FROM 注入
+        '/\bcreate\b.*\btable\b/i',    // 过滤 CREATE TABLE 注入
+        '/\bshow\b.*\btables\b/i',     // 过滤 SHOW TABLES 注入
+        '/\bgrant\b.*\bprivileges\b/i',// 过滤 GRANT PRIVILEGES 注入
+        '/\btruncate\b.*\btable\b/i',  // 过滤 TRUNCATE TABLE 注入
+    ];
+
+    // 用空字符串替换掉匹配的 SQL 注入关键字或模式
+    foreach ($sql_keywords as $pattern) {
+        $input = preg_replace($pattern, '', $input);
+    }
+
+    // 返回过滤后的内容
+    return $input;
+}
+```
+
+### XSS跨站
+
+```php
+<?php
+function filter_xss_keywords($input) {
+    // 定义需要过滤的正则表达式模式
+    $patterns = [
+        // 过滤 <script> 标签及其内容
+        '/<script.*?>(.*?)<\/script>/is',
+        // 过滤含有 javascript: 的链接或标签
+        '/<.*?javascript:.*?>/is',
+        // 过滤所有含有事件处理程序的 HTML 标签 (如 onclick, onload 等)
+        '/<.*?on\w+\s*=\s*.*?>/is',
+        // 过滤 eval() 函数调用
+        '/eval\((.*?)\)/is',
+        // 过滤 alert() 函数调用
+        '/alert\((.*?)\)/is',
+        // 过滤 iframe 标签
+        '/<iframe.*?src=".*?".*?>/is',
+        // 过滤 img 标签中的 onerror 事件
+        '/<img.*?onerror\s*=\s*".*?".*?>/is',
+        // 过滤 embed 标签，可能用于嵌入恶意对象
+        '/<embed.*?>/is',
+        // 过滤 object 标签，可能用于嵌入恶意对象
+        '/<object.*?>/is',
+        // 过滤 base64 编码的恶意 JavaScript
+        '/data:text\/html;base64,.*?script.*?<\/script>/is',
+        // 过滤 iframe 和 form 的恶意属性
+        '/<form.*?action=.*?javascript:.*?>/is',
+        // 过滤其他类型的恶意 JavaScript 函数
+        '/<.*?on\w+\s*=\s*.*?>/is',  // 过滤事件处理程序
+    ];
+
+    // 用空字符串替换掉恶意的关键字或 HTML 标签
+    foreach ($patterns as $pattern) {
+        $input = preg_replace($pattern, '', $input);
+    }
+
+    // 防止输入中出现危险关键字
+    $dangerous_keywords = [
+        'script', 'eval', 'alert', 'document', 'window', 'onerror', 'onload', 'onfocus',
+        'onmouseover', 'onmouseout', 'onclick', 'onchange', 'oninput', 'onabort', 'onblur',
+        'onkeydown', 'onkeyup', 'onkeypress', 'onclick', 'onsubmit', 'iframe', 'embed', 'object',
+        'base64', 'javascript', 'vbscript', 'file', 'activex', 'about:', 'chrome:', 'data:text/html', 'window.location'
+    ];
+
+    // 替换所有危险关键字为空字符串
+    foreach ($dangerous_keywords as $keyword) {
+        $input = str_ireplace($keyword, '', $input);
+    }
+
+    // 转义剩余的特殊字符以防止 XSS 攻击
+    //return htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+    return $input;
+}
+```
+
+# 模仿流量检测（基于规则或AI算法）
+
+演示：Python Flask+PHP Curl+训练大模型
+
+```
+客户端请求数据  -> 中间件搭建平台 -> 服务器代码文件处理
+客户端请求数据  -> WAF或流量监控 （规则，AI模型算法）-> 正常数据 -> 中间件搭建平台 -> 服务器代码文件处理
+客户端请求数据  -> WAF或流量监控 （规则，AI模型算法）-> 异常数据 -> 截止
+```
+
+## 基于规则
+
+php部分
+
+```php
+function aiDetectXSS($input) {
+    $api_url = "http://127.0.0.1:5000/detect_xss";  // 假设 AI 服务在本地运行
+
+    $data = json_encode(["text" => $input]);
+
+    $ch = curl_init($api_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $result = json_decode($response, true);
+    return $result['is_xss'];  // AI 返回的检测结果
+}
+
+// 用户输入
+$user_input = $_GET['xss'] ?? '';
+
+if (aiDetectXSS($user_input)) {
+    echo "AI 检测到 XSS 攻击！";
+} else {
+    echo "PHP输入安全。";
+}
+```
+
+python部分
+
+```python
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/detect_xss', methods=['POST'])
+def detect_xss():
+    data = request.get_json()
+    text = data['text']
+    if "<script>" in text or "onerror" in text or "alert(" in text:
+        return jsonify({"is_xss": True})
+    return jsonify({"is_xss": False})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+## AI算法大模型
+
+### xss
+
+python部分
+
+#### 训练模型
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+import pickle
+
+# 1. 数据集：XSS 攻击样本和正常文本
+texts = [
+    "<script>alert('XSS')</script>",
+    "<img src='x' onerror='alert(1)'>",
+    "Hello, how are you?",
+    "Welcome to my website!",
+    "<svg/onload=alert('XSS')>",
+    "This is a normal comment."
+]
+
+labels = [1, 1, 0, 0, 1, 0]  # 1: XSS, 0: 安全
+
+# 2. 特征提取（TF-IDF）
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(texts)
+
+# 3. 模型训练（逻辑回归）
+model = LogisticRegression()
+model.fit(X, labels)
+
+# 4. 保存模型和特征提取器
+with open('xss_model.pkl', 'wb') as model_file:
+    pickle.dump(model, model_file)
+
+with open('vectorizer.pkl', 'wb') as vectorizer_file:
+    pickle.dump(vectorizer, vectorizer_file)
+
+print("模型训练完成，已保存。")
+```
+
+#### 使用模型
+
+python部分
+
+```python
+from flask import Flask, request, jsonify
+import pickle
+
+app = Flask(__name__)
+
+# 加载已训练好的模型和特征提取器
+with open('xss_model.pkl', 'rb') as model_file:
+    model = pickle.load(model_file)
+
+with open('vectorizer.pkl', 'rb') as vectorizer_file:
+    vectorizer = pickle.load(vectorizer_file)
+
+# AI 检测函数
+def ai_detect_xss(text):
+    text_vector = vectorizer.transform([text])
+    prediction = model.predict(text_vector)
+    return prediction[0] == 1  # 返回 True 表示检测到 XSS
+
+@app.route('/detect_xss', methods=['POST'])
+def detect_xss():
+    try:
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({"error": "缺少参数 'text'"}), 400
+
+        text = data['text']
+
+        # 使用 AI 模型检测 XSS
+        if ai_detect_xss(text):
+            return jsonify({"is_xss": True, "message": "AI 检测到 XSS 攻击"})
+        else:
+            return jsonify({"is_xss": False, "message": "输入安全"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
+```
+
+php部分
+
+```php
+function aiDetectXSS($input) {
+    $api_url = "http://127.0.0.1:5001/detect_xss";  // 假设 AI 服务在本地运行
+
+    $data = json_encode(["text" => $input]);
+
+    $ch = curl_init($api_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $result = json_decode($response, true);
+    return $result['is_xss'];  // AI 返回的检测结果
+}
+
+// 用户输入
+$user_input = $_GET['xss'] ?? '';
+
+if (aiDetectXSS($user_input)) {
+    echo "AI 检测到 XSS 攻击！";
+} else {
+    echo "PHP输入安全。";
+}
+```
+
+## sql注入
+
+### 训练模型
+
+python部分
+
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+import pickle
+
+# 扩展后的 SQL 注入样本与正常样本
+texts = [
+    # SQL 注入样本
+    "' OR 1=1 --",  # 基本 SQL 注入
+    "' OR 'a'='a",  # 基本 SQL 注入
+    "' UNION SELECT null, username, password FROM users --",  # UNION 查询
+    "' AND 1=1 --",  # 逻辑注入
+    "' DROP TABLE users --",  # 删除表
+    "' OR SLEEP(5) --",  # 时间盲注
+    "' AND 1=1; IF (1=1) WAITFOR DELAY '0:0:5' --",  # 时间盲注
+    "' AND EXP(1) --",  # 函数注入
+    "' UNION SELECT 1, 2, 3, 4 --",  # 联合查询
+    "' SELECT * FROM products WHERE price = '100' OR 'a'='a' --",  # 逻辑注入
+
+    # 正常输入样本
+    "SELECT * FROM users WHERE username = 'admin'",  # 普通用户查询
+    "SELECT id, name FROM users WHERE username = 'johndoe'",  # 普通用户查询
+    "SELECT * FROM orders WHERE customer_id = 1234",  # 普通查询
+    "Hello, my name is John and I want to subscribe to your newsletter.",  # 用户输入
+    "Please confirm my registration.",  # 普通输入
+    "SELECT name, price FROM products WHERE product_id = 100",  # 商品查询
+    "Username: admin Password: mypassword123",  # 普通表单
+    "SELECT * FROM products WHERE product_id = 123",  # 安全的查询
+    "This is a normal comment on the blog post.",  # 评论
+    "Username: john_doe Email: john.doe@example.com",  # 表单输入
+]
+
+labels = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  # SQL 注入
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0]  # 正常输入
+
+# 1. 特征提取：使用 TF-IDF 转化文本为向量
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(texts)
+
+# 2. 模型训练：使用逻辑回归
+model = LogisticRegression()
+model.fit(X, labels)
+
+# 3. 保存模型和特征提取器
+with open('sql_injection_model.pkl', 'wb') as model_file:
+    pickle.dump(model, model_file)
+
+with open('vectorizer.pkl', 'wb') as vectorizer_file:
+    pickle.dump(vectorizer, vectorizer_file)
+
+print("SQL 注入检测模型已训练并保存。")
+```
+
+### 使用模型
+
+python部分
+
+```python
+from flask import Flask, request, jsonify
+import pickle
+
+app = Flask(__name__)
+
+# 加载训练好的模型和 TF-IDF 特征提取器
+with open('sql_injection_model.pkl', 'rb') as model_file:
+    model = pickle.load(model_file)
+
+with open('vectorizer.pkl', 'rb') as vectorizer_file:
+    vectorizer = pickle.load(vectorizer_file)
+
+# AI SQL 注入检测函数
+def ai_detect_sql_injection(text):
+    text_vector = vectorizer.transform([text])
+    prediction = model.predict(text_vector)
+    return prediction[0] == 1  # 返回 True 表示检测到 SQL 注入
+
+@app.route('/detect_sql_injection', methods=['POST'])
+def detect_sql_injection():
+    try:
+        data = request.get_json()
+        if not data or 'text' not in data:
+            return jsonify({"error": "缺少参数 'text'"}), 400
+
+        text = data['text']
+
+        # 使用 AI 模型检测 SQL 注入
+        if ai_detect_sql_injection(text):
+            return jsonify({"is_sql_injection": True, "message": "sqlin"})
+        else:
+            return jsonify({"is_sql_injection": False, "message": "ok"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5002)
+```
+
+php部分
+
+```php
+$apiUrl = 'http://127.0.0.1:5002/detect_sql_injection';
+$sqlin=$_GET['sqlin'];
+
+// 要发送的测试数据（JSON 格式）
+$data = array(
+    'text' => "$sqlin"  // 这是一个 SQL 注入示例
+);
+
+// 初始化 cURL 会话
+$ch = curl_init($apiUrl);
+
+// 设置请求的 cURL 选项
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // 返回响应而不是输出
+curl_setopt($ch, CURLOPT_POST, true);            // 使用 POST 方法
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // POST 数据为 JSON 格式
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json'  // 设置请求头为 JSON 格式
+));
+
+// 执行 cURL 请求并获取响应
+$response = curl_exec($ch);
+
+// 检查 cURL 请求是否成功
+if(curl_errno($ch)) {
+    echo 'cURL error: ' . curl_error($ch);
+} else {
+    // 打印响应结果
+    echo "Response from API:\n";
+    echo $response;
+}
+
+// 关闭 cURL 会话
+curl_close($ch);
+```
+
+# 代码-内置函数
+
+检测：数据的类型差异，数据的固定内容
+
+```php
+gettype()获取变量的类型
+
+is_float()检测变量是否是浮点型
+
+is_bool()检测变量是否是布尔型
+
+is_int()检测变量是否是整数
+
+is_null()检测变量是否为NULL
+
+is_numeric()检测变量是否为数字或数字字符串
+
+is_object()检测变量是否是一个对象
+
+is_resource()检测变量是否为资源类型
+
+is_scalar()检测变量是否是一个标量
+
+is_string()检测变量是否是字符串
+
+is_array()检测变量是否是数组
+
+filter_var()使用特定的过滤器过滤一个变量
+
+FILTER_SANITIZE_STRING 过滤器可以过滤HTML标签和特殊字符
+
+FILTER_SANITIZE_NUMBER_INT 过滤器可过滤非整数字符
+
+FILTER_SANITIZE_URL 过滤器用于过滤URL中的非法字符 
+
+FILTER_VALIDATE_EMAIL 过滤器来验证电子邮件地址的有效性
+```
+
+演示：filter_var()，is_numeric()，is_string()等
+
+## is_numeric()
+
+检测变量是否为数字或数字字符串
+
+```php
+$conn=mysqli_connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
+$id = $_GET['id'];
+if(is_numeric($id)){
+    $sql="select * from admin where id=$id";
+    echo $sql;
+    $data=mysqli_query($conn,$sql);
+
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        //判断用户登录成功
+        if(mysqli_num_rows($data) > 0){
+            header('Location: index.php');
+            exit();
+        }else{
+            //判断用户登录失败
+            echo '<script>alert("登录失败!")</script>';
+        }
+    }
+}else{
+    echo "没有接受到数据";
+}
+```
+
+## filter_var()
+
+```php
+$conn=mysqli_connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
+$id=filter_var(@$_GET['id'],FILTER_SANITIZE_NUMBER_INT);
+$sql="select * from admin where id='$id'";
+echo $sql;
+$data=mysqli_query($conn,$sql);
+
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    //判断用户登录成功
+    if(mysqli_num_rows($data) > 0){
+        header('Location: index.php');
+        exit();
+    }else{
+        //判断用户登录失败
+        echo '<script>alert("登录失败!")</script>';
+    }
+}
+```
+
+# SQL注入过滤
+
+```
+Addslashes()返回字符串，该字符串为了数据库查询语句等的需要在某些字符前加上了反斜线。这些字符是单引号()、双引号(”)、反斜线()与NULL字符)。
+
+stripslashes()反引用一个引用字符串,如果magic_quotes_sybase项开启，反斜线将被去除，但是两个反斜线将会被替换成一个。
+
+addcslashes()返回字符串，该字符串在属于参数charlist列表中的字符前都加上了反斜线。
+
+stripcslashes()返回反转义后的字符串。可识别类似C语言的\n，r，…八进制以及十六进制的描述。
+
+mysql_escape_string()此函数并不转义%和_。作用和mysql real escape_string()基本一样
+
+mysql_real_escape_string()调用mysql库的函数在以下字符前添加反斜杠:x00、\n、\r、\、x1a
+
+PHP魔术引号当打开时，所有的'(单引号)，”(双引号)，(反斜线)和NULL字符都会被自动加上一个反斜线进行转义。这和addslashes()作用完全相同。
+```
+
+预编译机制
+
+演示：魔术引号，addslashes()，预编译等
+
+## addslashes()
+
+返回字符串，该字符串为了数据库查询语句等的需要在某些字符前加上了反斜线。这些字符是单引号()、双引号(”)、反斜线()与NULL字符)。
+
+注入语句写进去需要闭合才能执行。
+
+```php
+$id = addslashes($_GET['id']);
+$sql="select * from admin where id='$id'";
+echo $sql;
+$data=mysqli_query($conn,$sql);
+
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    //判断用户登录成功
+    if(mysqli_num_rows($data) > 0){
+        header('Location: index.php');
+        exit();
+    }else{
+        //判断用户登录失败
+        echo '<script>alert("登录失败!")</script>';
+    }
+}
+```
+
+## 预编译
+
+固定执行语句，无论在这个执行语句加什么内容都不会改变执行语句本身。
+
+注入语句实际写入到数据库中为字符串。
+
+```php
+<?php
+$dns = 'mysql:dbname=phpstudy;host=127.0.0.1';
+$user = 'root';
+$password = '123456';
+try {
+    $pdo = new PDO($dns, $user, $password);
+    $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo $e->getMessage();
+}
+$pdo->query("set names utf8");
+$sql = 'insert into admin (username,password) values(:username,:password)';
+
+// 编译 SQL
+$pdo_stmt = $pdo->prepare($sql);
+$username = $_GET['u'];
+$password = $_GET['p'];
+echo $sql;
+// 绑定参数
+$pdo_stmt->bindParam(':username', $username);
+$pdo_stmt->bindParam(':password', $password);
+$pdo_stmt->execute();
+if ($pdo_stmt->errorCode() == 0) {
+    echo " 数据插入成功 ";
+} else {
+    print_r($pdo_stmt->errorInfo());
+}
+```
+
+# XSS跨站过滤
+
+htmlspecialchars()函数把预定义的字符转换为HTML实体。
+
+strip_tags()函数剥去字符串中的HTML、XML以及PHP的标签。
+
+演示：htmlspecialchars()，strip_tags()
+
+```
+//url中为：
+http://ip:port/xss_check.php?xss=<script>alert(1)</script>
+```
+
+##  经典xss
+
+```php
+$code = $_GET['xss']
+echo $code;
+```
+
+## filter_var() 
+
+`FILTER_SANITIZE_STRING` 过滤器可以过滤HTML标签和特殊字符
+
+只输出`alert(1)`
+
+```php
+$code=filter_var($_GET['xss'],FILTER_SANITIZE_STRING);
+echo $code;
+```
+
+## htmlspecialchars()
+
+函数把预定义的字符转换为HTML实体
+
+直接输出`<script>alert(1)</script>`
+
+```php
+$code=htmlspecialchars($_GET['xss']);
+echo $code;
+```
+
+## strip_tags()
+
+函数剥去字符串中的HTML、XML以及PHP的标签
+
+```php
+$code=strip_tags($_GET['xss']);
+echo $code;
+```
+
+# 命令执行过滤
+
+escapeshellcmd()确保用户只执行一个命令用户可以指定不限数量的参数用户不能执行不同的命令
+
+escapeshellarg()确保用户只传递一个参数给命令用户不能指定更多的参数一个用户不能执行不同的命令
+
+# 其他漏洞过滤
+
+可参考AI答案或参数类型过滤等
+
+# 防护-WAF产品
+
+见前面的课程
+
+# 通用-PHP.INI设置
+
+phpstudy中找到php版本路径中的php.ini文件
+
+参考：
+
+https://www.yisu.com/ask/28100386.html
+
+https://blog.csdn.net/u014265398/article/details/109700309
+
+https://www.cnblogs.com/xiaochaohuashengmi/archive/2011/10/23/2222105.html
+
+## 安全模式
+
+安全模式 safe_mode 命令执行函数会被禁用
+
+```
+safe_mode = On
+```
+
+`5.4.0`以上版本已被移除
+
+## 路径访问
+
+*路径访问 open_basedir 限制文件操作安全（遍历、读取等）
+
+![image-20260213131146345](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260213131146345.png)
+
+```ini
+open_basedir = D:\\phpstudy_pro\\www\\
+```
+
+![image-20260213131258318](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260213131258318.png)
+
+## 禁用函数
+
+*禁用函数 disable_function 升级版安全模式，自定义限制函数
+
+同样在php.ini中设置
+
+```ini
+disable_functions = system或者其他函数
+```
+
+![image-20260213130946708](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260213130946708.png)
+
+## 魔术引号转义
+
+*魔术引号转义 magic_quotes_gpc 同理下面的sql过滤addslashes()函数
+
+`5.4.0`以上版本已被移除
+
+## 数据库访问次数
+
+数据库访问次数 max_connections 防止数据库爆破
+
+## 禁用远程执行
+
+禁用远程执行 allow_url_include，allow_url_fopen远程包含开关等
+
+```ini
+allow_url_fopen = On
+allow_url_include = On
+```
+
+开启后可加载远程包含代码
+
+![image-20260213132212672](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260213132212672.png)
+
+![image-20260213132222410](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260213132222410.png)
+
+## 安全会话管理
+
+*安全会话管理 session.cookie_httponly，session.cookie_secure
+
+防止跨站脚本攻击（XSS）和中间人攻击（MITM）
+
+![image-20260213132414509](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260213132414509.png)
