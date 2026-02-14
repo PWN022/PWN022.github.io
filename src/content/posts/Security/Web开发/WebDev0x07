@@ -492,39 +492,51 @@ if __name__ == '__main__':
 php部分
 
 ```php
-$apiUrl = 'http://127.0.0.1:5002/detect_sql_injection';
-$sqlin=$_GET['sqlin'];
+function aiDetectsqlin($input) {
+    $apiUrl = 'http://127.0.0.1:5002/detect_sql_injection';
 
-// 要发送的测试数据（JSON 格式）
-$data = array(
-    'text' => "$sqlin"  // 这是一个 SQL 注入示例
-);
+    $data = json_encode(["text" => $input]);
 
-// 初始化 cURL 会话
-$ch = curl_init($apiUrl);
+    $ch = curl_init($apiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
-// 设置请求的 cURL 选项
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // 返回响应而不是输出
-curl_setopt($ch, CURLOPT_POST, true);            // 使用 POST 方法
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // POST 数据为 JSON 格式
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Content-Type: application/json'  // 设置请求头为 JSON 格式
-));
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
 
-// 执行 cURL 请求并获取响应
-$response = curl_exec($ch);
+    // 调试信息（可以注释掉）
+    // echo "调试 - HTTP状态码: " . $httpCode . "<br>";
+    // echo "调试 - API响应: " . $response . "<br>";
 
-// 检查 cURL 请求是否成功
-if(curl_errno($ch)) {
-    echo 'cURL error: ' . curl_error($ch);
-} else {
-    // 打印响应结果
-    echo "Response from API:\n";
-    echo $response;
+    $result = json_decode($response, true);
+    return $result;
 }
 
-// 关闭 cURL 会话
-curl_close($ch);
+// 用户输入
+$user_input = $_GET['sqlin'] ?? '';
+
+if ($user_input) {
+    $result = aiDetectsqlin($user_input);
+
+    if ($result && isset($result['is_sql_injection'])) {
+        if ($result['is_sql_injection']) {
+            // 检测到SQL注入
+            echo "❌ AI 检测到 SQL 注入攻击！<br>";
+            echo "消息: " . ($result['message'] ?? '未知');
+        } else {
+            // 安全
+            echo "✅ 输入安全。<br>";
+            echo "消息: " . ($result['message'] ?? '正常');
+        }
+    } else {
+        echo "API返回格式异常";
+    }
+} else {
+    echo "请在URL中添加 ?sqlin=你的输入";
+}
 ```
 
 # 代码-内置函数
