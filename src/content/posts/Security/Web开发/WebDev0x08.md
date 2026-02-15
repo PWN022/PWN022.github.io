@@ -553,7 +553,7 @@ if(res['infoCode'] == 1){
 
 ### xss漏洞
 
-这里发现可以通过上传接口返回恶意的HTML/JavaScript代码。
+源代码发现可以通过上传接口返回恶意的HTML/JavaScript代码。
 
 ![image-20260214210401679](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260214210401679.png)
 
@@ -569,7 +569,7 @@ if(res['infoCode'] == 1){
 
 ![image-20260214210004019](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260214210004019.png)
 
-这时候返回正题，看看有没有存在文件上传漏洞：
+这时候返回正题，看看有没有存在文件上传校验问题：
 
 ![image-20260214210541701](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260214210541701.png)
 
@@ -610,9 +610,9 @@ Whitelabel Error Page - Spring Boot默认错误页面
 500 Internal Server Error - 服务器处理时发生内部错误
 ```
 
-服务器可能没有直接执行上传的PHP文件，而是因为文件格式不正确或其他原因导致错误。
+服务器可能没有直接执行上传的文件，而是因为其他原因导致错误。
 
-于是尝试修改文件后缀，使用自动化脚本：
+于是尝试修改多种文件后缀，使用自动化脚本：
 
 ```python
 # direct_test.py
