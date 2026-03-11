@@ -162,6 +162,14 @@ http://localhost:8080/JDBC_demo_war_exploded/sql?id=1%20union%20select%20version
 
 安全写法(预编译)：
 
+```
+// 实际执行流程：
+// 1. 数据库收到：PREPARE SELECT * FROM admin WHERE id = ?
+// 2. 数据库收到：EXECUTE WITH 参数值 = "1 OR 1=1"
+// 3. 最终执行：SELECT * FROM admin WHERE id = '1 OR 1=1'
+// 结果：查找 id 等于字符串 "1 OR 1=1" 的记录
+```
+
 ```java
  "select * from admin where id=?"
  
@@ -172,6 +180,14 @@ ResultSet resultSet = preparedStatement.executeQuery();
 ```
 
 不安全写法(拼接)：
+
+```
+// 实际执行流程：
+// 1. 字符串拼接：sql = "SELECT * FROM admin WHERE id = 1 OR 1=1"
+// 2. 直接执行这个完整的SQL语句
+// 3. 最终执行：SELECT * FROM admin WHERE id = 1 OR 1=1
+// 结果：1=1永远为真，返回所有记录
+```
 
 ```java
  "select * from admin where id="+id
