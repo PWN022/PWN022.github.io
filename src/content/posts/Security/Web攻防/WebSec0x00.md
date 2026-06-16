@@ -2,7 +2,9 @@
 title: SQL注入&数据库类型&用户权限&架构分层&符号干扰&利用过程&发现思路
 published: 2026-04-18 15:00:00
 description: SQL注入原理详解：从数据库类型差异、符号闭合到各数据库（MySQL、Oracle、SQLite、MongoDB、PostgreSQL）的实战利用语句。
-tags: [Web攻防,SQL注入]
+tags:
+  - Web攻防
+  - SQL注入
 category: 网络安全
 draft: false
 ---

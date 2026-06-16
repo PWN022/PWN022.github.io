@@ -2,7 +2,9 @@
 title: SQL注入&高权限判定&跨库查询&文件读写&DNS带外&SecurePriv开关绕过
 published: 2026-04-23 15:00:00
 description: Root与普通用户的本质差异：跨库查询+文件读写。secure_file_priv限制读写，NULL时完全禁用。高权限可写Webshell或DNS带外传数据，低权限只能报错/布尔盲注。
-tags: [Web攻防,SQL注入]
+tags:
+  - Web攻防
+  - SQL注入
 category: 网络安全
 draft: false
 ---
