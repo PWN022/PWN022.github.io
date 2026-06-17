@@ -163,7 +163,7 @@
               "type": "outline",
               "state": {
                 "file": "HackTheBox/HackTheBox00.md",
-                "followCursor": false,
+                "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
@@ -189,7 +189,7 @@
       "bases:新建数据库": true
     }
   },
-  "active": "62c66f077dc6b1f7",
+  "active": "dff696cc1e8768cd",
   "lastOpenFiles": [
     "date/笔记属性.md",
     "HackTheBox/HackTheBox00.md",

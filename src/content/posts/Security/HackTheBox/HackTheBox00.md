@@ -649,7 +649,7 @@ answer：proxy
 
 What is the path to the directory on the webserver that returns a login page?
 
-先进行端口扫描，服务器开启了22 SSH端口和80 TCP端口
+先进行端口扫描，服务器开启了22 SSH服务端口和80 HTTP服务端口
 
 ```
 ┌──(kali㉿kali)-[~/Desktop]
@@ -893,7 +893,15 @@ robert@oopsie:/$ echo $PATH
 
 ```
 
-在环境目录添加一个恶意的cat命令，造成权限提升
+在环境目录添加一个恶意的cat命令，造成权限提升，以root权限启动交互式 Shell
+
+**流程**：
+1. robert 执行 /usr/bin/bugtracker
+2. bugtracker 程序内部执行 system("cat /root/flag.txt")  // 没有绝对路径
+3. 系统查找 cat:/tmp/cat 找到了（因为 PATH 优先）
+4. 执行 /tmp/cat，实际执行的是 /bin/sh
+5. 因为 bugtracker 是 SUID root，/tmp/cat 继承 root 权限
+6. robert 获得 root Shell
 
 ```
 robert@oopsie:/$ cd /tmp/ //切换到/tmp目录下
