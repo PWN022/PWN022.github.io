@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "HackTheBox/HackTheBox01.md",
+                "file": "HackTheBox/HackTheBox00.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "HackTheBox01"
+              "title": "HackTheBox00"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "HackTheBox/HackTheBox01.md",
+                "file": "HackTheBox/HackTheBox00.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "HackTheBox01 的反向链接列表"
+              "title": "HackTheBox00 的反向链接列表"
             }
           }
         ]
@@ -162,13 +162,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "HackTheBox/HackTheBox01.md",
+                "file": "HackTheBox/HackTheBox00.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "HackTheBox01 的大纲"
+              "title": "HackTheBox00 的大纲"
             }
           }
         ],
@@ -191,8 +191,8 @@
   },
   "active": "62c66f077dc6b1f7",
   "lastOpenFiles": [
-    "HackTheBox/HackTheBox00.md",
     "HackTheBox/HackTheBox01.md",
+    "HackTheBox/HackTheBox00.md",
     "date/笔记属性.md",
     "Web攻防/WebSec0x05.md",
     "Web攻防/WebSec0x00.md",

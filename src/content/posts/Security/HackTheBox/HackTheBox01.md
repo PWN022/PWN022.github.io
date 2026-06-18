@@ -1,5 +1,5 @@
 ---
-title: HackTheBox记录
+title: HackTheBox记录01
 published: 2026-06-18T18:00:00
 description: hackthebox靶场记录
 tags:
