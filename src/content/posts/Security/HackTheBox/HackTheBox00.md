@@ -1,7 +1,7 @@
 ---
 title: HackTheBox记录
 published: 2026-06-16T13:00:00
-description: hackthebox靶场记录，持续更新。
+description: hackthebox靶场记录（Three、Vaccine、Oopsie、Archetype、Unified）。
 tags:
   - HackTheBox
 category: 网络安全
