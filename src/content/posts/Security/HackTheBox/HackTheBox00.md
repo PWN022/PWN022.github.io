@@ -53,6 +53,7 @@ answer：thetoppers.htb
 ## Task 3
 
 In the absence of a DNS server, which Linux file can we use to resolve hostnames to IP addresses in order to be able to access the websites that point to those hostnames?
+
 在没有DNS服务器的情况下，我们可以使用哪个Linux文件来解析主机名到IP地址，以便访问指向这些主机名的网站？
 
 修改hosts文件，将域名与IP对应
@@ -79,6 +80,8 @@ answer：/etc/hosts
 Which sub-domain is discovered during further enumeration?
 
 使用fuff扫描子域名
+
+### fuff
 
 **前置**：
 安装seclists，这样会有几个特定用途的字典
@@ -397,6 +400,8 @@ session_start();
   }
   
 ```
+
+### hashcat
 
 或者将密码复制并单独存放一个文件，使用hashcat枚举密码 
 **参数**：
@@ -722,10 +727,13 @@ On uploading a file, what directory does that file appear in on the server?
 
 **注意**：上传的时候拦截数据包也需要修改身份，上传成功后提示` The file webshell.php has been uploaded. `，现在要做的就是找到该站的文件上传的具体路径，直接使用**Gobuster**
 
+### Gobuster
+
 **参数**：
 1. `-u:`：指定url
 2. `-w`：指定字典
 3. `-x`：指定文件后缀
+
 ```
   
 ┌──(kali㉿kali)-[~/Desktop]
@@ -839,7 +847,7 @@ Task 9 Q：What SUID stands for?
 
 经以上步骤，接下来查看详细的文件信息
 
-**权限拆解部分**
+### 权限拆解部分
 
 |     部分     |      值       |               含义                |
 | :--------: | :----------: | :-----------------------------: |
@@ -987,6 +995,8 @@ answer：1433
 What is the name of the non-Administrative share available over SMB?
 
 需要使用到工具smbclient
+
+### Smbclient
 
 Smbclient(samba client)是基于SMB协议的,用于存取共享目标的客户端程序。
 
@@ -1415,6 +1425,8 @@ Task 7 Q：What port do we need to inspect intercepted traffic for?
 2. 通过rogue-jndi开启本地LDAP服务（依赖Java和maven环境）
 3. 监听jndi注入的命令所使用的反弹shell端口
 4. 实施jndi攻击
+
+### tcpdump
 
 tcpdump工具介绍
 
