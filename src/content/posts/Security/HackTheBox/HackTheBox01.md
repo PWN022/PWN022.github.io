@@ -4,6 +4,7 @@ published: 2026-06-18T18:00:00
 description: hackthebox靶场记录
 tags:
   - HackTheBox
+  - 靶场
 category: 网络安全
 draft: false
 ---

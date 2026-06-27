@@ -8,7 +8,7 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "C311s",
+	title: "iW0ND3R",
 	subtitle: "ATTACKOR7.TECH",
 	lang: "zh_CN", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
 	themeColor: {
@@ -54,7 +54,7 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/demo-avatar.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
-	name: "C311s",
+	name: "iW0ND3R",
 	bio: "吾來之，見之，勝之",
 	links: [
 		{
@@ -63,7 +63,7 @@ export const profileConfig: ProfileConfig = {
 			// Visit https://icones.js.org/ for icon codes
 			// You will need to install the corresponding icon set if it's not already included
 			// `pnpm add @iconify-json/<icon-set-name>`
-			url: "https://open.spotify.com/album/2nLOHgzXzwFEpl62zAgCEC?si=OKRS-QSuQKie7d-tNFyGEw",
+			url: "https://accounts.spotify.com/",
 		},
 		{
 			name: "Steam",

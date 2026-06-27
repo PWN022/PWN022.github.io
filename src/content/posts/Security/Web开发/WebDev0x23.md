@@ -14,7 +14,7 @@ draft: false
 
 # 开发框架-SpringBoot
 
-参考：https://springdoc.cn/spring-boot/ 
+参考：<https://springdoc.cn/spring-boot/>
 
 # SpringBoot-监控依赖-Actuator
 
@@ -69,7 +69,7 @@ management.endpoints.web.exposure.include=*
 
 系统（这里为本机）上的环境变量：
 
-![image-20260317164532952](C:\Users\C311S\AppData\Roaming\Typora\typora-user-images\image-20260317164532952.png)
+图片丢失了，这里就是修改properties中的内容部分
 
 修改为：
 
@@ -219,7 +219,7 @@ jvisualvm分析器（自带）
 
 ##### 自动化提取
 
-JDumpSpider提取器：https://github.com/whwlsfb/JDumpSpider
+JDumpSpider提取器：<https://github.com/whwlsfb/JDumpSpider>
 
 ```
 java -jar JDumpSpider-1.1-SNAPSHOT-full.jar 文件名
@@ -229,7 +229,7 @@ java -jar JDumpSpider-1.1-SNAPSHOT-full.jar 文件名
 
 ##### 半手工提取
 
-半手工-heapdump_tool提取器：https://github.com/wyzxxz/heapdump_tool
+半手工-heapdump_tool提取器：<https://github.com/wyzxxz/heapdump_tool>
 
 贴个文档，防止消失
 
@@ -261,9 +261,9 @@ java -jar heapdump_tools.jar 文件名
 
 # 额外安全
 
-漏洞利用文章参考：https://github.com/LandGrey/SpringBootVulExploit
+漏洞利用文章参考：<https://github.com/LandGrey/SpringBootVulExploit>
 
-漏洞利用工具：https://github.com/wh1t3zer/SpringBootVul-GUI
+漏洞利用工具：<https://github.com/wh1t3zer/SpringBootVul-GUI>
 
 ## SpringCloud Gateway RCE（CVE-2022-22947）
 
@@ -285,7 +285,7 @@ java -jar heapdump_tools.jar 文件名
 
 启动后可以看到使用了gateway依赖
 
-参考：https://www.cnblogs.com/qgg4588/p/18104875
+参考：<https://www.cnblogs.com/qgg4588/p/18104875>
 
 ![image-20260317195554729](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260317195554729.png)
 
@@ -297,7 +297,7 @@ java -jar heapdump_tools.jar 文件名
 
 Swagger是当下比较流行的实时接口文文档生成工具。接口文档是当前前后端分离项目中必不可少的工具，在前后端开发之前，后端要先出接口文档，前端根据接口文档来进行项目的开发，双方开发结束后在进行联调测试。
 
-参考：https://blog.csdn.net/lsqingfeng/article/details/123678701
+参考：<https://blog.csdn.net/lsqingfeng/article/details/123678701>
 
 ## 开发使用
 
@@ -345,9 +345,9 @@ spring:
 
 3.X版本不需注解，写的话是@EnableOpenApi
 
-2.X访问路径：http://ip:port/swagger-ui.html
+2.X访问路径：<http://ip:port/swagger-ui.html>
 
-3.X访问路径：http://ip:port/swagger-ui/index.html
+3.X访问路径：<http://ip:port/swagger-ui/index.html>
 
 #### 例0
 
