@@ -1,7 +1,7 @@
 ---
 title: CSRF跨站请求伪造&Referer同源&Token校验&复用删除置空&联动上传或XSS
 published: 2026-07-01T18:00:00
-description:
+description: 利用用户会话伪造请求执行敏感操作，因Token校验不严或Referer策略缺陷（可删除Token、置空、改GET、绕过同源），配合XSS可致账号被控。
 tags:
   - Web攻防
   - CSRF

