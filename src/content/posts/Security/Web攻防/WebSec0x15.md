@@ -1,9 +1,10 @@
 ---
 title: 文件包含&LFI&RFI&伪协议条件&编码算法&无文件利用&JAVA应用&SRC复盘
-published: 2026-07-05T16:00:00
+published: 2026-07-06T16:00:00
 description: 文件包含漏洞的原理、分类（LFI与RFI）、白盒与黑盒的审计思路，并重点梳理了本地利用（如日志包含、SESSION包含、伪协议利用）和远程利用的各种实战技巧。同时结合CTF题目与SRC案例
 tags:
   - Web攻防
+  - 文件上传
   - 文件包含
 category: 网络安全
 draft: false

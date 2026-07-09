@@ -1,5 +1,5 @@
 ---
-title: WebSec0x09
+title: XSS跨站&Cookie盗取&数据包提交&网络钓鱼&BEEF项目&XSS平台&危害利用
 published: 2026-06-29T12:00:00
 description: 通过注入恶意脚本盗取用户Cookie等敏感凭证，在无法获取凭证时模拟业务请求执行未授权操作或写入后门，以及利用弹窗诱导等手段结合钓鱼页面或BeEF框架实现对目标浏览器的远程控制。内容覆盖了从手工代码构造到XSSReceiver、BeEF等平台工具的使用
 tags:
