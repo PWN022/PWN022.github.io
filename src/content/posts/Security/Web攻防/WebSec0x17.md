@@ -1,6 +1,6 @@
 ---
 title: XML&XXE&无回显带外&SSRF元数据&DTD实体&OOB盲注&文件拓展&复盘
-published: 2026-07-07T20:00:00
+published: 2026-07-08
 description: XXE漏洞的核心知识点，包括XML与HTML的区别、漏洞产生原理、黑盒白盒的挖掘方法，以及文件读取、通过 XXE 漏洞来实现 SSRF 攻击、外部实体引用、无回显带外攻击等利用方式，同时涉及XInclude绕过、SVG图像解析等
 tags:
   - Web攻防
