@@ -76,6 +76,8 @@ blog-post-author-display=user.name}}{%25+import+os+%25}{{os.system('ls%20-al')
 
 3、如果手工有困难，可用使用Tqlmap或SSTImap代替
 
+**和XSS挖掘类似，重点就是看有没有渲染的地方，模板是什么**
+
 # SSTImap
 
 地址：https://github.com/vladko312/SSTImap
