@@ -1,24 +1,24 @@
 {
   "main": {
-    "id": "3859dd440eabef73",
+    "id": "07b31bc3d9d07329",
     "type": "split",
     "children": [
       {
-        "id": "dfdaec2b03ef96de",
+        "id": "35250a5dc3a2640e",
         "type": "tabs",
         "children": [
           {
-            "id": "8356fdce47354d73",
+            "id": "bd56a52e09b7996f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Web攻防/WebSec0x20.md",
+                "file": "日常随笔/20260710随笔.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "WebSec0x20"
+              "title": "20260710随笔"
             }
           }
         ]
@@ -27,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "53ae10ad9c4c2131",
+    "id": "ec7193e37bf090e0",
     "type": "split",
     "children": [
       {
-        "id": "0ef6e55bcb65eae1",
+        "id": "33739db7f6ee5393",
         "type": "tabs",
         "children": [
           {
-            "id": "d7c83f499c59b253",
+            "id": "ec01939bd1a868fa",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -48,7 +48,7 @@
             }
           },
           {
-            "id": "8b40179c83f9f4f6",
+            "id": "73131f500696cfd1",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -65,7 +65,7 @@
             }
           },
           {
-            "id": "ae14e90ca49c2f16",
+            "id": "fc7d1418d48d7907",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -78,23 +78,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 260.51103591918945
+    "width": 300
   },
   "right": {
-    "id": "2a01b12666325793",
+    "id": "741dde7d3ec0fea0",
     "type": "split",
     "children": [
       {
-        "id": "a82322538268826d",
+        "id": "4b54485cc2cc16c1",
         "type": "tabs",
         "children": [
           {
-            "id": "f71a2f2588420f00",
+            "id": "039c0cbf7ed6619a",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Web攻防/WebSec0x20.md",
+                "file": "日常随笔/20260710随笔.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,45 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "WebSec0x20 的反向链接列表"
-            }
-          }
-        ]
-      },
-      {
-        "id": "2b5fde22ad931b91",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "d4460ec022af1d4d",
-            "type": "leaf",
-            "state": {
-              "type": "all-properties",
-              "state": {
-                "sortOrder": "frequency",
-                "showSearch": false,
-                "searchQuery": ""
-              },
-              "icon": "lucide-archive",
-              "title": "添加笔记属性"
+              "title": "20260710随笔 的反向链接列表"
             }
           },
           {
-            "id": "8d0f61fee2ef8db9",
+            "id": "658a38781df13a8a",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Web攻防/WebSec0x05.md",
+                "file": "日常随笔/20260710随笔.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "WebSec0x05 的出链列表"
+              "title": "20260710随笔 的出链列表"
             }
           },
           {
-            "id": "99dd701bdcc7f86a",
+            "id": "5bffb87704c7a8ba",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -157,71 +137,56 @@
             }
           },
           {
-            "id": "dff696cc1e8768cd",
+            "id": "5c6a43a8325181e6",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "d0d89e3119e65b99",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Web攻防/WebSec0x20.md",
-                "followCursor": true,
+                "file": "日常随笔/20260710随笔.md",
+                "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "WebSec0x20 的大纲"
+              "title": "20260710随笔 的大纲"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 223.5
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
-      "canvas:新建白板": true,
+      "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
-      "templates:插入模板": true,
+      "templates:插入模板": false,
       "command-palette:打开命令面板": false,
-      "bases:新建数据库": true
+      "bases:新建数据库": false
     }
   },
-  "active": "8356fdce47354d73",
+  "active": "bd56a52e09b7996f",
   "lastOpenFiles": [
-    "date/笔记属性.md",
-    "未命名.md",
-    "Web攻防/WebSec0x20.md",
-    "().md",
-    "Web攻防/WebSec0x19.md",
-    "Web攻防/WebSec0x18.md",
-    "Web攻防/WebSec0x17.md",
-    "Web攻防/WebSec0x16.md",
-    "Web攻防/WebSec0x12.md",
-    "Web攻防/WebSec0x13.md",
-    "Web攻防/WebSec0x14.md",
-    "Web攻防/WebSec0x15.md",
-    "靶场相关/Docker-Vulhub部署.md",
-    "靶场相关/HackTheBox00.md",
-    "靶场相关/HackTheBox01.md",
-    "Web攻防/WebSec0x01.md",
-    "Web攻防/WebSec0x00.md",
-    "2026-04-18.md",
-    "Web攻防/WebSec0x08.md",
-    "Web攻防/WebSec0x09.md",
-    "Invalid date.md",
-    "Web攻防/WebSec0x02.md",
-    "Web攻防/WebSec0x03.md",
-    "Web攻防/WebSec0x04.md",
-    "Web攻防/WebSec0x05.md",
-    "Web攻防/WebSec0x06.md",
-    "Pasted image 20260701113359.png",
-    "Pasted image 20260624100132.png",
-    "date",
-    "靶场相关",
-    "未命名.canvas",
-    "未命名.base"
+    "日常随笔/20260710随笔.md",
+    "日常随笔/20260710随笔.md",
+    "Security/未命名.md"
   ]
 }
