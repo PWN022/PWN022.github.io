@@ -11,14 +11,10 @@
             "id": "8356fdce47354d73",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Web攻防/20260710随笔.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "20260710随笔"
+              "title": "新标签页"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Web攻防/20260710随笔.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "20260710随笔 的反向链接列表"
+              "title": "反向链接"
             }
           }
         ]
@@ -189,7 +184,7 @@
       "bases:新建数据库": true
     }
   },
-  "active": "8356fdce47354d73",
+  "active": "d7c83f499c59b253",
   "lastOpenFiles": [
     "Web攻防/WebSec0x20.md",
     "Web攻防/20260710随笔.md",
