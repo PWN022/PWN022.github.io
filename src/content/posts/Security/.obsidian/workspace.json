@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Web攻防/WebSec0x21.md",
+                "file": "Web攻防/WebSev0x22.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "WebSec0x21"
+              "title": "WebSev0x22"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Web攻防/WebSec0x21.md",
+                "file": "Web攻防/WebSev0x22.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "WebSec0x21 的反向链接列表"
+              "title": "WebSev0x22 的反向链接列表"
             }
           }
         ]
@@ -162,13 +162,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Web攻防/WebSec0x21.md",
+                "file": "Web攻防/WebSev0x22.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "WebSec0x21 的大纲"
+              "title": "WebSev0x22 的大纲"
             }
           }
         ],
@@ -191,20 +191,22 @@
   },
   "active": "8356fdce47354d73",
   "lastOpenFiles": [
-    "Web攻防/WebSec0x20.md",
     "Web攻防/WebSec0x21.md",
+    "Web攻防/WebSev0x22.md",
+    "Web攻防/WebSec0x12.md",
+    "Web攻防/WebSec0x11.md",
+    "Web攻防/WebSec0x13.md",
+    "Web攻防/WebSec0x14.md",
+    "Web攻防/WebSec0x15.md",
     "Web攻防/WebSec0x19.md",
     "Web攻防/WebSec0x18.md",
-    "Web攻防/WebSec0x15.md",
-    "Web攻防/WebSec0x16.md",
-    "Web攻防/WebSec0x14.md",
     "Web攻防/WebSec0x17.md",
+    "Web攻防/WebSec0x16.md",
+    "Web攻防/WebSec0x20.md",
     "Web攻防/20260710随笔.md",
     "date/笔记属性.md",
     "未命名.md",
     "().md",
-    "Web攻防/WebSec0x12.md",
-    "Web攻防/WebSec0x13.md",
     "靶场相关/Docker-Vulhub部署.md",
     "靶场相关/HackTheBox00.md",
     "靶场相关/HackTheBox01.md",
@@ -215,8 +217,6 @@
     "Web攻防/WebSec0x09.md",
     "Invalid date.md",
     "Web攻防/WebSec0x02.md",
-    "Web攻防/WebSec0x03.md",
-    "Web攻防/WebSec0x04.md",
     "Pasted image 20260701113359.png",
     "Pasted image 20260624100132.png",
     "date",
