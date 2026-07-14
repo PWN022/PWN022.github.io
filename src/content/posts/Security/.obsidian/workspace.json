@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "dfdaec2b03ef96de",
+        "id": "fd1363de83969409",
         "type": "tabs",
         "children": [
           {
-            "id": "8356fdce47354d73",
+            "id": "29d574b140c70ac8",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "靶场相关/Vulhub-ThinkPHP_2.x_RCE.md",
+                "file": "Web攻防/WebSec0x23.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Vulhub-ThinkPHP_2.x_RCE"
+              "title": "WebSec0x23"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "靶场相关/Vulhub-ThinkPHP_2.x_RCE.md",
+                "file": "Web攻防/WebSec0x23.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Vulhub-ThinkPHP_2.x_RCE 的反向链接列表"
+              "title": "WebSec0x23 的反向链接列表"
             }
           }
         ]
@@ -162,13 +162,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "靶场相关/Vulhub-ThinkPHP_2.x_RCE.md",
+                "file": "Web攻防/WebSec0x23.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Vulhub-ThinkPHP_2.x_RCE 的大纲"
+              "title": "WebSec0x23 的大纲"
             }
           }
         ],
@@ -189,11 +189,14 @@
       "bases:新建数据库": true
     }
   },
-  "active": "8356fdce47354d73",
+  "active": "29d574b140c70ac8",
   "lastOpenFiles": [
-    "Web攻防/WebSev0x22.md",
-    "靶场相关/Vulhub-ThinkPHP_2.x_RCE.md",
+    "靶场相关/HackTheBox00.md",
+    "靶场相关/HackTheBox01.md",
+    "Web攻防/WebSec0x23.md",
+    "Web攻防/WebSec0x22.md",
     "Web攻防/WebSec0x21.md",
+    "靶场相关/Vulhub-ThinkPHP_2.x_RCE.md",
     "Web攻防/WebSec0x12.md",
     "Web攻防/WebSec0x11.md",
     "Web攻防/WebSec0x13.md",
@@ -209,14 +212,11 @@
     "未命名.md",
     "().md",
     "靶场相关/Docker-Vulhub部署.md",
-    "靶场相关/HackTheBox00.md",
-    "靶场相关/HackTheBox01.md",
     "Web攻防/WebSec0x01.md",
     "Web攻防/WebSec0x00.md",
     "2026-04-18.md",
     "Web攻防/WebSec0x08.md",
     "Web攻防/WebSec0x09.md",
-    "Invalid date.md",
     "Pasted image 20260701113359.png",
     "Pasted image 20260624100132.png",
     "date",
