@@ -1,8 +1,11 @@
 ---
 title: 身份验证篇&OAuth认证&授权分类及参数&重定向接管&State缺陷&Scope篡改
-published: 2026-07-18
-description:
+published: 2026-07-20
+description: 还没准备好。
 tags:
+  - OAuth
+  - 越权
+  - Web攻防
 category: 网络安全
 draft: true
 ---

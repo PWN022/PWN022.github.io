@@ -30,9 +30,6 @@ export default defineConfig({
 	// base: "/",
 	trailingSlash: "always",
 	integrations: [
-		expressiveCode({
-			langs: ["java", "jsp"],
-		}),
 		tailwind({
 			nesting: true,
 		}),
@@ -59,6 +56,8 @@ export default defineConfig({
 			},
 		}),
 		expressiveCode({
+			langs: ["java", "jsp"],
+    		logLevel: 'error', 
 			themes: [expressiveCodeConfig.theme, expressiveCodeConfig.theme],
 			plugins: [
 				pluginCollapsibleSections(),
@@ -131,6 +130,12 @@ export default defineConfig({
 						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
 					},
 				},
+			],
+			[
+				rehyperKatex,
+				{
+					strict: false,
+				}
 			],
 			[
 				rehypeAutolinkHeadings,
