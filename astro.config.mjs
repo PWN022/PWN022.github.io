@@ -132,7 +132,7 @@ export default defineConfig({
 				},
 			],
 			[
-				rehyperKatex,
+				rehypeKatex,
 				{
 					strict: false,
 				}
