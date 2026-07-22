@@ -1,6 +1,6 @@
 ---
 title: Vulhub-ThinkPHP_2.x_RCE
-published: 2026-07-13
+published: 2026-07-13T22:00:00
 description: 基于ThinkPHP 2.x框架远程代码执行漏洞的Python利用脚本，通过构造包含恶意payload的URL实现任意系统命令执行，帮助理解PHP反序列化与正则表达式/e修饰符的安全风险。
 tags:
   - 靶场

@@ -1,6 +1,6 @@
 ---
 title: PHP反序列化&Phar文件类&CLI框架类&PHPGGC生成器&TP&Yii&Laravel
-published: 2026-07-16
+published: 2026-07-16T12:00:00
 description: PHP反序列化进阶包括Phar反序列化（通过文件系统函数触发）、框架反序列化链工具（如PHPGGC生成复杂POP链）及框架利用（ThinkPHP、Yii2、Laravel等）。这些技术适用于绕过unserialize()限制或简化漏洞利用，在CTF和实战中广泛应用。
 tags:
   - 反序列化

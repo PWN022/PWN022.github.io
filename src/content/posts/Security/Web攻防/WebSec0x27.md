@@ -1,6 +1,6 @@
 ---
 title: 身份验证篇&OAuth认证&授权分类及参数&重定向接管&State缺陷&Scope篡改
-published: 2026-07-20
+published: 2026-07-20T12:00:00
 description: OAuth认证的授权码、隐式授权两种模式，重点分析因state缺失、redirect_uri可篡改、scope权限不当引发的CSRF绑定劫持、回调地址篡改与信息泄露漏洞，完整攻击流程及换绑测试方法。
 tags:
   - OAuth

@@ -1,6 +1,6 @@
 ---
 title: XML&XXE&上传解析&文件预览&接口服务&白盒审计&应用功能&SRC报告
-published: 2026-07-08
+published: 2026-07-08T20:00:00
 description: XXE漏洞常出现在SVG上传、DOCX解析和SOAP接口中，可利用外部实体读取文件或内网探测；黑盒主要靠功能测试和带外监控，白盒则追踪simplexml_load_string等函数调用链，无回显时用外部DTD带外读取数据。
 tags:
   - Web攻防

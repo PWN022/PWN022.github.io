@@ -1,6 +1,6 @@
 ---
 title: 身份验证篇&JWT令牌&空密钥&未签名&密钥爆破&JWK&JWU&KID&算法替换&CVE&报告复盘
-published: 2026-07-18
+published: 2026-07-18T12:00:00
 description: JWT安全测试需关注空算法绕过、弱密钥爆破、JWK/JKU/KID注入及算法混淆（RS256转HS256）等漏洞。利用jwt_tool、Burp插件等工具可检测未授权访问、敏感信息泄露及越权风险，重点检查Token时效性及签名验证机制，通过篡改Payload或伪造签名实现权限提升。
 tags:
   - JWT

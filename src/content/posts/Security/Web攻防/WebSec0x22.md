@@ -1,6 +1,6 @@
 ---
 title: PHP反序列化&原生内置&Exception类&SoapClient类&SimpleXMLElement
-published: 2026-07-13
+published: 2026-07-13T12:00:00
 description: PHP反序列化中原生类的利用链：Exception触发XSS、SoapClient触发SSRF、SimpleXMLElement触发XXE，涵盖利用条件、POP链构造及CTF实战案例（BJDCTF、SUCTF），理解无危险类时的攻击手法。
 tags:
   - 反序列化

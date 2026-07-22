@@ -1,6 +1,6 @@
 ---
 title: PHP反序列化&字符逃逸&增多减少&成员变量属性&解析不敏感&Wakeup绕过
-published: 2026-07-14
+published: 2026-07-14T12:00:00
 description: 主要内容为PHP反序列化漏洞利用：CVE-2016-7124（__wakeup绕过）通过篡改属性个数跳过方法执行；版本差异利用PHP 7.1+对protected/private属性的宽松解析；字符逃逸通过替换函数导致长度变化，实现属性注入。
 tags:
   - 反序列化
