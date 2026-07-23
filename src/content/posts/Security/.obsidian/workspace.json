@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Web攻防/WebSec0x31.md",
+                "file": "Web攻防/WebSec0x32.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "WebSec0x31"
+              "title": "WebSec0x32"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Web攻防/WebSec0x31.md",
+                "file": "Web攻防/WebSec0x32.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "WebSec0x31 的反向链接列表"
+              "title": "WebSec0x32 的反向链接列表"
             }
           }
         ]
@@ -162,13 +162,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Web攻防/WebSec0x31.md",
+                "file": "Web攻防/WebSec0x32.md",
                 "followCursor": true,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "WebSec0x31 的大纲"
+              "title": "WebSec0x32 的大纲"
             }
           }
         ],
@@ -191,9 +191,10 @@
   },
   "active": "373a6c1b0811b32d",
   "lastOpenFiles": [
+    "Web攻防/WebSec0x31.md",
+    "Web攻防/WebSec0x32.md",
     "date/笔记属性.md",
     "Web攻防/TESt.md",
-    "Web攻防/WebSec0x31.md",
     "date/笔记属性.md",
     "靶场相关/Vulhub-ThinkPHP_2.x_RCE.md",
     "靶场相关/HackTheBox01.md",
@@ -216,7 +217,6 @@
     "Web攻防/WebSec0x23.md",
     "Web攻防/WebSec0x22.md",
     "Web攻防/WebSec0x21.md",
-    "Web攻防/WebSec0x20.md",
     "Pasted image 20260701113359.png",
     "Pasted image 20260624100132.png",
     "date",
