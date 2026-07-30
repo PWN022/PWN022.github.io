@@ -20,5 +20,8 @@ Thumbs.db
 *.swp
 *.swo
 
+# Templates
+date/
+
 # Misc
 package-lock.json
