@@ -1,0 +1,33 @@
+---
+import { SITE_START_DATE } from '../consts';
+---
+
+<span
+  class="footer-timer"
+  id="site-timer"
+  data-start={SITE_START_DATE}
+>
+  Loading...
+</span>
+
+<script>
+  const el = document.getElementById('site-timer');
+  if (el) {
+    const start = new Date(el.dataset.start!);
+    const update = () => {
+      const now = new Date();
+      const diff = now.getTime() - start.getTime();
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const years = Math.floor(days / 365);
+      const remaining = days % 365;
+
+      if (years > 0) {
+        el.textContent = `已运行 ${years} 年 ${remaining} 天`;
+      } else {
+        el.textContent = `已运行 ${days} 天`;
+      }
+    };
+    update();
+    setInterval(update, 60000); // update every minute
+  }
+</script>

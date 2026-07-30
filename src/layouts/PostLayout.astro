@@ -1,0 +1,40 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date?: Date;
+  ogImage?: string;
+}
+
+const { title, description, date, ogImage } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} ogImage={ogImage}>
+  <article>
+    <header class="post-header">
+      <h1>{title}</h1>
+      {date && <time datetime={date.toISOString()}>{date.toISOString().split('T')[0]}</time>}
+    </header>
+    <div class="post-body">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .post-header h1 {
+    font-size: 2em;
+    margin-bottom: var(--space-2);
+  }
+
+  .post-header time {
+    color: var(--color-text-secondary);
+    font-style: normal;
+  }
+</style>
