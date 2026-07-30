@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.astro/
+.env
+.DS_Store
+Thumbs.db
+*.log
+
+# Obsidian
+.obsidian/
+**/.obsidian/
+
+# Claude
+.claude/
+**/.claude/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Misc
+package-lock.json
