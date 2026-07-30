@@ -18,8 +18,7 @@ const link = album.link || '#';
 
 <a href={link} class="album-card" target="_blank" rel="noopener noreferrer">
   <div class="album-cover-wrap">
-    <div class="album-cover-placeholder">{album.title}</div>
-    {album.cover && (
+    {album.cover ? (
       <img
         class="album-cover"
         loading="lazy"
@@ -27,6 +26,8 @@ const link = album.link || '#';
         src={album.cover}
         alt={album.title}
       />
+    ) : (
+      <div class="album-cover-placeholder">{album.title}</div>
     )}
   </div>
 
