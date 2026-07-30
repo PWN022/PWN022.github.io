@@ -311,22 +311,15 @@ ul.blog-posts li time {
 /* === Album Grid === */
 .album-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   margin-top: var(--space-4);
-}
-
-@media (max-width: 768px) {
-  .album-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-  }
 }
 
 @media (max-width: 520px) {
   .album-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
 }
 
@@ -401,6 +394,10 @@ ul.blog-posts li time {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .album-card {
+    z-index: 1;
+  }
+
   .album-card:hover {
     z-index: 999;
     transform: translateY(-4px);
