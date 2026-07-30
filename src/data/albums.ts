@@ -11,14 +11,14 @@ export interface Album {
 
 export const albums: Album[] = [
   {
-    title: "Random Access Memories",
-    artist: "Daft Punk",
-    year: 2013,
-    cover: "https://picsum.photos/seed/ram/300/450",
+    title: "ye",
+    artist: "Kanye West",
+    year: 2018,
+    cover: "/images/albums/ye.jpg",
     rating: 5,
-    genre: "Electronic / Disco",
-    comment: "A masterpiece that bridges the gap between human and machine. Every track is meticulously crafted.",
-    link: "https://music.douban.com/subject/24759607/",
+    genre: "Rap / Hip-Hop",
+    comment: "the best",
+    link: "https://open.spotify.com/album/2Ek1q2haOnxVqhvVKqMvJe?si=4WbWBTb_S0yWY8Sdxg6ecQ",
   },
   {
     title: "Abbey Road",

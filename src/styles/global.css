@@ -321,7 +321,7 @@ ul.blog-posts li a:visited {
 
 .album-cover-wrap {
   width: 100%;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 1 / 1;
   background: var(--color-bg-secondary);
   border-radius: var(--radius-md);
   overflow: hidden;

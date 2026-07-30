@@ -1,0 +1,10 @@
+{
+  "baseFontSize": 16,
+  "cssTheme": "Minimal",
+  "theme": "moonstone",
+  "nativeMenus": false,
+  "accentColor": "",
+  "monospaceFontFamily": "JetBrains Mono",
+  "textFontFamily": "HP Simplified",
+  "interfaceFontFamily": "HP Simplified"
+}
