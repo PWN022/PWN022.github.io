@@ -1,0 +1,56 @@
+---
+import type { Album } from '../data/albums';
+
+interface Props {
+  album: Album;
+}
+
+const { album } = Astro.props;
+
+function stars(n: number): string {
+  return '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n));
+}
+
+const genre = album.genre || '未知';
+const comment = album.comment || '暂无短评';
+const link = album.link || '#';
+---
+
+<a href={link} class="album-card" target="_blank" rel="noopener noreferrer">
+  <div class="album-cover-wrap">
+    <div class="album-cover-placeholder">{album.title}</div>
+    {album.cover && (
+      <img
+        class="album-cover"
+        loading="lazy"
+        decoding="async"
+        src={album.cover}
+        alt={album.title}
+        onload="this.style.opacity='1'"
+        onerror="this.style.display='none'; this.parentElement.querySelector('.album-cover-placeholder').style.display='flex'"
+      />
+    )}
+  </div>
+
+  <div class="album-info">
+    <div class="album-rating">{stars(album.rating)}</div>
+    <div class="album-title-text">{album.title}</div>
+  </div>
+
+  <!-- Hover Popup (Desktop only) -->
+  <div class="album-detail-popup">
+    <div class="popup-header">
+      <h3 class="popup-title">{album.title}</h3>
+      <span class="popup-rating">{stars(album.rating)}</span>
+    </div>
+    <div class="popup-meta">
+      <span>{album.artist}</span>
+      <span class="popup-year">{album.year}</span>
+      <span class="popup-genre">{genre}</span>
+    </div>
+    <div class="popup-comment-box">
+      <div class="popup-my-rate">个人评分: {stars(album.rating)}</div>
+      <div class="popup-comment">{comment}</div>
+    </div>
+  </div>
+</a>

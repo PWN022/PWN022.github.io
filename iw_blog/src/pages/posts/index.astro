@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="Articles">
+  <h1>Articles</h1>
+  <PostList posts={posts} />
+</BaseLayout>

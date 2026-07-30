@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR } from '../consts';
+---
+
+<BaseLayout title="About">
+  <h1>About Me</h1>
+  <div class="about-content">
+    <p>
+      Hi, I'm <strong>{AUTHOR}</strong>. Welcome to my little corner of the internet.
+    </p>
+    <p>
+      This is a minimal personal blog — a place to write, share, and curate.
+      No trackers, no ads, no distractions. Just words and albums.
+    </p>
+    <p>
+      Feel free to browse my <a href="/posts/">articles</a>,
+      check out my <a href="/albums/">album collection</a>,
+      or subscribe via <a href="/rss.xml">RSS</a>.
+    </p>
+  </div>
+</BaseLayout>
