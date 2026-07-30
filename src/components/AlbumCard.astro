@@ -26,8 +26,6 @@ const link = album.link || '#';
         decoding="async"
         src={album.cover}
         alt={album.title}
-        onload="this.style.opacity='1'"
-        onerror="this.style.display='none'; this.parentElement.querySelector('.album-cover-placeholder').style.display='flex'"
       />
     )}
   </div>
