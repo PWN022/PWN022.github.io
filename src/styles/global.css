@@ -10,7 +10,7 @@
 
 /* === Design Tokens === */
 :root {
-  --width: 820px;
+  --width: 852px;
 
   /* Typography */
   --font-main: 'Bree Serif', Georgia, serif;
@@ -104,6 +104,11 @@ body {
   min-height: 100dvh;
 }
 
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 /* === Typography === */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-main);
@@ -160,6 +165,7 @@ table {
 header {
   border-bottom: 2px solid var(--color-border-strong);
   margin-bottom: var(--space-12);
+  padding: 28px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

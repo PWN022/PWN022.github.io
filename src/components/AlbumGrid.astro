@@ -14,21 +14,3 @@ const { albums } = Astro.props;
     <AlbumCard album={album} />
   ))}
 </div>
-
-<!-- Load more support — if more albums added to data, no page rebuild needed -->
-<script>
-  // Minimal load-more setup for future expansion
-  // Currently all albums render at build time. If album count exceeds
-  // PAGE_SIZE, this script handles infinite scroll + load more button.
-  const PAGE_SIZE = 60;
-  const grid = document.getElementById('album-grid');
-  if (grid) {
-    const cards = grid.querySelectorAll('.album-card');
-    if (cards.length > PAGE_SIZE) {
-      cards.forEach((card, i) => {
-        if (i >= PAGE_SIZE) (card as HTMLElement).style.display = 'none';
-      });
-      // Would add IntersectionObserver + load-more button here
-    }
-  }
-</script>

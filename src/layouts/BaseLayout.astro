@@ -1,10 +1,8 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
 import { SITE_TITLE } from '../consts';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
-import '../styles/transitions.css';
 
 interface Props {
   title?: string;
@@ -46,8 +44,6 @@ const pageTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
   <link rel="icon" href="/favicon.svg" />
   <link rel="apple-touch-icon" href="/favicon.svg" />
   <link rel="alternate" type="application/rss+xml" href="/rss.xml" title={SITE_TITLE} />
-
-  <ViewTransitions />
 
   <!-- Theme init — prevent FART (Flash of Awkward Theme Transition) -->
   <script is:inline>
