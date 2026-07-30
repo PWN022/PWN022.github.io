@@ -17,7 +17,7 @@ export const albums: Album[] = [
     cover: "/images/albums/ye.jpg",
     rating: 5,
     genre: "Rap / Hip-Hop",
-    comment: "the best",
+    comment: "the best.",
     link: "https://open.spotify.com/album/2Ek1q2haOnxVqhvVKqMvJe?si=4WbWBTb_S0yWY8Sdxg6ecQ",
   },
   {

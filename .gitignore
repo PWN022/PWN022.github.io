@@ -23,5 +23,8 @@ Thumbs.db
 # Templates
 date/
 
+# Docs
+GUIDE.md
+
 # Misc
 package-lock.json
