@@ -148,7 +148,6 @@ blockquote {
   border-left: 2px solid var(--color-border-strong);
   color: var(--color-blockquote);
   padding-left: var(--space-4);
-  font-style: italic;
   margin-inline: 0;
 }
 
