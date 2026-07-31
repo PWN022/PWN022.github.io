@@ -338,9 +338,10 @@ ul.blog-posts li time {
 /* Italic spacing — prevent English italic colliding with Chinese */
 .post-body em,
 .post-body i {
-  padding-right: 0.12em;
+  padding-right: 0.2em;
 }
 
+/* Inline code — prevent overlap with following text */
 .post-body :not(pre) > code {
   font-size: 0.88em;
   padding: 2px 8px;
@@ -348,12 +349,39 @@ ul.blog-posts li time {
   background: #FDEBEC;
   color: #9F2F2D;
   font-weight: 500;
+  margin: 0 1px;
 }
 
 [data-theme="dark"] .post-body :not(pre) > code {
   background: #3d2028;
   color: #f5a8a5;
 }
+
+/* Tables */
+.post-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: var(--space-6) 0;
+  font-size: 0.95em;
+}
+
+.post-body th,
+.post-body td {
+  border: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+
+.post-body th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .post-body th {
+  background: var(--color-bg-secondary);
+}
+
+
 
 .post-body pre::-webkit-scrollbar {
   height: 6px;
