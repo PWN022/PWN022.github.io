@@ -330,14 +330,14 @@ ul.blog-posts li time {
   font-size: 0.88em;
   padding: 2px 8px;
   border-radius: 4px;
-  background: #e8e8e8;
-  color: #c7254e;
+  background: #FDEBEC;
+  color: #9F2F2D;
   font-weight: 500;
 }
 
 [data-theme="dark"] .post-body :not(pre) > code {
-  background: #2d2d3d;
-  color: #f78c6c;
+  background: #3d2028;
+  color: #f5a8a5;
 }
 
 .post-body pre::-webkit-scrollbar {
