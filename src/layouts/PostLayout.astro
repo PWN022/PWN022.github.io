@@ -14,6 +14,7 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description} ogImage={ogImage}>
+  <div class="progress-bar" id="progress-bar"></div>
   <article>
     <header class="post-header">
       <h1>{title}</h1>
@@ -77,4 +78,51 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     color: var(--color-link-hover-text);
     border-color: var(--color-link-hover-bg);
   }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 1.5px;
+    z-index: 100;
+    width: 0;
+    background: linear-gradient(90deg, transparent, var(--color-text) 30%, var(--color-text));
+    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+  }
+
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text);
+    box-shadow: 0 0 8px var(--color-text);
+    opacity: 0.8;
+  }
+
+  [data-theme="dark"] .progress-bar {
+    background: linear-gradient(90deg, transparent, #fff 30%, #fff);
+    box-shadow: 0 0 8px rgba(255,255,255,0.2);
+  }
+  [data-theme="dark"] .progress-bar::after {
+    background: #fff;
+    box-shadow: 0 0 12px #fff;
+  }
 </style>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  if (bar) {
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = Math.min(progress, 100) + '%';
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>
