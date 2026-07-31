@@ -324,6 +324,7 @@ ul.blog-posts li time {
   background: none !important;
   padding: 0;
   font-size: inherit;
+  color: #cdd6f4;
 }
 
 .post-body :not(pre) > code {
