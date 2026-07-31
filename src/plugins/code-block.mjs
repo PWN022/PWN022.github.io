@@ -4,24 +4,28 @@ export function codeBlockPlugin() {
     visit(tree, 'element', (node) => {
       if (node.tagName !== 'pre') return;
 
-      // Search for language class on both pre and child code
-      const allClasses = [
-        ...(node.properties?.className || []),
-        ...(node.children.find((c) => c.type === 'element' && c.tagName === 'code')
-          ?.properties?.className || []),
-      ];
+      const props = node.properties || {};
 
-      const lang = allClasses
-        .find((c) => c.startsWith('language-'))
-        ?.replace('language-', '')
-        ?.toUpperCase() || 'CODE';
+      // Try Shiki's data-language attr first, then class-based fallback
+      let lang = props.dataLanguage || props['data-language'] || '';
 
-      node.properties = node.properties || {};
-      node.properties.className = [
-        ...(node.properties.className || []),
-        'mac-code-block',
-      ];
-      node.properties.dataLang = lang;
+      if (!lang) {
+        const allClasses = [
+          ...(props.className || []),
+          ...(node.children.find(
+            (c) => c.type === 'element' && c.tagName === 'code'
+          )?.properties?.className || []),
+        ];
+        lang = allClasses
+          .find((c) => c.startsWith('language-'))
+          ?.replace('language-', '') || '';
+      }
+
+      node.properties = {
+        ...props,
+        className: [...(props.className || []), 'mac-code-block'],
+        dataLang: lang ? lang.toUpperCase() : 'CODE',
+      };
     });
   };
 }
