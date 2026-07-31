@@ -580,6 +580,43 @@ ul.blog-posts li time {
   margin-bottom: var(--space-8);
 }
 
+/* === Back to Top === */
+.back-to-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease,
+    background var(--transition-fast), border-color var(--transition-fast);
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.back-to-top.visible {
+  opacity: 0.6;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  opacity: 1;
+  background: var(--color-link-hover-bg);
+  color: var(--color-link-hover-text);
+  border-color: var(--color-link-hover-bg);
+}
+
 /* === About Page === */
 .about-content {
   max-width: 65ch;

@@ -1,13 +1,16 @@
----
----
-
-<button class="back-to-top" id="back-to-top" aria-label="Back to top">&uarr;</button>
+<button class="back-to-top" id="back-to-top" aria-label="Back to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 12V4M4 8l4-4 4 4"/></svg>
+</button>
 
 <script>
   const btn = document.getElementById('back-to-top');
   if (btn) {
     const toggle = () => {
-      btn.classList.toggle('visible', window.scrollY > 300);
+      if (window.scrollY > 300) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
     };
     window.addEventListener('scroll', toggle, { passive: true });
     btn.addEventListener('click', () => {
@@ -16,37 +19,3 @@
     toggle();
   }
 </script>
-
-<style>
-  .back-to-top {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg);
-    color: var(--color-text-secondary);
-    font-size: 1.2em;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--transition-base), visibility var(--transition-base), background var(--transition-fast);
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .back-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .back-to-top:hover {
-    background: var(--color-link-hover-bg);
-    color: var(--color-link-hover-text);
-    border-color: var(--color-link-hover-bg);
-  }
-</style>
