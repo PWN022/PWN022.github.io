@@ -274,16 +274,50 @@ ul.blog-posts li time {
   text-decoration: none;
 }
 
-/* Code blocks */
+/* Code blocks — Mac window style */
 .post-body pre {
-  padding: var(--space-6) var(--space-4);
+  position: relative;
+  padding: 52px var(--space-4) var(--space-4);
   border-radius: var(--radius-md);
   overflow-x: auto;
   font-size: 0.88em;
   line-height: 1.7;
-  background: #1e1e2e !important;
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  background: #21252b !important;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  margin: 32px 0;
+}
+
+/* Title bar */
+.post-body pre::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  line-height: 38px;
+  background: #282c34;
+  color: #abb2bf;
+  font-size: 14px;
+  font-family: var(--font-main);
+  font-weight: 600;
+  padding: 0 80px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* Mac dots */
+.post-body pre::after {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fc625d;
+  box-shadow: 20px 0 0 #fdbc40, 40px 0 0 #35cd4b;
+  z-index: 1;
 }
 
 .post-body pre code {
@@ -300,7 +334,6 @@ ul.blog-posts li time {
   color: var(--color-code-text);
 }
 
-/* Code block scrollbar */
 .post-body pre::-webkit-scrollbar {
   height: 6px;
 }
@@ -310,9 +343,11 @@ ul.blog-posts li time {
 }
 
 [data-theme="dark"] .post-body pre {
-  background: #11111b !important;
-  border-color: rgba(255,255,255,0.04);
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  background: #1a1b26 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .post-body pre::before {
+  background: #1f2130;
 }
 
 /* === Spoiler (anti-spoiler text) === */

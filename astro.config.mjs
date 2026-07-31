@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { codeBlockPlugin } from './src/plugins/code-block.mjs';
 
 export default defineConfig({
   site: 'https://attackor7.tech',
@@ -11,5 +12,6 @@ export default defineConfig({
       theme: 'github-dark',
       wrap: true,
     },
+    rehypePlugins: [codeBlockPlugin],
   },
 });

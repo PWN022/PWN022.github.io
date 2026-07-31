@@ -54,7 +54,7 @@ export const albums: Album[] = [
     title: "Graduation",
     artist: "Kanye West",
     year: 2007,
-    cover: "/images/albums/Graduation.jpg",
+    cover: "/images/albums/graduation.jpg",
     rating: 5,
     genre: "Rap / Hip-Hop",
     comment: "find your dreams come true!",
