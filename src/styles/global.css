@@ -9,7 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Noto+Serif+SC:wght@400;600&display=swap');
 
 /* Code fonts — JetBrains Mono (IDEA style) + Sarasa Gothic (中文) */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;1,400&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/sarasa-gothic@1.0.2/sarasa-mono-sc.min.css');
 
 /* === Design Tokens === */
@@ -331,7 +331,14 @@ ul.blog-posts li time {
   background: none !important;
   padding: 0;
   font-size: inherit;
+  font-weight: 400;
   color: #cdd6f4;
+}
+
+/* Italic spacing — prevent English italic colliding with Chinese */
+.post-body em,
+.post-body i {
+  padding-right: 0.12em;
 }
 
 .post-body :not(pre) > code {
