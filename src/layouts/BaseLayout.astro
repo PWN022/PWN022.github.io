@@ -2,6 +2,7 @@
 import { SITE_TITLE } from '../consts';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BackToTop from '../components/BackToTop.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -63,5 +64,6 @@ const pageTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
     <slot />
   </main>
   <Footer />
+  <BackToTop />
 </body>
 </html>

@@ -13,3 +13,7 @@ export const NAV_ITEMS = [
 ] as const;
 
 export const POSTS_PER_PAGE = 20;
+
+export const SOCIAL_LINKS = [
+  { label: "GitHub", href: "https://github.com/PWN022", icon: "gh" },
+] as const;

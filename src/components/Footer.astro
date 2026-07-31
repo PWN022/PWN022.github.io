@@ -1,10 +1,68 @@
 ---
+import { SOCIAL_LINKS } from '../consts';
 import SiteTimer from './SiteTimer.astro';
 ---
 
 <footer>
+  <nav class="footer-links">
+    {SOCIAL_LINKS.map((link) => (
+      <a href={link.href} target="_blank" rel="noopener noreferrer">@{link.label}</a>
+    ))}
+  </nav>
   <div class="footer-credit">
     Find your dreams come true.
   </div>
-  <SiteTimer />
+  <div class="footer-row">
+    <SiteTimer />
+    <span class="footer-sep">&middot;</span>
+    <span class="footer-counter" id="visitor-count">...</span>
+  </div>
 </footer>
+
+<script>
+  const counterEl = document.getElementById('visitor-count');
+  if (counterEl) {
+    const key = 'page_views';
+    const views = (parseInt(localStorage.getItem(key) || '0', 10) || 0) + 1;
+    localStorage.setItem(key, String(views));
+    counterEl.textContent = `👀 ${views} views`;
+  }
+</script>
+
+<style>
+  .footer-links {
+    margin-bottom: var(--space-3);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+
+  .footer-links a {
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+    padding: 2px 10px;
+    border-radius: var(--radius-sm);
+  }
+
+  .footer-links a:hover {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+  }
+
+  .footer-row {
+    margin-top: var(--space-2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .footer-sep {
+    color: var(--color-text-tertiary);
+  }
+
+  .footer-counter {
+    color: var(--color-text-tertiary);
+    font-size: 0.85em;
+  }
+</style>
