@@ -16,21 +16,17 @@ import ThemeToggle from './ThemeToggle.astro';
   <div class="footer-row">
     <SiteTimer />
     <span class="footer-sep">&middot;</span>
-    <span class="footer-counter" id="visitor-count">...</span>
+    <span class="footer-counter" id="busuanzi_container_site_pv">
+      <span id="busuanzi_value_site_pv">-</span> views
+    </span>
+    <span class="footer-sep">&middot;</span>
+    <span class="footer-counter" id="busuanzi_container_site_uv">
+      <span id="busuanzi_value_site_uv">-</span> visitors
+    </span>
     <span class="footer-sep">&middot;</span>
     <ThemeToggle />
   </div>
 </footer>
-
-<script>
-  const counterEl = document.getElementById('visitor-count');
-  if (counterEl) {
-    const key = 'page_views';
-    const views = (parseInt(localStorage.getItem(key) || '0', 10) || 0) + 1;
-    localStorage.setItem(key, String(views));
-    counterEl.textContent = `👀 ${views} views`;
-  }
-</script>
 
 <style>
   .footer-links {
