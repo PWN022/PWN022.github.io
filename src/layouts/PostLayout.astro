@@ -87,8 +87,8 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     z-index: 100;
     width: 0;
     border-radius: 0 2px 2px 0;
-    background: linear-gradient(90deg, var(--color-text), #555);
-    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    background: linear-gradient(90deg, #c0c0c0, #d8d8d8, #a8a8a8);
+    box-shadow: 0 0 8px rgba(180,180,180,0.4);
   }
 
   .progress-bar::after {
@@ -99,18 +99,17 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--color-text);
-    box-shadow: 0 0 8px var(--color-text);
-    opacity: 0.8;
+    background: #b0b0b0;
+    box-shadow: 0 0 8px rgba(180,180,180,0.6);
   }
 
   [data-theme="dark"] .progress-bar {
-    background: linear-gradient(90deg, transparent, #fff 30%, #fff);
-    box-shadow: 0 0 8px rgba(255,255,255,0.2);
+    background: linear-gradient(90deg, transparent, #f0f0f0 30%, #fff);
+    box-shadow: 0 0 12px rgba(255,255,255,0.35);
   }
   [data-theme="dark"] .progress-bar::after {
     background: #fff;
-    box-shadow: 0 0 12px #fff;
+    box-shadow: 0 0 14px #fff;
   }
 </style>
 

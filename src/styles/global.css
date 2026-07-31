@@ -8,6 +8,10 @@
 /* Post body fonts — Lora (English) + Noto Serif SC (Chinese) */
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Noto+Serif+SC:wght@400;600&display=swap');
 
+/* Code fonts — JetBrains Mono (IDEA style) + Sarasa Gothic (中文) */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/sarasa-gothic@1.0.2/sarasa-mono-sc.min.css');
+
 /* === Design Tokens === */
 :root {
   --width: 852px;
@@ -16,7 +20,7 @@
   --font-main: 'Bree Serif', Georgia, serif;
   --font-post: 'Lora', 'Noto Serif SC', Georgia, 'Songti SC', serif;
   --font-display: 'Bungee Shade', cursive;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-mono: 'JetBrains Mono', 'Sarasa Mono SC', 'Fira Code', 'Consolas', monospace;
 
   --font-scale: 1.1em;
 
