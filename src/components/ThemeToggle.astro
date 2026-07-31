@@ -1,20 +1,18 @@
----
----
-
 <button
   class="theme-toggle"
   id="theme-toggle"
   aria-label="Toggle theme"
-  title="Toggle light/dark/auto mode"
+  title="明暗切换"
 >
-  🌓
+  <span class="theme-icon theme-icon-light"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+  <span class="theme-icon theme-icon-dark"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
 </button>
 
 <script>
   const btn = document.getElementById('theme-toggle');
   if (btn) {
     const cycle = ['auto', 'dark', 'light'];
-    const icons: Record<string, string> = { auto: '🌓', dark: '🌙', light: '☀️' };
+    const icons: Record<string, string> = { auto: '', dark: 'dark', light: 'light' };
 
     const getCurrent = (): string => {
       const stored = localStorage.getItem('theme');
@@ -31,12 +29,23 @@
         root.removeAttribute('data-theme');
         localStorage.setItem('theme', 'light');
       } else {
-        // auto: follow system
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
         localStorage.removeItem('theme');
       }
-      btn.textContent = icons[mode];
+      updateIcon(mode);
+    };
+
+    const updateIcon = (mode: string) => {
+      document.querySelectorAll('.theme-icon').forEach(el => {
+        (el as HTMLElement).style.display = 'none';
+      });
+      if (mode === 'dark') {
+        (document.querySelector('.theme-icon-dark') as HTMLElement).style.display = 'inline';
+      } else {
+        (document.querySelector('.theme-icon-light') as HTMLElement).style.display = 'inline';
+      }
+      btn.setAttribute('data-mode', mode);
     };
 
     let current = getCurrent();

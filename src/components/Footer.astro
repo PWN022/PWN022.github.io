@@ -1,6 +1,7 @@
 ---
 import { SOCIAL_LINKS } from '../consts';
 import SiteTimer from './SiteTimer.astro';
+import ThemeToggle from './ThemeToggle.astro';
 ---
 
 <footer>
@@ -16,6 +17,8 @@ import SiteTimer from './SiteTimer.astro';
     <SiteTimer />
     <span class="footer-sep">&middot;</span>
     <span class="footer-counter" id="visitor-count">...</span>
+    <span class="footer-sep">&middot;</span>
+    <ThemeToggle />
   </div>
 </footer>
 
