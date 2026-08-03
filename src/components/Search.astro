@@ -45,13 +45,21 @@
     debounce = setTimeout(search, 150);
   });
 
+  let pf: any = null;
+  async function getPF() {
+    if (pf) return pf;
+    pf = new (window as any).Pagefind();
+    await pf.init();
+    return pf;
+  }
+
   async function search() {
     const q = input.value.trim();
     if (!q || q.length < 2) { results.innerHTML = ''; return; }
     results.innerHTML = '<p class="search-hint">搜索中...</p>';
     try {
-      const pagefind = await (window as any).pagefind;
-      const res = await pagefind.search(q);
+      const p = await getPF();
+      const res = await p.search(q);
       if (!res?.results?.length) {
         results.innerHTML = '<p class="search-hint">没有找到相关文章</p>';
         return;
@@ -65,8 +73,8 @@
         </a>`;
       }
       results.innerHTML = html || '<p class="search-hint">没有找到相关文章</p>';
-    } catch {
-      results.innerHTML = '<p class="search-hint">搜索功能正在索引中，请稍后再试</p>';
+    } catch (e) {
+      results.innerHTML = '<p class="search-hint">搜索功能索引中，请稍后再试</p>';
     }
   }
 </script>
