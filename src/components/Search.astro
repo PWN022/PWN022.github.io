@@ -66,6 +66,7 @@
       let html = '';
       for (const r of res.results.slice(0, 12)) {
         const data = await r.data();
+        // Only show description — pagefind excerpts are too fragmented
         const desc = data.meta?.description || '';
         html += `<a class="search-item" href="${data.url}">
           <span class="search-title">${data.meta?.title || data.url}</span>
