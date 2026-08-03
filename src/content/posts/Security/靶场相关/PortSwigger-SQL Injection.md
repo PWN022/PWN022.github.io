@@ -1,7 +1,7 @@
 ---
 title: PortSwigger-SQL Injection
 published: 2026-07-27T18:00:00
-description: sql注入通关记录
+description: SQLi通关记录
 tags:
   - 靶场
   - SQL注入

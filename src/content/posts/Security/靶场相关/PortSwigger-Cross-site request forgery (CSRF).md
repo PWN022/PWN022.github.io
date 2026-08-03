@@ -1,7 +1,7 @@
 ---
 title: PortSwigger-Cross-site request forgery (CSRF)
 published: 2026-08-03 10:03
-description: csrf部分通关记录，非完整
+description: CSRF部分通关记录，非完整
 tags:
   - 靶场
   - CSRF

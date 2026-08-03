@@ -1,7 +1,7 @@
 ---
 title: PortSwigger-Cross-site scripting
 published: 2026-07-30T18:00:00
-description: xss部分通关记录，非完整
+description: XSS部分通关记录，非完整
 tags:
   - 靶场
   - XSS
