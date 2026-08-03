@@ -66,9 +66,15 @@
       let html = '';
       for (const r of res.results.slice(0, 12)) {
         const data = await r.data();
+        let excerpt = '';
+        if (data.plain_excerpt) {
+          const clean = data.plain_excerpt.replace(/\s+/g, ' ').trim();
+          const len = 24;
+          excerpt = clean.length > len ? clean.slice(0, len) + '...' : clean;
+        }
         html += `<a class="search-item" href="${data.url}">
           <span class="search-title">${data.meta?.title || data.url}</span>
-          <span class="search-excerpt">${data.excerpt?.replace(/<\/?mark>/g, '') || ''}</span>
+          ${excerpt ? `<span class="search-excerpt">${excerpt}</span>` : ''}
         </a>`;
       }
       results.innerHTML = html || '<p class="search-hint">没有找到相关文章</p>';
@@ -154,8 +160,8 @@
     text-decoration: none;
   }
   .search-item:hover { background: var(--color-bg-secondary); }
-  .search-title { display: block; font-weight: 600; color: var(--color-text); margin-bottom: 2px; }
-  .search-excerpt { display: block; font-size: 0.85em; color: var(--color-text-secondary); line-height: 1.5; }
+  .search-title { display: block; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .search-excerpt { display: block; font-size: 0.82em; color: var(--color-text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 
   [data-theme="dark"] .search-overlay { background: rgba(0,0,0,0.6); }
   [data-theme="dark"] .search-panel { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
