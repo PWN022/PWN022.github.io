@@ -46,11 +46,19 @@
   });
 
   let pf: any = null;
+  let pfReady: Promise<any> | null = null;
+
   async function getPF() {
     if (pf) return pf;
-    pf = new (window as any).Pagefind();
-    await pf.init();
-    return pf;
+    if (!pfReady) {
+      pfReady = (async () => {
+        const mod = await import('/pagefind/pagefind.js');
+        pf = new mod.Pagefind();
+        await pf.init();
+        return pf;
+      })();
+    }
+    return pfReady;
   }
 
   async function search() {
