@@ -57,6 +57,12 @@ const pageTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
     })();
   </script>
   <script is:inline defer src="https://events.vercount.one/js"></script>
+  <script type="module">
+    import('/pagefind/pagefind.js').then(mod => {
+      window.__pagefind = mod;
+      mod.init();
+    });
+  </script>
 </head>
 
 <body>

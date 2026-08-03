@@ -45,18 +45,11 @@
     debounce = setTimeout(search, 150);
   });
 
-  let pfReady: Promise<any> | null = null;
-
   async function getPF() {
-    if (!pfReady) {
-      pfReady = (async () => {
-        // @ts-ignore
-        const mod = await import('/pagefind/pagefind' + '.js');
-        await mod.init();
-        return mod;
-      })();
+    while (!(window as any).__pagefind) {
+      await new Promise(r => setTimeout(r, 100));
     }
-    return pfReady;
+    return (window as any).__pagefind;
   }
 
   async function search() {
