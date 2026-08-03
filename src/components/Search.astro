@@ -45,18 +45,15 @@
     debounce = setTimeout(search, 150);
   });
 
-  let pf: any = null;
   let pfReady: Promise<any> | null = null;
 
   async function getPF() {
-    if (pf) return pf;
     if (!pfReady) {
       pfReady = (async () => {
         // @ts-ignore
         const mod = await import('/pagefind/pagefind' + '.js');
-        pf = new mod.Pagefind();
-        await pf.init();
-        return pf;
+        await mod.init();
+        return mod;
       })();
     }
     return pfReady;
@@ -67,8 +64,8 @@
     if (!q || q.length < 2) { results.innerHTML = ''; return; }
     results.innerHTML = '<p class="search-hint">搜索中...</p>';
     try {
-      const p = await getPF();
-      const res = await p.search(q);
+      const pf = await getPF();
+      const res = await pf.search(q);
       if (!res?.results?.length) {
         results.innerHTML = '<p class="search-hint">没有找到相关文章</p>';
         return;
