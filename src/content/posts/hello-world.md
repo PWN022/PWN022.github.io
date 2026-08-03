@@ -1,13 +1,14 @@
 ---
-title: "Hello, World"
+title: Hello, World
 date: 2026-07-30
-description: "我的第一篇博客文章"
-tags: ["hello"]
+description: 新博客的第一篇文章
+tags:
+  - hello
 ---
 
 ## 欢迎来到我的博客
 
-这是我的第一篇博客文章。这里使用 **Astro** 构建，托管在 GitHub Pages 上。
+这是新博客的第一篇博客文章。这里使用 **Astro** 构建，托管在 GitHub Pages 上。
 
 ### 功能特性
 
