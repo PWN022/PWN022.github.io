@@ -1,0 +1,96 @@
+<nav class="toc" id="toc" aria-label="文章目录">
+  <div class="toc-title">目录</div>
+  <ul class="toc-list" id="toc-list"></ul>
+</nav>
+
+<script>
+  const build = () => {
+    const headings = document.querySelectorAll('.post-body h1[id], .post-body h2[id], .post-body h3[id]');
+    if (headings.length < 2) {
+      document.getElementById('toc')!.style.display = 'none';
+      return;
+    }
+
+    const list = document.getElementById('toc-list')!;
+    let html = '';
+    const observerTargets: Element[] = [];
+
+    headings.forEach((h) => {
+      const level = parseInt(h.tagName[1], 10);
+      const indent = (level - 1) * 16;
+      const id = h.getAttribute('id')!;
+      html += `<li style="padding-left:${indent}px">
+        <a href="#${id}" data-toc="${id}" class="toc-link toc-l${level}">${h.textContent}</a>
+      </li>`;
+      observerTargets.push(h);
+    });
+
+    list.innerHTML = html;
+
+    // IntersectionObserver for active heading
+    const links = list.querySelectorAll('.toc-link');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        const link = list.querySelector(`[data-toc="${e.target.id}"]`);
+        if (link) link.classList.toggle('active', e.isIntersecting);
+      });
+    }, { rootMargin: '-80px 0px -70% 0px' });
+
+    observerTargets.forEach((h) => observer.observe(h));
+  };
+
+  // Wait for post body to render
+  if (document.querySelector('.post-body')) {
+    build();
+  }
+</script>
+
+<style is:global>
+  .toc {
+    position: fixed;
+    right: max(16px, calc((100vw - 820px) / 2 - 220px));
+    top: 120px;
+    width: 180px;
+    max-height: calc(100dvh - 160px);
+    overflow-y: auto;
+    padding: 0 0 var(--space-8) var(--space-4);
+    border-left: 1px solid var(--color-border);
+    font-size: 0.82em;
+    z-index: 50;
+  }
+
+  .toc-title {
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+    font-size: 0.85em;
+  }
+
+  .toc-list { list-style: none; padding: 0; margin: 0; }
+  .toc-list li { margin-bottom: 2px; }
+  .toc-link {
+    display: block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    line-height: 1.5;
+    transition: color var(--transition-fast), background var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toc-link:hover { color: var(--color-text); background: var(--color-bg-secondary); }
+  .toc-link.active { color: var(--color-text); font-weight: 600; }
+  .toc-l1 { font-weight: 600; }
+  .toc-l2 { font-size: 0.95em; }
+  .toc-l3 { font-size: 0.9em; }
+
+  /* Scrollbar */
+  .toc::-webkit-scrollbar { width: 3px; }
+  .toc::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 10px; }
+
+  @media (max-width: 1100px) {
+    .toc { display: none; }
+  }
+</style>

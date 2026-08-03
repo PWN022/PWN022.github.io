@@ -57,6 +57,12 @@ const pageTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
     })();
   </script>
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  {import.meta.env.PROD && (
+    <>
+      <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+      <script src="/pagefind/pagefind-ui.js"></script>
+    </>
+  )}
 </head>
 
 <body>

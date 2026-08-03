@@ -1,5 +1,6 @@
 ---
 import { NAV_ITEMS, SITE_TITLE } from '../consts';
+import Search from './Search.astro';
 ---
 
 <header>
@@ -10,5 +11,6 @@ import { NAV_ITEMS, SITE_TITLE } from '../consts';
     {NAV_ITEMS.map((item) => (
       <a href={item.href}>{item.label}</a>
     ))}
+    <Search />
   </nav>
 </header>

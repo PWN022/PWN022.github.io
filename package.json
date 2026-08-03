@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && npx pagefind --site dist",
     "preview": "astro preview",
     "sync": "astro sync"
   },
@@ -15,5 +15,8 @@
     "@astrojs/sitemap": "^3.3.0",
     "astro": "^5.7.12",
     "typescript": "^5.8.0"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
   }
 }

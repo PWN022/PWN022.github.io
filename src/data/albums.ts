@@ -27,7 +27,7 @@ export const albums: Album[] = [
     cover: "/images/albums/TCD.jpg",
     rating: 5,
     genre: "Rap / Hip-Hop",
-    comment: "how do You Live?",
+    comment: "how do you live?",
     link: "https://open.spotify.com/album/3lQePoIm6iNQIiZkCYxCy0",
   },
   {

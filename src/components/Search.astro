@@ -1,0 +1,155 @@
+<button class="search-btn" id="search-btn" aria-label="Search" title="搜索">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+</button>
+
+<div class="search-overlay" id="search-overlay">
+  <div class="search-panel">
+    <div class="search-bar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="search-input" type="text" placeholder="输入关键词搜索文章..." autofocus />
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('search-btn')!;
+  const overlay = document.getElementById('search-overlay')!;
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const results = document.getElementById('search-results')!;
+  const close = document.getElementById('search-close')!;
+
+  btn.addEventListener('click', () => {
+    overlay.classList.add('open');
+    input.focus();
+  });
+  close.addEventListener('click', () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') overlay.classList.remove('open');
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      overlay.classList.add('open');
+      input.focus();
+    }
+  });
+
+  let debounce: ReturnType<typeof setTimeout>;
+  input.addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(search, 150);
+  });
+
+  async function search() {
+    const q = input.value.trim();
+    if (!q || q.length < 2) { results.innerHTML = ''; return; }
+    results.innerHTML = '<p class="search-hint">搜索中...</p>';
+    try {
+      const pagefind = await (window as any).pagefind;
+      const res = await pagefind.search(q);
+      if (!res?.results?.length) {
+        results.innerHTML = '<p class="search-hint">没有找到相关文章</p>';
+        return;
+      }
+      let html = '';
+      for (const r of res.results.slice(0, 12)) {
+        const data = await r.data();
+        html += `<a class="search-item" href="${data.url}">
+          <span class="search-title">${data.meta?.title || data.url}</span>
+          <span class="search-excerpt">${data.excerpt?.replace(/<\/?mark>/g, '') || ''}</span>
+        </a>`;
+      }
+      results.innerHTML = html || '<p class="search-hint">没有找到相关文章</p>';
+    } catch {
+      results.innerHTML = '<p class="search-hint">搜索功能正在索引中，请稍后再试</p>';
+    }
+  }
+</script>
+
+<style is:global>
+  .search-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 4px;
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+  }
+  .search-btn:hover { color: var(--color-text); }
+
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    padding-top: 15vh;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+  .search-overlay.open { opacity: 1; visibility: visible; }
+
+  .search-panel {
+    width: min(600px, 90vw);
+    max-height: 70vh;
+    background: var(--color-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font: inherit;
+    font-size: 1.05em;
+    background: none;
+    color: var(--color-text);
+  }
+  .search-bar input::placeholder { color: var(--color-text-tertiary); }
+  .search-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    color: var(--color-text-tertiary);
+  }
+  .search-close:hover { color: var(--color-text); }
+
+  .search-results { overflow-y: auto; padding: var(--space-2); }
+  .search-hint { padding: var(--space-8) var(--space-4); text-align: center; color: var(--color-text-tertiary); }
+  .search-item {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+  }
+  .search-item:hover { background: var(--color-bg-secondary); }
+  .search-title { display: block; font-weight: 600; color: var(--color-text); margin-bottom: 2px; }
+  .search-excerpt { display: block; font-size: 0.85em; color: var(--color-text-secondary); line-height: 1.5; }
+
+  [data-theme="dark"] .search-overlay { background: rgba(0,0,0,0.6); }
+  [data-theme="dark"] .search-panel { box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+</style>
