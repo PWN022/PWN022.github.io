@@ -53,7 +53,7 @@
     if (!pfReady) {
       pfReady = (async () => {
         // @ts-ignore
-        const mod = await import('/pagefind/pagefind.js');
+        const mod = await import('/pagefind/pagefind' + '.js');
         pf = new mod.Pagefind();
         await pf.init();
         return pf;
