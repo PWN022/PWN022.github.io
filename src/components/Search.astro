@@ -66,15 +66,10 @@
       let html = '';
       for (const r of res.results.slice(0, 12)) {
         const data = await r.data();
-        let excerpt = '';
-        if (data.plain_excerpt) {
-          const clean = data.plain_excerpt.replace(/\s+/g, ' ').trim();
-          const len = 24;
-          excerpt = clean.length > len ? clean.slice(0, len) + '...' : clean;
-        }
+        const desc = data.meta?.description || '';
         html += `<a class="search-item" href="${data.url}">
           <span class="search-title">${data.meta?.title || data.url}</span>
-          ${excerpt ? `<span class="search-excerpt">${excerpt}</span>` : ''}
+          ${desc ? `<span class="search-excerpt">${desc}</span>` : ''}
         </a>`;
       }
       results.innerHTML = html || '<p class="search-hint">没有找到相关文章</p>';
