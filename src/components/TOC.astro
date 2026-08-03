@@ -28,7 +28,6 @@
     list.innerHTML = html;
 
     // IntersectionObserver for active heading
-    const links = list.querySelectorAll('.toc-link');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         const link = list.querySelector(`[data-toc="${e.target.id}"]`);
