@@ -7,6 +7,13 @@ export default defineConfig({
   output: 'static',
   integrations: [sitemap()],
   devToolbar: { enabled: false },
+  vite: {
+    build: {
+      rollupOptions: {
+        external: /^\/pagefind\//,
+      },
+    },
+  },
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
