@@ -1,6 +1,6 @@
 ---
 title: PortSwigger-Web LLM attacks
-published: 2026-08-06T11:00:00
+published: 2026-08-05T19:00:00
 description: Web LLM部分通关记录，非完整
 tags:
   - 靶场
