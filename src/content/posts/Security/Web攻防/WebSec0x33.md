@@ -4,7 +4,7 @@ published: 2026-07-24T09:00:00
 description: WEB LLM安全威胁主要包括提示词注入（操控模型输出）和不安全输出处理（导致XSS/SSRF）。测试需关注API接口调用风险及远程通讯命令注入。
 tags:
   - LLM安全
-category: LLM安全
+category: 网络安全
 draft: false
 ---
 
