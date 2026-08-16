@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { tagSlug } from '../../utils/formatting';
+
+const posts = await getCollection('posts');
+const tagCount = new Map<string, number>();
+
+for (const post of posts) {
+  if (post.data.draft) continue;
+  if (post.data.category) {
+    tagCount.set(post.data.category, (tagCount.get(post.data.category) || 0) + 1);
+  }
+  for (const t of post.data.tags || []) {
+    tagCount.set(t, (tagCount.get(t) || 0) + 1);
+  }
+}
+
+const tags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="Tags">
+  <h1>Tags</h1>
+  <div class="tag-cloud">
+    {tags.map(([tag, count]) => (
+      <a class="tag-pill" href={`/tags/${tagSlug(tag)}/`}>
+        {tag}<span class="pill-count">{count}</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: var(--space-6);
+  }
+
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tag-pill:hover {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+    border-color: var(--color-link-hover-bg);
+  }
+
+  .pill-count {
+    font-size: 0.78em;
+    color: var(--color-text-tertiary);
+  }
+
+  .tag-pill:hover .pill-count {
+    color: var(--color-link-hover-text);
+    opacity: 0.7;
+  }
+</style>

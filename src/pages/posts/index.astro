@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import TagSidebar from '../../components/TagSidebar.astro';
 import { formatDate } from '../../utils/formatting';
 
 const allPosts = await getCollection('posts');
@@ -26,7 +25,6 @@ const yearEntries = [...byYearMonth.entries()];
 
 <BaseLayout title="Articles">
   <h1>Articles</h1>
-  <TagSidebar />
   {yearEntries.map(([year, months], idx) => (
     <details class="archive-year" open={idx === 0}>
       <summary class="year-title">{year}</summary>
