@@ -12,33 +12,6 @@ const posts = allPosts
 
 <BaseLayout title="Articles">
   <h1>Articles</h1>
-  <div class="articles-layout">
-    <TagSidebar />
-    <div class="articles-main">
-      <PostList posts={posts} />
-    </div>
-  </div>
+  <TagSidebar />
+  <PostList posts={posts} />
 </BaseLayout>
-
-<style>
-  .articles-layout {
-    display: flex;
-    gap: var(--space-8);
-    align-items: flex-start;
-  }
-
-  .articles-main {
-    flex: 1;
-    min-width: 0;
-  }
-
-  @media (max-width: 767px) {
-    .articles-layout {
-      flex-direction: column;
-    }
-    .tag-sidebar {
-      flex: none;
-      width: 100%;
-    }
-  }
-</style>
