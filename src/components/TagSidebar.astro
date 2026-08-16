@@ -16,8 +16,8 @@ for (const post of posts) {
 }
 
 const tags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
-const visible = tags.slice(0, 15);
-const hidden = tags.slice(15);
+const visible = tags.slice(0, 5);
+const hidden = tags.slice(5);
 ---
 
 <aside class="tag-sidebar">

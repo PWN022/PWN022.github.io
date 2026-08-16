@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TagSidebar from '../../components/TagSidebar.astro';
+import { formatDate } from '../../utils/formatting';
 
 const allPosts = await getCollection('posts');
 const posts = allPosts
@@ -19,35 +20,66 @@ for (const post of posts) {
   if (!months.has(m)) months.set(m, []);
   months.get(m)!.push(post);
 }
+
+const yearEntries = [...byYearMonth.entries()];
 ---
 
 <BaseLayout title="Articles">
   <h1>Articles</h1>
   <TagSidebar />
-  {[...byYearMonth.entries()].map(([year, months]) => (
-    <section class="archive-year">
-      <h2 class="year-title">{year}</h2>
-      {[...months.entries()].map(([month, monthPosts]) => (
-        <section class="archive-month">
-          <h3 class="month-title">{month}月</h3>
-          <ul class="blog-posts">
-            {monthPosts.map((post) => (
-              <li>
-                <time datetime={post.data.date.toISOString()}>{post.data.date.getDate()}</time>
-                <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </section>
-  ))}
+  {yearEntries.map(([year, months], idx) => {
+    const monthsBlock = (
+      <>
+        {[...months.entries()].map(([month, monthPosts]) => (
+          <section class="archive-month">
+            <h3 class="month-title">{month}月</h3>
+            <ul class="blog-posts">
+              {monthPosts.map((post) => (
+                <li>
+                  <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'm-d')}</time>
+                  <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </>
+    );
+
+    return idx === 0 ? (
+      <section class="archive-year">
+        <h2 class="year-title">{year}</h2>
+        {monthsBlock}
+      </section>
+    ) : (
+      <details class="archive-year archive-collapsed">
+        <summary class="year-title">{year}</summary>
+        {monthsBlock}
+      </details>
+    );
+  })}
 </BaseLayout>
 
 <style>
   .year-title {
     font-size: 1.4em;
     margin: var(--space-8) 0 var(--space-3) 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .year-title::-webkit-details-marker {
+    display: none;
+  }
+
+  details.archive-collapsed > summary::before {
+    content: '▸ ';
+    font-size: 0.8em;
+    color: var(--color-text-tertiary);
+  }
+
+  details.archive-collapsed[open] > summary::before {
+    content: '▾ ';
   }
 
   .month-title {
@@ -58,7 +90,7 @@ for (const post of posts) {
   }
 
   .archive-month ul.blog-posts li time {
-    flex: 0 0 32px;
+    flex: 0 0 55px;
     font-variant-numeric: tabular-nums;
   }
 </style>
