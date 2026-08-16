@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostList from '../../components/PostList.astro';
+import TagSidebar from '../../components/TagSidebar.astro';
 
 const allPosts = await getCollection('posts');
 const posts = allPosts
@@ -11,5 +12,33 @@ const posts = allPosts
 
 <BaseLayout title="Articles">
   <h1>Articles</h1>
-  <PostList posts={posts} />
+  <div class="articles-layout">
+    <TagSidebar />
+    <div class="articles-main">
+      <PostList posts={posts} />
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .articles-layout {
+    display: flex;
+    gap: var(--space-8);
+    align-items: flex-start;
+  }
+
+  .articles-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: 767px) {
+    .articles-layout {
+      flex-direction: column;
+    }
+    .tag-sidebar {
+      flex: none;
+      width: 100%;
+    }
+  }
+</style>

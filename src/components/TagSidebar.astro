@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import { tagSlug } from '../utils/formatting';
+
+const posts = await getCollection('posts');
+const tagCount = new Map<string, number>();
+
+for (const post of posts) {
+  if (post.data.draft) continue;
+  if (post.data.category) {
+    tagCount.set(post.data.category, (tagCount.get(post.data.category) || 0) + 1);
+  }
+  for (const t of post.data.tags || []) {
+    tagCount.set(t, (tagCount.get(t) || 0) + 1);
+  }
+}
+
+const tags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
+---
+
+<aside class="tag-sidebar">
+  <h2 class="tag-sidebar-title">Tags</h2>
+  <ul class="tag-list">
+    {tags.map(([tag, count]) => (
+      <li>
+        <a href={`/tags/${tagSlug(tag)}/`}>
+          <span class="tag-name">{tag}</span>
+          <span class="tag-count">{count}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</aside>
+
+<style>
+  .tag-sidebar {
+    flex: 0 0 180px;
+  }
+
+  .tag-sidebar-title {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-3) 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tag-list li {
+    margin-bottom: 2px;
+  }
+
+  .tag-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+
+  .tag-list a:hover {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+  }
+
+  .tag-name {
+    font-size: 0.88em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tag-count {
+    font-size: 0.75em;
+    color: var(--color-text-tertiary);
+    margin-left: var(--space-2);
+  }
+
+  .tag-list a:hover .tag-count {
+    color: var(--color-link-hover-text);
+    opacity: 0.7;
+  }
+</style>

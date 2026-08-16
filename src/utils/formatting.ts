@@ -56,3 +56,7 @@ export function formatDate(date: Date, format: string = 'Y-m-d'): string {
   }
   return result;
 }
+
+export function tagSlug(tag: string): string {
+  return tag.replace(/\//g, '-');
+}
