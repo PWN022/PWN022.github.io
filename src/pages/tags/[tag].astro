@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const tagSet = new Set<string>();
+
+  for (const post of posts) {
+    if (post.data.draft) continue;
+    if (post.data.category) tagSet.add(post.data.category);
+    for (const t of post.data.tags || []) tagSet.add(t);
+  }
+
+  return Array.from(tagSet).map((tag) => ({
+    params: { tag },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .filter((p) => !p.data.draft)
+  .filter((p) => p.data.category === tag || (p.data.tags || []).includes(tag))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title={tag}>
+  <h1 class="page-heading">{tag}</h1>
+  <p class="tag-count">共 {posts.length} 篇文章</p>
+  <PostList posts={posts} />
+</BaseLayout>
+
+<style>
+  .page-heading {
+    color: var(--color-text);
+  }
+  .tag-count {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-6);
+  }
+</style>

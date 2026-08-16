@@ -239,6 +239,11 @@ ul.blog-posts li time {
   color: var(--color-text-secondary);
 }
 
+ul.blog-posts li > a {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Visited links same color as normal */
 
 /* === Theme Toggle === */

@@ -20,14 +20,15 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     <header class="post-header">
       <h1>{title}</h1>
       {date && <time datetime={date.toISOString()}>{date.toISOString().split('T')[0]}</time>}
+      {description && <p class="post-description">{description}</p>}
     </header>
     <div class="post-body">
       <slot />
     </div>
     {(tags.length > 0 || category) && (
       <footer class="post-tags">
-        {category && <span class="tag tag-category">{category}</span>}
-        {tags.map((t) => <span class="tag">{t}</span>)}
+        {category && <a class="tag tag-category" href={`/tags/${category}/`}>{category}</a>}
+        {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
       </footer>
     )}
   </article>
@@ -58,6 +59,15 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     font-style: normal;
   }
 
+  .post-description {
+    margin: var(--space-3) 0 0 0;
+    font-family: var(--font-post);
+    font-size: 1.05em;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    max-width: 65ch;
+  }
+
   .post-tags {
     border-top: none;
     margin-top: var(--space-8);
@@ -73,12 +83,25 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tag:hover {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+    border-color: var(--color-link-hover-bg);
   }
 
   .tag-category {
     background: var(--color-link-hover-bg);
     color: var(--color-link-hover-text);
     border-color: var(--color-link-hover-bg);
+  }
+
+  .tag-category:hover {
+    background: transparent;
+    color: var(--color-link-hover-bg);
   }
 
   .progress-bar {

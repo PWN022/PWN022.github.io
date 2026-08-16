@@ -5,9 +5,11 @@ interface Props {
   slug: string;
   title: string;
   date: Date;
+  tags?: string[];
+  category?: string;
 }
 
-const { slug, title, date } = Astro.props;
+const { slug, title, date, tags = [], category } = Astro.props;
 ---
 
 <li>
@@ -15,4 +17,51 @@ const { slug, title, date } = Astro.props;
   <a href={`/posts/${slug}/`}>
     {title}
   </a>
+  {(category || tags.length > 0) && (
+    <span class="post-tags">
+      {category && <a class="tag tag-category" href={`/tags/${category}/`}>{category}</a>}
+      {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+    </span>
+  )}
 </li>
+
+<style>
+  .post-tags {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    max-width: 30%;
+    margin-left: auto;
+  }
+
+  .tag {
+    font-size: 0.72em;
+    padding: 1px 8px;
+    border-radius: 9999px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tag:hover {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+    border-color: var(--color-link-hover-bg);
+  }
+
+  .tag-category {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+    border-color: var(--color-link-hover-bg);
+  }
+
+  .tag-category:hover {
+    background: transparent;
+    color: var(--color-link-hover-bg);
+  }
+</style>
