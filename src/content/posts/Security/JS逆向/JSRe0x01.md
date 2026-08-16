@@ -5,8 +5,9 @@ description: JS逆向中反调试机制的检测与绕过展开实战复现。�
 tags:
   - JS
   - JS逆向
+  - HOOK
 category: 网络安全
-draft: true
+draft: false
 ---
 
 # 知识点
