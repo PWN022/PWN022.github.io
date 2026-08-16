@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import TOC from '../components/TOC.astro';
+import TagSidebar from '../components/TagSidebar.astro';
 
 interface Props {
   title: string;
@@ -32,6 +33,7 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
       </footer>
     )}
   </article>
+  <TagSidebar />
   <TOC />
 </BaseLayout>
 
