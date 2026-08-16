@@ -1,17 +1,64 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PostList from '../../components/PostList.astro';
 import TagSidebar from '../../components/TagSidebar.astro';
 
 const allPosts = await getCollection('posts');
 const posts = allPosts
   .filter((p) => !p.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// 按年份 + 月份分组
+const byYearMonth = new Map<number, Map<number, typeof posts>>();
+for (const post of posts) {
+  const d = post.data.date;
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  if (!byYearMonth.has(y)) byYearMonth.set(y, new Map());
+  const months = byYearMonth.get(y)!;
+  if (!months.has(m)) months.set(m, []);
+  months.get(m)!.push(post);
+}
 ---
 
 <BaseLayout title="Articles">
   <h1>Articles</h1>
   <TagSidebar />
-  <PostList posts={posts} />
+  {[...byYearMonth.entries()].map(([year, months]) => (
+    <section class="archive-year">
+      <h2 class="year-title">{year}</h2>
+      {[...months.entries()].map(([month, monthPosts]) => (
+        <section class="archive-month">
+          <h3 class="month-title">{month}月</h3>
+          <ul class="blog-posts">
+            {monthPosts.map((post) => (
+              <li>
+                <time datetime={post.data.date.toISOString()}>{post.data.date.getDate()}</time>
+                <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </section>
+  ))}
 </BaseLayout>
+
+<style>
+  .year-title {
+    font-size: 1.4em;
+    margin: var(--space-8) 0 var(--space-3) 0;
+  }
+
+  .month-title {
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: var(--space-4) 0 var(--space-2) 0;
+  }
+
+  .archive-month ul.blog-posts li time {
+    flex: 0 0 32px;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

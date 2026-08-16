@@ -16,28 +16,50 @@ for (const post of posts) {
 }
 
 const tags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
+const visible = tags.slice(0, 15);
+const hidden = tags.slice(15);
 ---
 
 <aside class="tag-sidebar">
   <h2 class="tag-sidebar-title">Tags</h2>
-  <ul class="tag-list">
-    {tags.map(([tag, count]) => (
-      <li>
-        <a href={`/tags/${tagSlug(tag)}/`}>
-          <span class="tag-name">{tag}</span>
-          <span class="tag-count">{count}</span>
-        </a>
-      </li>
+  <div class="tag-cloud">
+    {visible.map(([tag, count]) => (
+      <a class="tag-pill" href={`/tags/${tagSlug(tag)}/`}>
+        {tag}<span class="pill-count">{count}</span>
+      </a>
     ))}
-  </ul>
+    {hidden.length > 0 && (
+      <div class="tag-cloud-more" id="tag-more">
+        {hidden.map(([tag, count]) => (
+          <a class="tag-pill" href={`/tags/${tagSlug(tag)}/`}>
+            {tag}<span class="pill-count">{count}</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+  {hidden.length > 0 && (
+    <button class="tag-toggle" id="tag-toggle">展开更多 ▾</button>
+  )}
 </aside>
+
+<script>
+  const toggle = document.getElementById('tag-toggle');
+  const more = document.getElementById('tag-more');
+  if (toggle && more) {
+    toggle.addEventListener('click', () => {
+      const expanded = more.classList.toggle('open');
+      toggle.textContent = expanded ? '收起 ▴' : '展开更多 ▾';
+    });
+  }
+</script>
 
 <style>
   .tag-sidebar {
     position: fixed;
     right: calc(50% + 446px);
     top: 120px;
-    width: 160px;
+    width: 170px;
     max-height: calc(100dvh - 160px);
     overflow-y: auto;
   }
@@ -55,47 +77,62 @@ const tags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
     letter-spacing: 0.05em;
   }
 
-  .tag-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .tag-list li {
-    margin-bottom: 2px;
-  }
-
-  .tag-list a {
+  .tag-cloud {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 3px 8px;
-    border-radius: var(--radius-sm);
-    color: var(--color-text);
-    text-decoration: none;
-    transition: background var(--transition-fast);
+    flex-wrap: wrap;
+    gap: 5px;
   }
 
-  .tag-list a:hover {
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78em;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tag-pill:hover {
     background: var(--color-link-hover-bg);
     color: var(--color-link-hover-text);
+    border-color: var(--color-link-hover-bg);
   }
 
-  .tag-name {
-    font-size: 0.88em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .tag-count {
-    font-size: 0.75em;
+  .pill-count {
+    font-size: 0.8em;
     color: var(--color-text-tertiary);
-    margin-left: var(--space-2);
   }
 
-  .tag-list a:hover .tag-count {
+  .tag-pill:hover .pill-count {
     color: var(--color-link-hover-text);
     opacity: 0.7;
+  }
+
+  .tag-cloud-more {
+    display: none;
+  }
+  .tag-cloud-more.open {
+    display: contents;
+  }
+
+  .tag-toggle {
+    display: block;
+    margin-top: var(--space-3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.78em;
+    color: var(--color-text-tertiary);
+    padding: 0;
+    transition: color var(--transition-fast);
+  }
+
+  .tag-toggle:hover {
+    color: var(--color-text);
   }
 </style>
