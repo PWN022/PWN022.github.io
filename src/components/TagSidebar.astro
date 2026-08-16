@@ -22,22 +22,25 @@ const hidden = tags.slice(5);
 
 <aside class="tag-sidebar">
   <h2 class="tag-sidebar-title">Tags</h2>
-  <div class="tag-cloud">
+  <input class="tag-filter" id="tag-filter" type="text" placeholder="筛选..." />
+  <ul class="tag-list">
     {visible.map(([tag, count]) => (
-      <a class="tag-pill" href={`/tags/${tagSlug(tag)}/`}>
-        {tag}<span class="pill-count">{count}</span>
-      </a>
+      <li><a href={`/tags/${tagSlug(tag)}/`} data-tag={tag}>
+        <span class="tag-name">{tag}</span>
+        <span class="tag-count">{count}</span>
+      </a></li>
     ))}
     {hidden.length > 0 && (
-      <div class="tag-cloud-more" id="tag-more">
+      <div class="tag-more" id="tag-more">
         {hidden.map(([tag, count]) => (
-          <a class="tag-pill" href={`/tags/${tagSlug(tag)}/`}>
-            {tag}<span class="pill-count">{count}</span>
-          </a>
+          <li><a href={`/tags/${tagSlug(tag)}/`} data-tag={tag}>
+            <span class="tag-name">{tag}</span>
+            <span class="tag-count">{count}</span>
+          </a></li>
         ))}
       </div>
     )}
-  </div>
+  </ul>
   {hidden.length > 0 && (
     <button class="tag-toggle" id="tag-toggle">展开更多 ▾</button>
   )}
@@ -46,10 +49,38 @@ const hidden = tags.slice(5);
 <script>
   const toggle = document.getElementById('tag-toggle');
   const more = document.getElementById('tag-more');
+  const filter = document.getElementById('tag-filter') as HTMLInputElement;
+  const list = document.querySelector('.tag-list') as HTMLElement;
+
+  let expanded = false;
   if (toggle && more) {
     toggle.addEventListener('click', () => {
-      const expanded = more.classList.toggle('open');
+      expanded = !expanded;
       toggle.textContent = expanded ? '收起 ▴' : '展开更多 ▾';
+      more.style.display = expanded ? '' : 'none';
+    });
+  }
+
+  if (filter && list) {
+    filter.addEventListener('input', () => {
+      const q = filter.value.trim().toLowerCase();
+      const items = list.querySelectorAll('li');
+      let anyVisible = false;
+      items.forEach((li) => {
+        const a = li.querySelector('a');
+        const tag = (a?.getAttribute('data-tag') || '').toLowerCase();
+        const match = !q || tag.includes(q);
+        (li as HTMLElement).style.display = match ? '' : 'none';
+        if (match) anyVisible = true;
+      });
+      // 搜索时展开全部
+      if (q && toggle) {
+        toggle.style.display = 'none';
+        if (more) more.style.display = '';
+      } else if (toggle) {
+        toggle.style.display = '';
+        if (more && !expanded) more.style.display = 'none';
+      }
     });
   }
 </script>
@@ -77,52 +108,74 @@ const hidden = tags.slice(5);
     letter-spacing: 0.05em;
   }
 
-  .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+  .tag-filter {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background: none;
+    outline: none;
+    font: inherit;
+    font-size: 0.85em;
+    padding: 4px 0;
+    margin-bottom: var(--space-3);
+    color: var(--color-text);
   }
 
-  .tag-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.78em;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    transition: background var(--transition-fast), color var(--transition-fast);
-  }
-
-  .tag-pill:hover {
-    background: var(--color-link-hover-bg);
-    color: var(--color-link-hover-text);
-    border-color: var(--color-link-hover-bg);
-  }
-
-  .pill-count {
-    font-size: 0.8em;
+  .tag-filter::placeholder {
     color: var(--color-text-tertiary);
   }
 
-  .tag-pill:hover .pill-count {
+  .tag-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tag-list li {
+    margin-bottom: 1px;
+  }
+
+  .tag-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 6px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+
+  .tag-list a:hover {
+    background: var(--color-link-hover-bg);
+    color: var(--color-link-hover-text);
+  }
+
+  .tag-name {
+    font-size: 0.88em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tag-count {
+    font-size: 0.75em;
+    color: var(--color-text-tertiary);
+    margin-left: var(--space-2);
+  }
+
+  .tag-list a:hover .tag-count {
     color: var(--color-link-hover-text);
     opacity: 0.7;
   }
 
-  .tag-cloud-more {
+  .tag-more {
     display: none;
-  }
-  .tag-cloud-more.open {
-    display: contents;
   }
 
   .tag-toggle {
     display: block;
-    margin-top: var(--space-3);
+    margin-top: var(--space-2);
     background: none;
     border: none;
     cursor: pointer;
