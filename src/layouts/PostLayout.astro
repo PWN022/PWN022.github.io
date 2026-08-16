@@ -27,8 +27,8 @@ const { title, description, date, ogImage, tags = [], category } = Astro.props;
     </div>
     {(tags.length > 0 || category) && (
       <footer class="post-tags">
-        {category && <a class="tag tag-category" href={`/tags/${category}/`}>{category}</a>}
-        {tags.map((t) => <a class="tag" href={`/tags/${t}/`}>{t}</a>)}
+        {category && <a class="tag tag-category" href={`/tags/${encodeURIComponent(category)}/`}>{category}</a>}
+        {tags.map((t) => <a class="tag" href={`/tags/${encodeURIComponent(t)}/`}>{t}</a>)}
       </footer>
     )}
   </article>
