@@ -27,37 +27,24 @@ const yearEntries = [...byYearMonth.entries()];
 <BaseLayout title="Articles">
   <h1>Articles</h1>
   <TagSidebar />
-  {yearEntries.map(([year, months], idx) => {
-    const monthsBlock = (
-      <>
-        {[...months.entries()].map(([month, monthPosts]) => (
-          <section class="archive-month">
-            <h3 class="month-title">{month}月</h3>
-            <ul class="blog-posts">
-              {monthPosts.map((post) => (
-                <li>
-                  <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'm-d')}</time>
-                  <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
-      </>
-    );
-
-    return idx === 0 ? (
-      <section class="archive-year">
-        <h2 class="year-title">{year}</h2>
-        {monthsBlock}
-      </section>
-    ) : (
-      <details class="archive-year archive-collapsed">
-        <summary class="year-title">{year}</summary>
-        {monthsBlock}
-      </details>
-    );
-  })}
+  {yearEntries.map(([year, months], idx) => (
+    <details class="archive-year" open={idx === 0}>
+      <summary class="year-title">{year}</summary>
+      {[...months.entries()].map(([month, monthPosts]) => (
+        <section class="archive-month">
+          <h3 class="month-title">{month}月</h3>
+          <ul class="blog-posts">
+            {monthPosts.map((post) => (
+              <li>
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'm-d')}</time>
+                <a href={`/posts/${post.slug}/`}>{post.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </details>
+  ))}
 </BaseLayout>
 
 <style>
@@ -72,13 +59,13 @@ const yearEntries = [...byYearMonth.entries()];
     display: none;
   }
 
-  details.archive-collapsed > summary::before {
+  details.archive-year > summary::before {
     content: '▸ ';
     font-size: 0.8em;
     color: var(--color-text-tertiary);
   }
 
-  details.archive-collapsed[open] > summary::before {
+  details.archive-year[open] > summary::before {
     content: '▾ ';
   }
 
