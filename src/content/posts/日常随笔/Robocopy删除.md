@@ -1,6 +1,6 @@
 ---
-title: Robocopy删卡死文件
-published: 2026-08-21 11:45
+title: Robocopy镜像覆盖删除法
+published: 2026-08-21T16:00:00
 description: 利用 robocopy /mir 将空目录镜像覆盖目标，彻底删除 Windows 顽固文件夹，绕过资源管理器卡死问题。
 tags:
   - 日常
