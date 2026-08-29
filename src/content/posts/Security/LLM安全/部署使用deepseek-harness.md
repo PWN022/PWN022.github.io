@@ -1,5 +1,5 @@
 ---
-title: deepseek-harness
+title: DSH部署及安装使用Skill
 published: 2026-08-30T00:30:00
 description: 记录deepseek-harness的部署以及skills的安装与使用
 tags:
