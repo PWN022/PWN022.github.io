@@ -1,10 +1,12 @@
 ---
 title: 代码混淆&EVAL执行&OB算法&AA和JJ&特征识别&解密还原&美化输出&自动项目
 published: 2026-08-22 19:06
-description:
-tags: []
-category:
-draft: false
+description: 暂时没有准备好
+tags:
+  - JS逆向
+  - 代码混淆
+category: 网络安全
+draft: true
 ---
 
 # 知识点
