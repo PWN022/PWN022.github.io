@@ -1,12 +1,13 @@
 ---
 title: 代码混淆&EVAL执行&OB算法&AA和JJ&特征识别&解密还原&美化输出&自动项目
-published: 2026-08-30T12:00:00
-description: 暂时没有准备好
+published: 2026-09-01T17:50:00
+description: JS逆向中代码混淆的加密意义与常见方法，涵盖eval、JJEncode、AAEncode、JSFuck、Obfuscator等混淆手法的特征识别与还原技巧，并通过案例演示解密流程。
 tags:
+  - JS
   - JS逆向
   - 代码混淆
 category: 网络安全
-draft: true
+draft: false
 ---
 
 # 知识点
@@ -222,13 +223,130 @@ new Vue({
 
 ## Eval案例
 
+测试地址：https://www.aqistudy.cn/html/city_realtime.php
+
+代码中含有eval混淆
+
+```php
+eval(deDyzDPXGX(`ICB[REDACTED]`));
+```
+
+将eval还原后得到：
+
+```
+`var debugflag = false;\r\n  document.onkeydown = function() {\r\n    if ((e.ctrlKey) && (e.keyCode == 83)) {\r\n      alert("检测到非法调试，CTRL + S被管理员禁用");\r\n…………`
+```
+
+复制`deDyzDPXGX`，将该函数在控制台输出，点击查看源代码
+
+```js
+function deDyzDPXGX(pUpOMOU) {
+    pUpOMOU = BASE64.decrypt(pUpOMOU);
+    return pUpOMOU
+}
+```
+
+代码是将传入的参数`pUp...`进行解密并返回解密结果，那么在eval中该函数中的数据为base64编码：`ICB[REDACTED]`，将这部分放到base64解密并查看
+
+解出源代码为：
+
+```js
+  var debugflag = false;
+  document.onkeydown = function() {
+    if ((e.ctrlKey) && (e.keyCode == 83)) {
+      alert("检测到非法调试，CTRL + S被管理员禁用");
+      return false;
+    }
+  }
+  document.onkeydown = function() {
+    var e = window.event || arguments[0];
+    if (e.keyCode == 123) {
+      alert("检测到非法调试，F12被管理员禁用");
+      return false;
+    }
+  }
+  document.oncontextmenu = function() {
+    alert('检测到非法调试，右键被管理员禁用');
+    return false;
+  }
+  !function () {
+    const handler = setInterval(() => {
+      if (window.outerWidth - window.innerWidth > 300 ||
+       window.outerHeight - window.innerHeight > 300) {
+        // document.write((window.outerWidth - window.innerWidth) + ',' + (window.outerHeight - window.innerHeight));
+        document.write('检测到非法调试, 请关闭调试终端后刷新本页面重试!<br/>');
+        document.write("Welcome for People, Not Welcome for Machine!<br/>");
+        debugflag = true;
+      }
+      const before = new Date();
+      (function() {}
+        ["constructor"]("debugger")())
+      const after = new Date();
+      const cost = after.getTime() - before.getTime();
+      if (cost > 50) {
+        debugflag = true;
+        document.write('检测到非法调试, 请关闭调试终端后刷新本页面重试!<br/>');
+        document.write("Welcome for People, Not Welcome for Machine!<br/>");
+      }
+
+    }, 2000)
+  }();
+```
 
 ## JSFuck案例
 
+在某观影网站的登录请求包`code?callback=[REDACTED]`中存在jsfuck加密数据
+
+解密之后为：
+
+```
+jv=[REDACTED];domain=[REDACTED].com;path=/;expires=Sat, 01 Jun 2030 07:00:00 GMT
+```
 
 ## JSJaiMi案例
 
+测试地址：https://eisk.cn/tides/1363.html
+
+只截取了部分代码
+
+```
+/*
+ * 加密工具已经升级了一个版本，目前为 jsjiami.com.v5 ，主要加强了算法，以及防破解【绝对不可逆】配置，耶稣也无法100%还原，我说的。;
+ * 已经打算把这个工具基础功能一直免费下去。还希望支持我。
+ * 另外 jsjiami.com.v5 已经强制加入校验，注释可以去掉，但是 jsjiami.com.v5 不能去掉（如果你开通了VIP，可以手动去掉），其他都没有任何绑定。
+ * 誓死不会加入任何后门，jsjiami JS 加密的使命就是为了保护你们的Javascript 。
+ * 警告：如果您恶意去掉 jsjiami.com.v5 那么我们将不会保护您的JavaScript代码。请遵守规则
+ * 新版本: https://www.jsjiami.com/ 支持批量加密，支持大文件加密，拥有更多加密。 */
+
+;var encode_version = 'jsjiami.com.v5'
+  , flcuz = '__0xcbeba'
+  , __0xcbeba = ['HsKkIw==', 'e8K6D8O6', 'FuS8hjQ=', 'R+WkgFc=', 'wpjltYvCqg==', 'XQ0Zwr3Dmw==', …………
+```
+
+发现出现了大量`0x`开头的混淆代码，访问网址后确认其实就是二开的Ob混淆
+
+如果遇到这种情况，可以直接利用工具：https://jsdec.js.org/（因为是国内的加密，一般会有人对这种进行过研究），或者在网上搜有没有对这套加密进行过解密的
+
+因此直接将以上完整代码放入到工具中并选择相应的算法进行解密，之后根据解密结果得到：
+
+```
+var key = CryptoJS['enc']['Utf8']['parse']('[REDACTED]');
+var iv = CryptoJS['enc']['Utf8']['parse']('[REDACTED]');
+ws = CryptoJS['AES']['decrypt'](ws, key, {
+    'iv': iv,
+    'mode': CryptoJS['mode']['[REDACTED]'],
+    'padding': CryptoJS['pad']['[REDACTED]']
+});
+```
+
+对任意网站加密的数据，使用AES解密的相关工具，最后得到结果
+
+```
+{"Date":"2026-09-01T00:00:00","TideDesc":"潮汐一般每天是涨退各2次,今天情况：<br />第一次：02点37分涨满，后开始退潮到08点37分；<br/>…………
+```
 
 ## Obfuscator案例
 
+测试地址：https://d.weidian.com/weidian-pc/login/index.html#/
 
+数据包中存在Ob混淆后的数据，一般这种放到平台是解密不了的，最多就是使用到jsdec的美化功能，如果解密需要使用到ast技术
