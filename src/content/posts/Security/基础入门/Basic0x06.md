@@ -48,7 +48,7 @@ https://www.colasoft.com.cn/
 
 1. Burp 127.0.0.1:8888
 2. Yakit 127.0.0.1:8083，此时Yakit的下游就不需要填写。
-3. 让Burp将给到Yakit
+3. 让Burp给到Yakit
 4. 系统的代理设置：127.0.0.1:8888
 
 ![image-20260120210553955](https://cdn.jsdelivr.net/gh/pwn022/0x00/NetSecurity/img/image-20260120210553955.png)
@@ -61,7 +61,7 @@ https://www.colasoft.com.cn/
 
 1. Burp 127.0.0.1:8080
 2. Yakit 127.0.0.1:8083
-3. 让Burp将给到Yakit
+3. 让Burp给到Yakit
 4. 系统的代理设置：127.0.0.1:8080
 5. Yakit设置下游 127.0.0.1:9000
 
