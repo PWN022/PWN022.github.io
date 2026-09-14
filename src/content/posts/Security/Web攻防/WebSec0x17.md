@@ -8,7 +8,7 @@ tags:
 category: 网络安全
 draft: false
 ---
-
+	
 # 知识点
 
 1. WEB攻防-XML&XXE-注入原理&四大分类
@@ -57,15 +57,21 @@ HTML 旨在显示信息 ，而XML旨在传输存储信息。
 
 PHP:
 
+```
 libxml_disable_entity_loader(true);
+```
 
 JAVA:
 
+```
 DocumentBuilderFactory dbf =DocumentBuilderFactory.newInstance();dbf.setExpandEntityReferences(false);
+```
 
 Python：
 
+```
 from lxml import etreexmlData = etree.parse(xmlSource,etree.XMLParser(resolve_entities=False))
+```
 
 ### 方案2-过滤用户提交的XML数据
 
