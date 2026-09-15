@@ -1,7 +1,7 @@
 ---
 title: 接口类型&测试方法&端点提取&暴漏攻击&枚举规则&RESTful风格&GraphQL语法
 published: 2026-09-14T20:00:00
-description: API攻防中RESTful与GraphQL类型利用，涵盖接口类型、检测流程与实战案例，包括参数污染、方法篡改、价格折扣泄露、GraphQL字段及隐藏端点探测，涉及越权、未授权和业务逻辑突破。GraphQL还有后续章节以及实验。
+description: API攻防中RESTful与GraphQL类型利用，涵盖接口类型、检测流程与实战案例，包括参数污染、方法篡改、价格折扣泄露、GraphQL字段及隐藏端点探测，涉及越权、未授权和业务逻辑突破。
 tags:
   - RESTful
   - GraphQL
