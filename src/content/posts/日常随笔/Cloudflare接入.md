@@ -1,7 +1,7 @@
 ---
 title: " Cloudflare域名接入"
 published: 2026-09-16T20:30:00
-description: 记录将域名接入 Cloudflare 的完整实操流程，包括添加域名、AI 爬虫策略设置、选择 Free 套餐、修改 NS、补齐 DNS 记录、开启 HTTPS 以及配置主域名重定向规则，适合个人笔记站参考。
+description: 记录将域名接入 Cloudflare 的完整实操流程，包括添加域名、AI 爬虫策略设置、选择 Free 套餐、修改 NS、补齐 DNS 记录、开启 HTTPS 以及配置主域名重定向规则还有邮件接收。
 tags:
   - 日常
 category: 随笔
@@ -187,3 +187,35 @@ draft: false
     `http://example.com/*` → `https://www.example.com/${1}`
     
 - 更简单的做法：开启 **Always Use HTTPS**，先把 HTTP 升级到 HTTPS，再触发上面这条规则。
+
+## 设置域名邮箱（仅接收）
+
+如果只需要用域名接收邮件，不需要自己搭建邮件服务器。在 Cloudflare 中配置 Email Routing 即可。
+
+### 接入域名
+
+进入 **Compute > Email Service > Email Routing**，点击 **Onboard Domain**，选择你的域名。Cloudflare 会自动添加所需的 MX、SPF、DKIM 记录。
+
+### 验证目标邮箱
+
+进入 **Destination Addresses**，添加你实际用来收信的邮箱（如 Gmail、QQ 邮箱）。Cloudflare 会发送验证邮件，**必须点击邮件中的验证链接**。验证成功后，目标地址状态变为“已验证”。
+
+### 创建路由规则
+
+进入 **Routing Rules**，点击 **Create routing rule**。
+
+|      字段       |                      填写                      |
+| :-----------: | :------------------------------------------: |
+| Email pattern | 你想对外使用的邮箱前缀，如 `hello`，代表 `hello@example.com` |
+|    Action     |               Send to an email               |
+|  Destination  |                  选择已验证的目标邮箱                  |
+
+保存后，规则默认启用。
+
+### 测试接收
+
+用另一个邮箱（不能是目标邮箱自己）发送邮件到 `hello@example.com`。然后检查目标邮箱的收件箱和垃圾邮件文件夹。如果收到，说明设置成功。
+
+### 可选：全捕获
+
+如需接收所有发往域名的邮件，可在 **Routing Rules** 中启用 **Catch-all**，指向已验证的目标邮箱。
