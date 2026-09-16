@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import { codeBlockPlugin } from './src/plugins/code-block.mjs';
 
 export default defineConfig({
-  site: 'https://attackor7.tech',
+  site: 'https://bound2.space',
   output: 'static',
   integrations: [sitemap()],
   devToolbar: { enabled: false },
