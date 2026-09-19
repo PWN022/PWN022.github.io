@@ -155,7 +155,7 @@ draft: false
         
     - 开启 **Automatic HTTPS Rewrites**
 
-## 设置重定向规则（统一主域名）
+## 设置重定向规则（如需统一主域名）
 
 在 **Rules → Redirect Rules** 新建规则，把裸域统一跳到 `www`，避免 SEO 分散。
 
