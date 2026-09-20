@@ -1,5 +1,5 @@
 ---
-title: 好靶场SQLi(基础注入/盲注)
+title: 好靶场SQLi-1(基础注入/盲注)
 published: 2026-09-17T12:00:00
 description: 梳理 SQL 注入基础题型，包含报错、联合、布尔、时间盲注，附带 payload、绕过思路与 Python 盲注脚本。
 tags:
