@@ -1,5 +1,5 @@
 ---
-title: HackTheBox02
+title: HackTheBox-Nexus
 published: 2026-10-09T10:30:00
 description: 本次渗透HTB Nexus靶机，从子域名枚举与Gitea仓库泄露的.env中获取凭据，登录Krayin CRM后利用上传漏洞拿到容器shell，再通过数据库密码复用SSH登录jones，最终滥用root模板同步服务的路径遍历写入SSH公钥，成功提权至root。
 tags:

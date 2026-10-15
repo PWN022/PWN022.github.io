@@ -1,5 +1,5 @@
 ---
-title: HackTheBox03
+title: HackTheBox-Cohort
 published: 2026-10-12T12:00:00
 description: 本文记录 Cohort.htb 靶机渗透：利用 SSRF 读取 Nginx 状态页发现内部 Marimo，借 CVE-2026-39987 获取 shell，再通过 PackageKit TOCTOU 提权至 root。文末附通用 Linux 提权枚举清单，涵盖 SUID、计划任务、服务、D-Bus 等常用检查项与思路。
 tags:

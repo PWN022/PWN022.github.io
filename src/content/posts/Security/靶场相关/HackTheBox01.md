@@ -1,7 +1,7 @@
 ---
-title: HackTheBox记录01
+title: HackTheBox记录Cap、Connected、Reactor、Facts、WingData、Orion
 published: 2026-06-18T18:00:00
-description: hackthebox靶场记录
+description: hackthebox靶场记录（Cap、Connected、Reactor、Facts、WingData、Orion）
 tags:
   - HackTheBox
   - 靶场

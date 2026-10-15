@@ -1,5 +1,5 @@
 ---
-title: HackTheBox04
+title: HackTheBox-Fireflow
 published: 2026-10-13T10:00:00
 description: FireFlow 靶场从子域枚举发现 Langflow 1.8.2，利用 CVE-2026-33017 未授权 RCE 获取 www-data，从环境变量泄露凭据 SSH 至 nightfall。随后利用 MCP 服务 JWT alg:none 伪造管理员 Token，注册恶意工具获得 Pod Shell。最终滥用 SA 的 nodes/proxy 权限，经 Kubelet WebSocket exec 进入 node-exporter 容器，读取宿主机 root flag。
 tags:
